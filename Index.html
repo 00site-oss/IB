@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>RewardBux</title>
+  <meta name="theme-color" content="#0b1229" />
+  <link rel="icon" href="https://i.imgur.com/wppiqAy.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0b1229;
+      --card: #131c35;
+      --card-hover: #1a2545;
+      --border: #1e2a4a;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-light: #60a5fa;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(99, 102, 241, 0.08), transparent),
+        var(--bg);
+      position: relative;
+      padding-bottom: 76px;
+    }
+
+    /* ===== TOP HEADER ===== */
+    .top-header {
+      background: rgba(11, 18, 41, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 12px 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.55rem;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #fff;
+    }
+    .logo .dollar {
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1.5rem;
+    }
+    .logo span { color: #60a5fa; }
+
+    /* User bar under logo */
+    .user-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px 12px;
+    }
+
+    .user-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+    }
+    .avatar-wrap img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+    }
+    .level-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -4px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--bg);
+    }
+
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .user-meta .name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+    .user-meta .balance-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+    .user-meta .balance-row .diamond {
+      color: #fbbf24;
+    }
+    .user-meta .balance-row .amount {
+      color: var(--accent-light);
+      font-weight: 600;
+    }
+
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover {
+      background: var(--card-hover);
+      color: var(--text);
+    }
+    .icon-btn.logout:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    /* ===== STATIC LOGS BAR (no animation) ===== */
+    .logs-bar {
+      background: rgba(19, 28, 53, 0.7);
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .logs-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .logs-row {
+      display: flex;
+      gap: 10px;
+      width: max-content;
+    }
+    .log-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 7px 12px 7px 7px;
+      min-width: 160px;
+      flex-shrink: 0;
+    }
+    .log-card img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .log-card .info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+      overflow: hidden;
+    }
+    .log-card .uname {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 90px;
+    }
+    .log-card .amount {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent-light);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #fff;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 16px 10px 8px;
+    }
+    .hero h1 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--accent-light);
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .feature-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 span { color: var(--accent-light); }
+    .feature-card .icons {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      font-size: 1.55rem;
+      color: #fff;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .stat-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .stat-box .value {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-light);
+    }
+    .stat-box .label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      background: var(--card-hover);
+      color: var(--text);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .offer-grid, .reward-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .offer, .reward-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .reward-item { cursor: pointer; }
+    .reward-item:hover {
+      border-color: var(--accent);
+      background: var(--card-hover);
+    }
+    .offer img, .reward-item img {
+      height: 34px;
+      max-width: 100%;
+      object-fit: contain;
+      margin-bottom: 8px;
+    }
+    .reward-item .name { font-weight: 600; font-size: 0.9rem; }
+    .reward-item .min { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+
+    .log-item, .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+    }
+    .log-item:last-child, .history-item:last-child { border-bottom: none; }
+    .log-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(59,130,246,0.15);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .history-item { justify-content: space-between; }
+
+    .leaderboard table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .leaderboard th {
+      text-align: left;
+      padding: 8px 6px;
+      color: var(--muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .leaderboard td {
+      padding: 11px 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .captcha {
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 1.4rem;
+      letter-spacing: 5px;
+      margin-bottom: 12px;
+      user-select: none;
+      color: var(--accent-light);
+    }
+
+    .alert {
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      margin-bottom: 14px;
+    }
+    .alert-warn { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+    .alert-error { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .alert-success { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+    .alert-info { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+
+    .divider {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin: 18px 0;
+      position: relative;
+    }
+    .divider::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .divider span {
+      background: var(--card);
+      padding: 0 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chat-box { display: flex; flex-direction: column; height: calc(100vh - 260px); min-height: 340px; }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+    }
+    .chat-msg {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+      word-break: break-word;
+    }
+    .chat-msg:last-child { border-bottom: none; }
+    .chat-msg.admin-msg {
+      background: rgba(245,158,11,0.1);
+      border-radius: 8px;
+      border-bottom: none;
+      margin: 4px 8px;
+    }
+    .chat-msg .meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 3px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .chat-msg .meta .name { color: var(--accent-light); font-weight: 600; }
+    .badge-owner {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #fff;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+    .chat-input-row { display: flex; gap: 8px; }
+    .chat-input-row input { margin-bottom: 0; flex: 1; }
+    .chat-input-row button { width: auto; padding: 10px 16px; flex-shrink: 0; }
+    .chat-sound-toggle {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-unsent { background: rgba(239,68,68,0.2); color: #f87171; }
+    .badge-sent { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .badge-pending { background: rgba(245,158,11,0.2); color: #fbbf24; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .modal-header h3 { font-size: 1.1rem; font-weight: 600; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+    .steps { display: flex; gap: 8px; margin-bottom: 20px; }
+    .step-dot { flex: 1; height: 4px; border-radius: 2px; background: var(--border); }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.done { background: var(--success); }
+
+    .summary {
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 0.875rem;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    .summary div { margin-bottom: 6px; }
+    .summary strong { color: var(--muted); font-weight: 500; }
+
+    .btn-row { display: flex; gap: 8px; }
+    .btn-row .btn { flex: 1; }
+
+    #gbtn { display: flex; justify-content: center; min-height: 44px; }
+
+    .policy-content { max-height: 58vh; overflow-y: auto; padding-right: 6px; }
+    .policy-content h3 { color: var(--accent-light); margin: 16px 0 8px; font-size: 0.95rem; }
+    .policy-content h3:first-child { margin-top: 0; }
+    .policy-content p, .policy-content li { color: var(--muted); font-size: 0.875rem; line-height: 1.6; margin-bottom: 8px; }
+    .policy-content ul { padding-left: 20px; margin-bottom: 12px; }
+    .policy-accept {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .policy-accept label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .policy-accept input[type="checkbox"] { width: auto; margin: 0; accent-color: var(--accent); }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 16px;
+      font-size: 0.9rem;
+    }
+
+    /* ===== BOTTOM FIXED NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 4px 12px;
+      z-index: 100;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.35);
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 2px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s;
+      border-radius: 10px;
+    }
+    .nav-item i {
+      font-size: 1.2rem;
+      margin-bottom: 1px;
+    }
+    .nav-item.active {
+      color: var(--accent-light);
+    }
+    .nav-item.active i {
+      color: var(--accent);
+    }
+
+    .iframe-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 150;
+      display: flex;
+      flex-direction: column;
+    }
+    .iframe-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .iframe-bar button {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    iframe { flex: 1; border: none; width: 100%; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    /* ====== CONFIG ====== */
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
+    const GOOGLE_CLIENT_ID = "@secret:GOOGLE_OAUTH_CLIENT_ID";
+
+    const memoryStore = {};
+    const storage = {
+      get(key) { try { return localStorage.getItem(key); } catch (e) { return memoryStore[key] || null; } },
+      set(key, val) { try { localStorage.setItem(key, val); } catch (e) { memoryStore[key] = val; } },
+      remove(key) { try { localStorage.removeItem(key); } catch (e) { delete memoryStore[key]; } }
+    };
+
+    const REWARDS = [
+      {
+        id: "amazon_uk",
+        name: "Amazon.co.uk",
+        min: 1,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+        detailsLabel: "Amazon.co.uk Gift Card Email",
+        detailsPlaceholder: "you@email.com"
+      }
+    ];
+
+    let audioCtx = null;
+    function playDing() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    async function api(action, params = {}) {
+      try {
+        const qs = new URLSearchParams(Object.assign({ action }, params)).toString();
+        const res = await fetch(SCRIPT_URL + "?" + qs);
+        return await res.json();
+      } catch (e) {
+        return { error: "Network error" };
+      }
+    }
+
+    async function postApi(action, body = {}) {
+      try {
+        const params = new URLSearchParams();
+        params.append("action", action);
+        Object.keys(body).forEach(function (k) { params.append(k, body[k]); });
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body: params.toString()
+        });
+        return await res.json();
+      } catch (e) {
+        return { error: "Network error" };
+      }
+    }
+
+    function TermsOfService() {
+      return (
+        <div className="policy-content">
+          <h3>1. Acceptance of Terms</h3>
+          <p>By using RewardBux you agree to these Terms.</p>
+          <h3>2. Eligibility</h3>
+          <ul>
+            <li>Must be at least 13 years old</li>
+            <li>One account per user</li>
+          </ul>
+          <h3>3. Earning & Rewards</h3>
+          <ul>
+            <li>Earnings depend on third-party offerwalls</li>
+            <li>Minimum cashout currently $1</li>
+          </ul>
+          <h3>4. Prohibited Activities</h3>
+          <ul>
+            <li>No bots, multiple accounts, or fraud</li>
+            <li>No harassment in chat</li>
+          </ul>
+          <p style={{ marginTop: 16, color: 'var(--muted)', fontSize: '0.8rem' }}>Last Updated: August 2026 • support@rewardbux.com</p>
+        </div>
+      );
+    }
+
+    function PrivacyPolicy() {
+      return (
+        <div className="policy-content">
+          <h3>1. Information We Collect</h3>
+          <ul>
+            <li>Account info, email, name, avatar (via Google)</li>
+            <li>Chat messages and cashout details</li>
+            <li>IP and device data</li>
+          </ul>
+          <h3>2. How We Use It</h3>
+          <ul>
+            <li>Account management, earnings, cashouts</li>
+            <li>Leaderboards, chat, fraud prevention</li>
+          </ul>
+          <p style={{ marginTop: 16, color: 'var(--muted)', fontSize: '0.8rem' }}>Last Updated: August 2026 • support@rewardbux.com</p>
+        </div>
+      );
+    }
+
+    function App() {
+      const [tab, setTab] = useState("home");
+      const [user, setUser] = useState(null);
+      const [logs, setLogs] = useState([]);
+      const [leaders, setLeaders] = useState([]);
+      const [iframeUrl, setIframeUrl] = useState(null);
+      const [msg, setMsg] = useState(null);
+      const [captcha, setCaptcha] = useState("");
+      const [form, setForm] = useState({ account: "", clientId: "", captcha: "", username: "", bonusCode: "" });
+      const [offerwalls, setOfferwalls] = useState([]);
+      const [owLoading, setOwLoading] = useState(true);
+      const [chatMessages, setChatMessages] = useState([]);
+      const [chatInput, setChatInput] = useState("");
+      const [soundOn, setSoundOn] = useState(true);
+      const lastMsgId = useRef(null);
+      const chatEndRef = useRef(null);
+      const pollRef = useRef(null);
+      const soundRef = useRef(true);
+      const userRef = useRef(null);
+      const gInited = useRef(false);
+      const [cashouts, setCashouts] = useState([]);
+      const [modal, setModal] = useState(null);
+      const [step, setStep] = useState(1);
+      const [amount, setAmount] = useState("");
+      const [details, setDetails] = useState("");
+      const [submitting, setSubmitting] = useState(false);
+      const [loggingIn, setLoggingIn] = useState(false);
+      
+      const [policyModal, setPolicyModal] = useState(null);
+      const [policyAccepted, setPolicyAccepted] = useState(false);
+      const [showPolicyAccept, setShowPolicyAccept] = useState(false);
+
+      useEffect(function () { soundRef.current = soundOn; }, [soundOn]);
+      useEffect(function () { userRef.current = user; }, [user]);
+
+      useEffect(() => {
+        const accepted = storage.get("buxiq_policy_accepted");
+        if (accepted === "true") setPolicyAccepted(true);
+        else if (user) setShowPolicyAccept(true);
+      }, [user]);
+
+      function showMsg(text, type) {
+        setMsg({ text: text, type: type || "error" });
+        setTimeout(function () { setMsg(null); }, 4000);
+      }
+      function genCaptcha() { setCaptcha(String(Math.floor(10000 + Math.random() * 90000))); }
+      function saveUser(u) {
+        setUser(u);
+        userRef.current = u;
+        storage.set("buxiq_user", JSON.stringify(u));
+      }
+      function logout() {
+        setUser(null);
+        storage.remove("buxiq_user");
+        try { if (window.google) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
+        gInited.current = false;
+        setTab("home");
+        showMsg("Logged out", "success");
+      }
+      function toggleSound() {
+        const next = !soundOn;
+        setSoundOn(next);
+        storage.set("buxiq_sound", next ? "1" : "0");
+      }
+
+      function acceptPolicies() {
+        storage.set("buxiq_policy_accepted", "true");
+        setPolicyAccepted(true);
+        setShowPolicyAccept(false);
+        showMsg("Thank you for accepting our policies!", "success");
+      }
+
+      const loadLogs = useCallback(async function () {
+        const data = await api("logs");
+        if (data.logs) setLogs(data.logs);
+      }, []);
+      const loadLeaders = useCallback(async function () {
+        const data = await api("leaders");
+        if (data.leaders) setLeaders(data.leaders);
+      }, []);
+      const loadOfferwalls = useCallback(async function () {
+        setOwLoading(true);
+        const data = await api("getOfferwalls");
+        setOfferwalls(Array.isArray(data.offerwalls) ? data.offerwalls : []);
+        setOwLoading(false);
+      }, []);
+      const refreshBalance = useCallback(async function () {
+        const u = userRef.current;
+        if (!u) return;
+        const data = await api("balance", { account: u.account });
+        if (data.balance !== undefined) saveUser(Object.assign({}, u, { balance: data.balance, level: data.level || u.level }));
+      }, []);
+      const loadCashouts = useCallback(async function (account) {
+        const data = await api("getCashouts", { account: account });
+        setCashouts(data.cashouts || []);
+      }, []);
+      const loadChat = useCallback(async function (isInitial) {
+        const data = await api("getChat", { limit: 50 });
+        if (!data.messages) return;
+        const msgs = data.messages;
+        const newestId = msgs.length ? msgs[msgs.length - 1].id : null;
+        if (!isInitial && newestId && lastMsgId.current && newestId !== lastMsgId.current && soundRef.current) playDing();
+        lastMsgId.current = newestId;
+        setChatMessages(msgs);
+      }, []);
+
+      const creditEarnings = useCallback(async function (userId, amt, txnId) {
+        const data = await postApi("creditEarnings", {
+          userId: userId,
+          amount: amt,
+          transactionId: txnId || String(Date.now())
+        });
+        if (data.error) { showMsg("Credit failed: " + data.error); return; }
+        showMsg("$" + Number(amt).toFixed(2) + " credited!", "success");
+        const u = userRef.current;
+        if (u && (String(u.account) === String(userId) || u.username === userId)) refreshBalance();
+        loadLogs(); loadLeaders();
+        if (soundRef.current) playDing();
+      }, [refreshBalance, loadLogs, loadLeaders]);
+
+      const handleGoogleCredential = useCallback(function (response) {
+        if (!response || !response.credential) { showMsg("Google login failed"); return; }
+        let payload;
+        try {
+          payload = JSON.parse(decodeURIComponent(escape(atob(response.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))));
+        } catch (e) { showMsg("Could not read Google account"); return; }
+        setLoggingIn(true);
+        postApi("googleLogin", {
+          googleId: payload.sub,
+          email: payload.email,
+          name: payload.name || "",
+          picture: payload.picture || ""
+        }).then(function (data) {
+          setLoggingIn(false);
+          if (data.error) { showMsg(data.error); return; }
+          saveUser(data.user);
+          setTab("earn");
+          const accepted = storage.get("buxiq_policy_accepted");
+          if (accepted !== "true") setShowPolicyAccept(true);
+          showMsg(data.isNew ? "Account created! Welcome!" : "Welcome back!", "success");
+        });
+      }, []);
+
+      useEffect(function () {
+        if (user) return;
+        let tries = 0;
+        const timer = setInterval(function () {
+          tries++;
+          const el = document.getElementById("gbtn");
+          const g = window.google && window.google.accounts && window.google.accounts.id;
+          if (g && el) {
+            clearInterval(timer);
+            try {
+              if (!gInited.current) {
+                g.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential, cancel_on_tap_outside: true });
+                gInited.current = true;
+              }
+              el.innerHTML = "";
+              g.renderButton(el, { theme: "filled_blue", size: "large", width: 320, text: "continue_with", shape: "pill", logo_alignment: "left" });
+            } catch (e) {}
+          } else if (tries > 40) clearInterval(timer);
+        }, 250);
+        return function () { clearInterval(timer); };
+      }, [tab, user, handleGoogleCredential]);
+
+      useEffect(function () {
+        const saved = storage.get("buxiq_user");
+        if (saved) { try { const u = JSON.parse(saved); setUser(u); userRef.current = u; } catch (e) {} }
+        const soundPref = storage.get("buxiq_sound");
+        if (soundPref !== null) { setSoundOn(soundPref === "1"); soundRef.current = soundPref === "1"; }
+        const policyAcceptedPref = storage.get("buxiq_policy_accepted");
+        if (policyAcceptedPref === "true") setPolicyAccepted(true);
+        genCaptcha();
+        loadLeaders(); loadLogs(); loadOfferwalls();
+        const p = new URLSearchParams(window.location.search);
+        const uid = p.get("user_id") || p.get("userid");
+        const amt = p.get("amount") || p.get("reward");
+        const txn = p.get("transaction_id") || p.get("txn_id");
+        if (uid && amt && !isNaN(parseFloat(amt))) {
+          creditEarnings(uid, parseFloat(amt), txn);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }, []);
+
+      useEffect(function () {
+        if (tab === "chat") {
+          loadChat(true);
+          pollRef.current = setInterval(function () { loadChat(false); }, 4000);
+        }
+        return function () { clearInterval(pollRef.current); };
+      }, [tab, loadChat]);
+      useEffect(function () { if (tab === "shop" && user) loadCashouts(user.account); }, [tab, user, loadCashouts]);
+      useEffect(function () { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
+      useEffect(function () { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
+
+      async function handleLogin() {
+        if (!form.account || !form.clientId) { showMsg("Enter account and client ID"); return; }
+        if (form.captcha.trim() !== captcha) { showMsg("Invalid CAPTCHA"); genCaptcha(); setForm(Object.assign({}, form, { captcha: "" })); return; }
+        setLoggingIn(true);
+        const data = await api("login", { account: form.account, clientId: form.clientId });
+        setLoggingIn(false);
+        if (data.error) { showMsg(data.error); genCaptcha(); return; }
+        saveUser(data.user);
+        setTab("earn");
+        const accepted = storage.get("buxiq_policy_accepted");
+        if (accepted !== "true") setShowPolicyAccept(true);
+        showMsg("Welcome back!", "success");
+      }
+
+      async function sendChat() {
+        const text = chatInput.trim();
+        if (!text) return;
+        if (!user) { showMsg("Please login to chat"); setTab("earn"); return; }
+        if (text.length > 300) { showMsg("Message too long (max 300)"); return; }
+        setChatInput("");
+        const data = await postApi("sendChat", {
+          account: user.account, username: user.username || user.account, message: text
+        });
+        if (data.error) { showMsg(data.error); return; }
+        loadChat(false);
+      }
+
+      function openModal(reward) {
+        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
+        setModal(reward); setStep(1); setAmount(""); setDetails("");
+      }
+      function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
+
+      function nextStep() {
+        const bal = parseFloat((user && user.balance) || 0);
+        const amt = parseFloat(amount);
+        if (step === 1) {
+          if (!amount || isNaN(amt) || amt <= 0) { showMsg("Enter a valid amount"); return; }
+          if (amt < modal.min) { showMsg("Minimum is $" + modal.min); return; }
+          if (amt > bal) { showMsg("Insufficient balance"); return; }
+          setStep(2);
+        } else if (step === 2) {
+          if (!details.trim()) { showMsg("Enter receiving details"); return; }
+          setStep(3);
+        }
+      }
+
+      async function submitCashout() {
+        setSubmitting(true);
+        const data = await postApi("submitCashout", {
+          account: user.account,
+          username: user.username || user.account,
+          rewardType: modal.id,
+          rewardName: modal.name,
+          amount: amount,
+          details: details.trim()
+        });
+        setSubmitting(false);
+        if (data.error) { showMsg(data.error); return; }
+        showMsg("Cashout submitted!", "success");
+        const newBal = data.newBalance !== undefined ? data.newBalance : (parseFloat(user.balance) - parseFloat(amount));
+        saveUser(Object.assign({}, user, { balance: parseFloat(newBal).toFixed(2) }));
+        loadCashouts(user.account);
+        closeModal();
+      }
+
+      function statusBadge(status) {
+        const s = String(status || "unsent").toLowerCase();
+        if (s === "sent") return <span className="badge badge-sent">Sent</span>;
+        if (s === "pending") return <span className="badge badge-pending">Pending</span>;
+        return <span className="badge badge-unsent">Unsent</span>;
+      }
+
+      async function redeemBonus() {
+        if (!form.username || !form.bonusCode) { showMsg("Fill all fields"); return; }
+        const data = await api("redeemBonus", { username: form.username, bonusCode: form.bonusCode });
+        if (data.error) { showMsg(data.error); return; }
+        showMsg("Redeemed $" + data.amountUsd, "success");
+        setForm(function (f) { return Object.assign({}, f, { bonusCode: "" }); });
+        refreshBalance();
+      }
+
+      function openOffer(ow) {
+        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
+        const uid = String(user.account || user.username || "");
+        const uname = String(user.username || uid);
+        let url = String(ow.urlTemplate || "");
+        if (!url) { showMsg("Offerwall URL missing"); return; }
+        url = url
+          .replace(/\{user\}/gi, encodeURIComponent(uid))
+          .replace(/\{userid\}/gi, encodeURIComponent(uid))
+          .replace(/\{user_id\}/gi, encodeURIComponent(uid))
+          .replace(/\{account\}/gi, encodeURIComponent(uid))
+          .replace(/\{username\}/gi, encodeURIComponent(uname))
+          .replace(/\$\{userid\}/gi, encodeURIComponent(uid))
+          .replace(/\$\{account\}/gi, encodeURIComponent(uid))
+          .replace(/\$\{username\}/gi, encodeURIComponent(uname));
+        url += (url.indexOf("?") !== -1 ? "&" : "?") + "t=" + Date.now();
+        setIframeUrl(url);
+      }
+
+      function openPolicy(type) { setPolicyModal(type); }
+
+      const tabs = [
+        { id: "home", icon: "fa-home", label: "Home" },
+        { id: "earn", icon: "fa-hand-holding-dollar", label: "Earn" },
+        { id: "shop", icon: "fa-shopping-cart", label: "Shop" },
+        { id: "leaders", icon: "fa-trophy", label: "Leaders" },
+        { id: "chat", icon: "fa-comments", label: "Chat" },
+        { id: "help", icon: "fa-circle-question", label: "Help" }
+      ];
+
+      return (
+        <div className="app">
+          {/* TOP HEADER */}
+          <div className="top-header">
+            <div className="logo-row">
+              <div className="logo">
+                <span className="dollar">$</span>Reward<span>Bux</span>
+              </div>
+            </div>
+
+            {/* User bar */}
+            <div className="user-bar">
+              {user ? (
+                <>
+                  <div className="user-left">
+                    <div className="avatar-wrap">
+                      <img 
+                        src={user.avatar || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=3b82f6&color=fff")} 
+                        alt="" 
+                      />
+                      <div className="level-badge">{user.level || 1}</div>
+                    </div>
+                    <div className="user-meta">
+                      <div className="name">{user.username || user.account || "User"}</div>
+                      <div className="balance-row">
+                        <span className="diamond"><i className="fas fa-gem"></i></span>
+                        <span className="amount">${parseFloat(user.balance || 0).toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="user-actions">
+                    <button className="icon-btn" title="Notifications">
+                      <i className="fas fa-bell"></i>
+                    </button>
+                    <button className="icon-btn logout" onClick={logout} title="Logout">
+                      <i className="fas fa-sign-out-alt"></i>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                  <button className="btn btn-primary" style={{ width: "auto", padding: "8px 20px" }} onClick={() => setTab("earn")}>
+                    Signup / Login
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* STATIC LOGS BAR - no animation */}
+            {logs.length > 0 && (
+              <div className="logs-bar">
+                <div className="logs-row">
+                  {logs.slice(0, 15).map((l, i) => (
+                    <div key={i} className="log-card">
+                      <img 
+                        src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(l.username || "U") + "&background=3b82f6&color=fff&size=64"} 
+                        alt="" 
+                      />
+                      <div className="info">
+                        <span className="uname">{l.username}</span>
+                        <span className="amount">{parseFloat(l.amount || 0).toFixed(2)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <main>
+            {msg && <div className={"alert alert-" + msg.type}>{msg.text}</div>}
+            
+            {showPolicyAccept && !policyAccepted && user && (
+              <div className="card" style={{ borderColor: 'rgba(245,158,11,0.4)' }}>
+                <div className="alert alert-warn" style={{ marginBottom: 12 }}>
+                  Please review and accept our policies to continue.
+                </div>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => openPolicy('tos')}>Terms</button>
+                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => openPolicy('privacy')}>Privacy</button>
+                  <button className="btn btn-primary" style={{ flex: 2 }} onClick={acceptPolicies}>I Agree</button>
+                </div>
+              </div>
+            )}
+
+            {tab === "home" && (
+              <React.Fragment>
+                <div className="hero">
+                  <h1>Earn free crypto, Paypal, and gift cards</h1>
+                  <p>Join thousands of users already earning hundreds of dollars every day!</p>
+                </div>
+
+                <div className="feature-grid">
+                  <div className="feature-card">
+                    <h3>Complete <span>Surveys</span></h3>
+                    <div className="icons">
+                      <i className="fas fa-clipboard-list"></i>
+                      <i className="fas fa-chart-bar"></i>
+                    </div>
+                  </div>
+                  <div className="feature-card">
+                    <h3>Download <span>Apps</span></h3>
+                    <div className="icons">
+                      <i className="fas fa-cloud-download-alt"></i>
+                      <i className="fas fa-mobile-alt"></i>
+                    </div>
+                  </div>
+                  <div className="feature-card">
+                    <h3>Play <span>Games</span></h3>
+                    <div className="icons">
+                      <i className="fas fa-keyboard"></i>
+                      <i className="fas fa-mouse"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.85rem', margin: '16px 0 10px' }}>
+                  – And Cashout Into –
+                </div>
+
+                <div className="feature-grid">
+                  <div className="feature-card">
+                    <h3>Crypto <span>Currencies</span></h3>
+                    <div className="icons">
+                      <i className="fab fa-bitcoin"></i>
+                      <i className="fab fa-ethereum"></i>
+                    </div>
+                  </div>
+                  <div className="feature-card">
+                    <h3>Paypal <span>Money</span></h3>
+                    <div className="icons">
+                      <i className="fab fa-paypal"></i>
+                      <i className="fas fa-money-bill-wave"></i>
+                    </div>
+                  </div>
+                  <div className="feature-card">
+                    <h3>Gift <span>Cards</span></h3>
+                    <div className="icons">
+                      <i className="fas fa-gift"></i>
+                      <i className="fas fa-credit-card"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="stats-row">
+                  <div className="stat-box">
+                    <div className="value">{logs.length > 0 ? logs.length * 11 : "—"}</div>
+                    <div className="label">Completed Offers</div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="value">${user ? parseFloat(user.balance || 0).toFixed(2) : "0.00"}</div>
+                    <div className="label">Your Balance</div>
+                  </div>
+                </div>
+
+                {!user && (
+                  <button className="btn btn-primary" style={{ marginTop: 18 }} onClick={() => setTab("earn")}>
+                    <i className="fas fa-sign-in-alt" /> Login to Start Earning
+                  </button>
+                )}
+              </React.Fragment>
+            )}
+
+            {tab === "earn" && (!user ? (
+              <div className="card">
+                <h2>Login</h2>
+                <div id="gbtn" />
+                <div className="divider"><span>OR</span></div>
+                <label>Account #</label>
+                <input value={form.account} onChange={e => setForm({...form, account: e.target.value})} placeholder="Account number" />
+                <label>Client ID</label>
+                <input value={form.clientId} onChange={e => setForm({...form, clientId: e.target.value})} placeholder="Client ID" />
+                <label>CAPTCHA</label>
+                <div className="captcha">{captcha}</div>
+                <input value={form.captcha} onChange={e => setForm({...form, captcha: e.target.value})}
+                  onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="Enter CAPTCHA" />
+                <button className="btn btn-primary" onClick={handleLogin} disabled={loggingIn}>
+                  {loggingIn ? "Signing in…" : "Login"}
+                </button>
+                <div style={{ marginTop: 14, fontSize: '0.8rem', color: 'var(--muted)', textAlign: 'center' }}>
+                  By logging in you agree to our <a href="#" onClick={e => {e.preventDefault(); openPolicy('tos')}} style={{color:'var(--accent-light)'}}>Terms</a> & <a href="#" onClick={e => {e.preventDefault(); openPolicy('privacy')}} style={{color:'var(--accent-light)'}}>Privacy</a>
+                </div>
+              </div>
+            ) : (
+              <div className="card">
+                <h2>Earning Portal</h2>
+                <p style={{ color: "var(--muted)", marginBottom: 16, fontSize: "0.9rem" }}>Complete offers to earn rewards</p>
+                {owLoading ? (
+                  <div className="empty">Loading offerwalls…</div>
+                ) : offerwalls.length === 0 ? (
+                  <div className="empty">No offerwalls available.</div>
+                ) : (
+                  <div className="offer-grid">
+                    {offerwalls.map(o => (
+                      <div key={o.id} className="offer">
+                        {o.logo ? <img src={o.logo} alt={o.name} onError={e => e.target.style.display="none"} /> : null}
+                        <div style={{ fontSize: "0.85rem", marginBottom: 10, fontWeight: 500 }}>{o.name}</div>
+                        <button className="btn btn-primary" style={{ padding: "8px" }} onClick={() => openOffer(o)}>Open</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {tab === "shop" && (
+              <React.Fragment>
+                <div className="card">
+                  <h2>Cashout</h2>
+                  <p style={{ color: "var(--muted)", marginBottom: 14, fontSize: "0.875rem" }}>
+                    Balance: <strong style={{color:'var(--accent-light)'}}>${parseFloat((user && user.balance) || 0).toFixed(2)}</strong>
+                  </p>
+                  {!user ? (
+                    <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
+                  ) : (
+                    <div className="reward-grid">
+                      {REWARDS.map(r => (
+                        <div key={r.id} className="reward-item" onClick={() => openModal(r)}>
+                          {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
+                          <div className="name">{r.name}</div>
+                          <div className="min">Min ${r.min}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {user && (
+                  <div className="card">
+                    <h2>Your Cashouts</h2>
+                    {cashouts.length === 0 ? (
+                      <div className="empty">No cashout requests yet</div>
+                    ) : cashouts.map((c, i) => (
+                      <div key={c.id || i} className="history-item">
+                        <div>
+                          <div style={{ fontWeight: 600 }}>{c.rewardName || c.rewardType}</div>
+                          <div style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
+                            ${parseFloat(c.amount || 0).toFixed(2)} · {c.time}
+                          </div>
+                        </div>
+                        {statusBadge(c.status)}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </React.Fragment>
+            )}
+
+            {tab === "chat" && (
+              <div className="card chat-box">
+                <h2>Community Chat</h2>
+                <div className="chat-sound-toggle" onClick={toggleSound}>
+                  <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
+                  {soundOn ? "Ding sound ON" : "Ding sound OFF"}
+                </div>
+                <div className="chat-messages">
+                  {chatMessages.length === 0 ? (
+                    <div className="empty">No messages yet. Say hi!</div>
+                  ) : chatMessages.map(m => (
+                    <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
+                      <div className="meta">
+                        <span>
+                          <span className="name">{m.username}</span>
+                          {m.isAdmin ? <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span> : null}
+                        </span>
+                        <span>{m.time}</span>
+                      </div>
+                      <div>{m.message}</div>
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+                <div className="chat-input-row">
+                  <input value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && sendChat()}
+                    placeholder={user ? "Type a message..." : "Login to chat"}
+                    maxLength={300} disabled={!user} />
+                  <button className="btn btn-primary" onClick={sendChat} disabled={!user}>
+                    <i className="fas fa-paper-plane" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {tab === "leaders" && (
+              <div className="card leaderboard">
+                <h2>Leaderboard</h2>
+                {leaders.length === 0 ? (
+                  <div className="empty">No data yet</div>
+                ) : (
+                  <table>
+                    <thead><tr><th>#</th><th>User</th><th>Earnings</th><th>Lvl</th></tr></thead>
+                    <tbody>
+                      {leaders.map((l, i) => (
+                        <tr key={i}>
+                          <td>{i + 1}</td>
+                          <td>{l.username}</td>
+                          <td>${parseFloat(l.balance || 0).toFixed(2)}</td>
+                          <td>{l.level}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+
+            {tab === "help" && (
+              <div className="card">
+                <h2>Help &amp; Support</h2>
+                <div style={{ marginBottom: 16 }}>
+                  <strong>How to earn?</strong>
+                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Login → Earn → open an offerwall.</p>
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <strong>How to cash out?</strong>
+                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Shop → pick a reward → amount → details → submit.</p>
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <strong>Cashout status</strong>
+                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>
+                    <span className="badge badge-unsent">Unsent</span> waiting ·
+                    <span className="badge badge-sent" style={{ marginLeft: 6 }}>Sent</span> paid
+                  </p>
+                </div>
+                <button className="btn btn-primary" onClick={() => alert("Email support@rewardbux.com")}>
+                  Contact Support
+                </button>
+                <div style={{ marginTop: 18, textAlign: 'center' }}>
+                  <a href="#" onClick={e => {e.preventDefault(); openPolicy('tos')}} style={{ color: 'var(--accent-light)', marginRight: 16 }}>Terms</a>
+                  <a href="#" onClick={e => {e.preventDefault(); openPolicy('privacy')}} style={{ color: 'var(--accent-light)' }}>Privacy</a>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* BOTTOM FIXED NAV */}
+          <div className="bottom-nav">
+            {tabs.map(t => (
+              <div 
+                key={t.id} 
+                className={"nav-item" + (tab === t.id ? " active" : "")}
+                onClick={() => setTab(t.id)}
+              >
+                <i className={"fas " + t.icon} />
+                <span>{t.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Policy Modals */}
+          {policyModal === 'tos' && (
+            <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setPolicyModal(null)}>
+              <div className="modal">
+                <div className="modal-header">
+                  <h3>Terms of Service</h3>
+                  <button className="modal-close" onClick={() => setPolicyModal(null)}><i className="fas fa-times" /></button>
+                </div>
+                <TermsOfService />
+                <div className="policy-accept">
+                  <label>
+                    <input type="checkbox" checked={policyAccepted} onChange={e => {
+                      if (e.target.checked) acceptPolicies();
+                      else { storage.set("buxiq_policy_accepted", "false"); setPolicyAccepted(false); }
+                    }} />
+                    I have read and agree to the Terms
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {policyModal === 'privacy' && (
+            <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setPolicyModal(null)}>
+              <div className="modal">
+                <div className="modal-header">
+                  <h3>Privacy Policy</h3>
+                  <button className="modal-close" onClick={() => setPolicyModal(null)}><i className="fas fa-times" /></button>
+                </div>
+                <PrivacyPolicy />
+                <div className="policy-accept">
+                  <label>
+                    <input type="checkbox" checked={policyAccepted} onChange={e => {
+                      if (e.target.checked) acceptPolicies();
+                      else { storage.set("buxiq_policy_accepted", "false"); setPolicyAccepted(false); }
+                    }} />
+                    I have read and agree to the Privacy Policy
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {iframeUrl && (
+            <div className="iframe-overlay">
+              <div className="iframe-bar">
+                <span style={{ fontWeight: 600 }}>Offer Wall</span>
+                <button onClick={() => { setIframeUrl(null); refreshBalance(); }}><i className="fas fa-times" /></button>
+              </div>
+              <iframe src={iframeUrl} title="Offerwall" sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-top-navigation-by-user-activation" />
+            </div>
+          )}
+
+          {modal && (
+            <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
+              <div className="modal">
+                <div className="modal-header">
+                  <h3>{modal.name}</h3>
+                  <button className="modal-close" onClick={closeModal}><i className="fas fa-times" /></button>
+                </div>
+                <div className="steps">
+                  <div className={"step-dot" + (step > 1 ? " done" : step === 1 ? " active" : "")} />
+                  <div className={"step-dot" + (step > 2 ? " done" : step === 2 ? " active" : "")} />
+                  <div className={"step-dot" + (step === 3 ? " active" : "")} />
+                </div>
+                {step === 1 && (
+                  <React.Fragment>
+                    <label>Amount (USD)</label>
+                    <input type="number" step="0.01" min={modal.min} max={user && user.balance}
+                      value={amount} onChange={e => setAmount(e.target.value)}
+                      placeholder={"Min $" + modal.min} autoFocus />
+                    <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 16 }}>
+                      Available: ${parseFloat((user && user.balance) || 0).toFixed(2)}
+                    </p>
+                    <button className="btn btn-primary" onClick={nextStep}>Next</button>
+                  </React.Fragment>
+                )}
+                {step === 2 && (
+                  <React.Fragment>
+                    <label>{modal.detailsLabel}</label>
+                    <input value={details} onChange={e => setDetails(e.target.value)}
+                      placeholder={modal.detailsPlaceholder} autoFocus />
+                    <div className="btn-row">
+                      <button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button>
+                      <button className="btn btn-primary" onClick={nextStep}>Next</button>
+                    </div>
+                  </React.Fragment>
+                )}
+                {step === 3 && (
+                  <React.Fragment>
+                    <div className="summary">
+                      <div><strong>Reward:</strong> {modal.name}</div>
+                      <div><strong>Amount:</strong> ${parseFloat(amount || 0).toFixed(2)}</div>
+                      <div><strong>Details:</strong> {details}</div>
+                    </div>
+                    <div className="btn-row">
+                      <button className="btn btn-ghost" onClick={() => setStep(2)} disabled={submitting}>Back</button>
+                      <button className="btn btn-primary" onClick={submitCashout} disabled={submitting}>
+                        {submitting ? "Submitting..." : "Submit"}
+                      </button>
+                    </div>
+                  </React.Fragment>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
