@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RewardBux Admin</title>
+  <meta name="theme-color" content="#0b1229" />
+  <link rel="icon" href="https://i.imgur.com/wppiqAy.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg: #0b1229;
+      --card: #131c35;
+      --card-hover: #1a2545;
+      --border: #1e2a4a;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-light: #60a5fa;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.12), transparent), var(--bg);
+    }
+
+    /* Login */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .login-box h1 { font-size: 1.6rem; margin-bottom: 8px; color: #fff; }
+    .login-box p { color: var(--muted); margin-bottom: 28px; font-size: 0.9rem; }
+    .login-box input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      font-family: inherit;
+    }
+    .login-box input:focus { outline: none; border-color: var(--accent); }
+
+    /* Header */
+    header {
+      background: rgba(11, 18, 41, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .logo { font-weight: 700; font-size: 1.3rem; display: flex; align-items: center; gap: 6px; }
+    .logo span { color: var(--accent-light); }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .admin-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent-light);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Nav */
+    .admin-nav {
+      display: flex;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .admin-nav::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      padding: 14px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active {
+      color: var(--accent-light);
+      border-bottom-color: var(--accent);
+    }
+    .nav-tab i { margin-right: 6px; }
+
+    main { flex: 1; padding: 20px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+    }
+    .stat-card .value { font-size: 1.6rem; font-weight: 700; color: var(--accent-light); }
+    .stat-card .label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-sm { padding: 6px 10px; font-size: 0.8rem; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-success:hover { background: #16a34a; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--card-hover); color: var(--text); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-pending { background: rgba(245,158,11,0.2); color: #fbbf24; }
+    .badge-sent { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .badge-unsent { background: rgba(239,68,68,0.2); color: #f87171; }
+    .badge-rejected { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+    .alert {
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.875rem;
+      margin-bottom: 16px;
+    }
+    .alert-success { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+    .alert-error { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .alert-info { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+      font-size: 0.95rem;
+    }
+    .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .search-bar input { margin-bottom: 0; flex: 1; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect, useCallback } = React;
+
+    // ====== CONFIG ======
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
+    const ADMIN_PASSWORD = "admin123";   // must match code.gs
+
+    async function api(action, params = {}) {
+      try {
+        const qs = new URLSearchParams({ action, token: ADMIN_PASSWORD, ...params }).toString();
+        const res = await fetch(SCRIPT_URL + "?" + qs);
+        return await res.json();
+      } catch (e) {
+        return { error: "Network error" };
+      }
+    }
+
+    async function postApi(action, body = {}) {
+      try {
+        const params = new URLSearchParams();
+        params.append("action", action);
+        params.append("token", ADMIN_PASSWORD);
+        Object.keys(body).forEach(k => params.append(k, body[k]));
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body: params.toString()
+        });
+        return await res.json();
+      } catch (e) {
+        return { error: "Network error" };
+      }
+    }
+
+    function App() {
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [password, setPassword] = useState("");
+      const [loginError, setLoginError] = useState("");
+      const [tab, setTab] = useState("dashboard");
+      const [msg, setMsg] = useState(null);
+
+      const [cashouts, setCashouts] = useState([]);
+      const [users, setUsers] = useState([]);
+      const [logs, setLogs] = useState([]);
+      const [offerwalls, setOfferwalls] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [search, setSearch] = useState("");
+
+      const [newOffer, setNewOffer] = useState({ name: "", urlTemplate: "", logo: "" });
+      const [bonusCode, setBonusCode] = useState({ code: "", amount: "" });
+
+      useEffect(() => {
+        if (localStorage.getItem("rewardbux_admin") === "true") {
+          setIsLoggedIn(true);
+        }
+      }, []);
+
+      function showMsg(text, type = "success") {
+        setMsg({ text, type });
+        setTimeout(() => setMsg(null), 4000);
+      }
+
+      function handleLogin(e) {
+        e.preventDefault();
+        if (password === ADMIN_PASSWORD) {
+          setIsLoggedIn(true);
+          localStorage.setItem("rewardbux_admin", "true");
+          setLoginError("");
+        } else {
+          setLoginError("Incorrect password");
+        }
+      }
+
+      function logout() {
+        setIsLoggedIn(false);
+        localStorage.removeItem("rewardbux_admin");
+        setPassword("");
+      }
+
+      // Loaders
+      const loadCashouts = useCallback(async () => {
+        setLoading(true);
+        const data = await api("adminGetCashouts");
+        if (data.cashouts) setCashouts(data.cashouts);
+        else if (data.error) showMsg(data.error, "error");
+        setLoading(false);
+      }, []);
+
+      const loadUsers = useCallback(async () => {
+        setLoading(true);
+        const data = await api("adminGetUsers");
+        if (data.users) setUsers(data.users);
+        else if (data.error) showMsg(data.error, "error");
+        setLoading(false);
+      }, []);
+
+      const loadLogs = useCallback(async () => {
+        const data = await api("logs");
+        if (data.logs) setLogs(data.logs);
+      }, []);
+
+      const loadOfferwalls = useCallback(async () => {
+        const data = await api("getOfferwalls");
+        if (data.offerwalls) setOfferwalls(data.offerwalls);
+      }, []);
+
+      useEffect(() => {
+        if (!isLoggedIn) return;
+        if (tab === "dashboard" || tab === "cashouts") loadCashouts();
+        if (tab === "dashboard" || tab === "users") loadUsers();
+        if (tab === "dashboard" || tab === "logs") loadLogs();
+        if (tab === "offerwalls") loadOfferwalls();
+      }, [isLoggedIn, tab]);
+
+      // Actions
+      async function updateCashoutStatus(id, status) {
+        const data = await postApi("adminUpdateCashout", { id, status });
+        if (data.error) {
+          showMsg(data.error, "error");
+          return;
+        }
+        showMsg(`Cashout marked as ${status}`);
+        loadCashouts();
+      }
+
+      async function addOfferwall() {
+        if (!newOffer.name || !newOffer.urlTemplate) {
+          showMsg("Name and URL Template are required", "error");
+          return;
+        }
+        const data = await postApi("adminAddOfferwall", newOffer);
+        if (data.error) {
+          showMsg(data.error, "error");
+          return;
+        }
+        showMsg("Offerwall added successfully!");
+        setNewOffer({ name: "", urlTemplate: "", logo: "" });
+        loadOfferwalls();
+      }
+
+      async function createBonus() {
+        if (!bonusCode.code || !bonusCode.amount) {
+          showMsg("Code and amount required", "error");
+          return;
+        }
+        const data = await postApi("adminCreateBonus", {
+          code: bonusCode.code,
+          amount: bonusCode.amount
+        });
+        if (data.error) {
+          showMsg(data.error, "error");
+          return;
+        }
+        showMsg("Bonus code created!");
+        setBonusCode({ code: "", amount: "" });
+      }
+
+      const filteredCashouts = cashouts.filter(c => {
+        if (!search) return true;
+        const s = search.toLowerCase();
+        return (
+          (c.username || "").toLowerCase().includes(s) ||
+          (c.account || "").toLowerCase().includes(s) ||
+          (c.rewardName || "").toLowerCase().includes(s) ||
+          (c.details || "").toLowerCase().includes(s)
+        );
+      });
+
+      const pendingCount = cashouts.filter(c =>
+        ["unsent", "pending", ""].includes(String(c.status || "unsent").toLowerCase())
+      ).length;
+
+      // LOGIN SCREEN
+      if (!isLoggedIn) {
+        return (
+          <div className="login-screen">
+            <div className="login-box">
+              <div className="logo" style={{ justifyContent: "center", marginBottom: 8 }}>
+                <span style={{ color: "var(--accent-light)" }}>$</span>Reward<span>Bux</span>
+              </div>
+              <h1>Admin Panel</h1>
+              <p>Enter the admin password to continue</p>
+             
+              <form onSubmit={handleLogin}>
+                <input
+                  type="password"
+                  placeholder="Admin Password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  autoFocus
+                />
+                {loginError && <div className="alert alert-error">{loginError}</div>}
+                <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px" }}>
+                  Login
+                </button>
+              </form>
+              <p style={{ marginTop: 20, fontSize: "0.8rem", color: "var(--muted)" }}>
+                Default password: <code>admin123</code>
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // MAIN PANEL
+      return (
+        <div className="app">
+          <header>
+            <div className="logo">
+              <span style={{ color: "var(--accent-light)" }}>$</span>Reward<span>Bux</span>
+              <span style={{ fontSize: "0.85rem", color: "var(--muted)", fontWeight: 500, marginLeft: 8 }}>Admin</span>
+            </div>
+            <div className="header-right">
+              <span className="admin-badge"><i className="fas fa-shield-alt"></i> Admin</span>
+              <button className="btn btn-ghost btn-sm" onClick={logout}>
+                <i className="fas fa-sign-out-alt"></i> Logout
+              </button>
+            </div>
+          </header>
+
+          <nav className="admin-nav">
+            {[
+              { id: "dashboard", icon: "fa-chart-pie", label: "Dashboard" },
+              { id: "cashouts", icon: "fa-money-bill-wave", label: `Cashouts ${pendingCount > 0 ? `(${pendingCount})` : ""}` },
+              { id: "users", icon: "fa-users", label: "Users" },
+              { id: "offerwalls", icon: "fa-th-large", label: "Offerwalls" },
+              { id: "bonus", icon: "fa-gift", label: "Bonus Codes" },
+              { id: "logs", icon: "fa-history", label: "Activity Logs" },
+            ].map(t => (
+              <div
+                key={t.id}
+                className={"nav-tab" + (tab === t.id ? " active" : "")}
+                onClick={() => setTab(t.id)}
+              >
+                <i className={"fas " + t.icon}></i>
+                {t.label}
+              </div>
+            ))}
+          </nav>
+
+          <main>
+            {msg && <div className={"alert alert-" + msg.type}>{msg.text}</div>}
+
+            {/* DASHBOARD */}
+            {tab === "dashboard" && (
+              <>
+                <div className="stats-grid">
+                  <div className="stat-card">
+                    <div className="value">{pendingCount}</div>
+                    <div className="label">Pending Cashouts</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="value">{cashouts.length}</div>
+                    <div className="label">Total Cashouts</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="value">{users.length || "—"}</div>
+                    <div className="label">Total Users</div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="value">{logs.length}</div>
+                    <div className="label">Recent Logs</div>
+                  </div>
+                </div>
+
+                <div className="card">
+                  <h2><i className="fas fa-clock" style={{ color: "var(--warning)" }}></i> Pending Cashouts</h2>
+                  {pendingCount === 0 ? (
+                    <div className="empty">No pending cashouts 🎉</div>
+                  ) : (
+                    <div className="table-wrap">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>User</th>
+                            <th>Reward</th>
+                            <th>Amount</th>
+                            <th>Details</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cashouts
+                            .filter(c => ["unsent", "pending", ""].includes(String(c.status || "unsent").toLowerCase()))
+                            .slice(0, 10)
+                            .map((c, i) => (
+                              <tr key={c.id || i}>
+                                <td><strong>{c.username || c.account}</strong></td>
+                                <td>{c.rewardName || c.rewardType}</td>
+                                <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
+                                  ${parseFloat(c.amount || 0).toFixed(2)}
+                                </td>
+                                <td style={{ maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}>
+                                  {c.details}
+                                </td>
+                                <td>{c.time || "—"}</td>
+                                <td>
+                                  <div className="action-btns">
+                                    <button className="btn btn-success btn-sm" onClick={() => updateCashoutStatus(c.id, "sent")}>
+                                      Mark Sent
+                                    </button>
+                                    <button className="btn btn-danger btn-sm" onClick={() => updateCashoutStatus(c.id, "rejected")}>
+                                      Reject
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* CASHOUTS */}
+            {tab === "cashouts" && (
+              <div className="card">
+                <h2><i className="fas fa-money-bill-wave"></i> All Cashouts</h2>
+               
+                <div className="search-bar">
+                  <input
+                    placeholder="Search by username, account, reward or details..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                  />
+                  <button className="btn btn-ghost" onClick={loadCashouts}>
+                    <i className="fas fa-sync-alt"></i>
+                  </button>
+                </div>
+
+                {loading ? (
+                  <div className="empty">Loading...</div>
+                ) : filteredCashouts.length === 0 ? (
+                  <div className="empty">No cashouts found</div>
+                ) : (
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>User</th>
+                          <th>Reward</th>
+                          <th>Amount</th>
+                          <th>Details</th>
+                          <th>Status</th>
+                          <th>Time</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredCashouts.map((c, i) => {
+                          const status = String(c.status || "unsent").toLowerCase();
+                          return (
+                            <tr key={c.id || i}>
+                              <td>
+                                <strong>{c.username || c.account}</strong>
+                                <div style={{ fontSize: "0.75rem", color: "var(--muted)" }}>{c.account}</div>
+                              </td>
+                              <td>{c.rewardName || c.rewardType}</td>
+                              <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
+                                ${parseFloat(c.amount || 0).toFixed(2)}
+                              </td>
+                              <td style={{ maxWidth: 180, wordBreak: "break-all" }}>{c.details}</td>
+                              <td>
+                                {status === "sent" && <span className="badge badge-sent">Sent</span>}
+                                {status === "pending" && <span className="badge badge-pending">Pending</span>}
+                                {status === "rejected" && <span className="badge badge-rejected">Rejected</span>}
+                                {(status === "unsent" || status === "") && <span className="badge badge-unsent">Unsent</span>}
+                              </td>
+                              <td>{c.time || "—"}</td>
+                              <td>
+                                <div className="action-btns">
+                                  {status !== "sent" && (
+                                    <button className="btn btn-success btn-sm" onClick={() => updateCashoutStatus(c.id, "sent")}>
+                                      Sent
+                                    </button>
+                                  )}
+                                  {status !== "rejected" && (
+                                    <button className="btn btn-danger btn-sm" onClick={() => updateCashoutStatus(c.id, "rejected")}>
+                                      Reject
+                                    </button>
+                                  )}
+                                  {status === "sent" && (
+                                    <button className="btn btn-ghost btn-sm" onClick={() => updateCashoutStatus(c.id, "unsent")}>
+                                      Undo
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* USERS */}
+            {tab === "users" && (
+              <div className="card">
+                <h2><i className="fas fa-users"></i> Users</h2>
+                <button className="btn btn-ghost btn-sm" style={{ marginBottom: 16 }} onClick={loadUsers}>
+                  <i className="fas fa-sync-alt"></i> Refresh
+                </button>
+
+                {users.length === 0 ? (
+                  <div className="empty">No users found</div>
+                ) : (
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Username</th>
+                          <th>Account</th>
+                          <th>Balance</th>
+                          <th>Level</th>
+                          <th>Email</th>
+                          <th>Joined</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users.map((u, i) => (
+                          <tr key={u.account || i}>
+                            <td><strong>{u.username || "—"}</strong></td>
+                            <td>{u.account}</td>
+                            <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
+                              ${parseFloat(u.balance || 0).toFixed(2)}
+                            </td>
+                            <td>{u.level || 1}</td>
+                            <td>{u.email || "—"}</td>
+                            <td>{u.joined || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* OFFERWALLS */}
+            {tab === "offerwalls" && (
+              <>
+                <div className="card">
+                  <h2><i className="fas fa-plus-circle"></i> Add Offerwall</h2>
+                  <div className="form-row">
+                    <div>
+                      <label>Name</label>
+                      <input
+                        value={newOffer.name}
+                        onChange={e => setNewOffer({...newOffer, name: e.target.value})}
+                        placeholder="e.g. AdGate Media"
+                      />
+                    </div>
+                    <div>
+                      <label>Logo URL (optional)</label>
+                      <input
+                        value={newOffer.logo}
+                        onChange={e => setNewOffer({...newOffer, logo: e.target.value})}
+                        placeholder="https://..."
+                      />
+                    </div>
+                  </div>
+                  <label>URL Template</label>
+                  <input
+                    value={newOffer.urlTemplate}
+                    onChange={e => setNewOffer({...newOffer, urlTemplate: e.target.value})}
+                    placeholder="https://example.com/?user={user}&userid={userid}"
+                  />
+                  <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 14 }}>
+                    Use <code>{`{user}`}</code>, <code>{`{userid}`}</code>, <code>{`{username}`}</code> as placeholders
+                  </p>
+                  <button className="btn btn-primary" onClick={addOfferwall}>
+                    <i className="fas fa-plus"></i> Add Offerwall
+                  </button>
+                </div>
+
+                <div className="card">
+                  <h2><i className="fas fa-th-large"></i> Current Offerwalls</h2>
+                  <button className="btn btn-ghost btn-sm" style={{ marginBottom: 16 }} onClick={loadOfferwalls}>
+                    <i className="fas fa-sync-alt"></i> Refresh
+                  </button>
+                 
+                  {offerwalls.length === 0 ? (
+                    <div className="empty">No offerwalls yet</div>
+                  ) : (
+                    <div className="table-wrap">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>URL Template</th>
+                            <th>Logo</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {offerwalls.map((o, i) => (
+                            <tr key={o.id || i}>
+                              <td><strong>{o.name}</strong></td>
+                              <td style={{ maxWidth: 280, wordBreak: "break-all", fontSize: "0.8rem" }}>
+                                {o.urlTemplate}
+                              </td>
+                              <td>
+                                {o.logo ? (
+                                  <img src={o.logo} alt="" style={{ height: 28, maxWidth: 80, objectFit: "contain" }} />
+                                ) : "—"}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* BONUS CODES */}
+            {tab === "bonus" && (
+              <div className="card">
+                <h2><i className="fas fa-gift"></i> Create Bonus Code</h2>
+                <div className="form-row">
+                  <div>
+                    <label>Code</label>
+                    <input
+                      value={bonusCode.code}
+                      onChange={e => setBonusCode({...bonusCode, code: e.target.value.toUpperCase()})}
+                      placeholder="e.g. WELCOME50"
+                    />
+                  </div>
+                  <div>
+                    <label>Amount (USD)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={bonusCode.amount}
+                      onChange={e => setBonusCode({...bonusCode, amount: e.target.value})}
+                      placeholder="e.g. 0.50"
+                    />
+                  </div>
+                </div>
+                <button className="btn btn-primary" onClick={createBonus}>
+                  <i className="fas fa-plus"></i> Create Bonus Code
+                </button>
+              </div>
+            )}
+
+            {/* LOGS */}
+            {tab === "logs" && (
+              <div className="card">
+                <h2><i className="fas fa-history"></i> Recent Activity</h2>
+                <button className="btn btn-ghost btn-sm" style={{ marginBottom: 16 }} onClick={loadLogs}>
+                  <i className="fas fa-sync-alt"></i> Refresh
+                </button>
+
+                {logs.length === 0 ? (
+                  <div className="empty">No recent activity</div>
+                ) : (
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Username</th>
+                          <th>Amount</th>
+                          <th>Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {logs.slice(0, 50).map((l, i) => (
+                          <tr key={i}>
+                            <td><strong>{l.username}</strong></td>
+                            <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
+                              +${parseFloat(l.amount || 0).toFixed(2)}
+                            </td>
+                            <td>{l.time || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
