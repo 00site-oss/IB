@@ -1,109 +1,71 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RewardBux</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>RewardBux · Chat Fix</title>
   <meta name="theme-color" content="#0b1229" />
   <link rel="icon" href="https://i.imgur.com/wppiqAy.png" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
   <style>
     :root {
-  /* Background - deep charcoal terminal feel */
-  --bg: #0c0f12;
-  --bg-secondary: #151a1f;
+      --bg: #0c0f12;
+      --bg-secondary: #151a1f;
+      --card: #171c22;
+      --card-hover: #1e252d;
+      --border: #2c353f;
+      --text: #d8dde3;
+      --muted: #8b949e;
+      --accent: #00b8a9;
+      --accent-2: #e8a838;
+      --accent-light: #5eead4;
+      --success: #3dd68c;
+      --danger: #f07178;
+      --warning: #e8a838;
+      --radius: 3px;
+      --shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family: 'Roboto', 'Noto Sans', sans-serif;
+      color:var(--text);
+      background: #0c0f12;
+      min-height:100vh;
+      line-height:1.35;
+      font-size:13px;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    .app {
+      position:relative;
+      width:100%;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      background: #0c0f12;
+    }
+    @media (max-width: 768px) {
+      .app { padding-bottom: 56px; }
+    }
+    .card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      transition:none;
+    }
+    .card:hover { background:var(--card-hover); border-color:#3b4a63; }
 
-  /* Cards */
-  --card: #171c22;
-  --card-hover: #1e252d;
-  --border: #2c353f;
-
-  /* Text */
-  --text: #d8dde3;
-  --muted: #8b949e;
-
-  /* Accent - teal + warm amber (not Material blue) */
-  --accent: #00b8a9;
-  --accent-2: #e8a838;
-  --accent-light: #5eead4;
-
-  /* Status */
-  --success: #3dd68c;
-  --danger: #f07178;
-  --warning: #e8a838;
-
-  /* Effects - dense old desktop */
-  --radius: 3px;
-  --shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4);
-  --blur: none;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  font-family: 'Roboto', 'Noto Sans', 'Droid Sans', sans-serif;
-  color:var(--text);
-  background: #0c0f12;
-  min-height:100vh;
-  line-height:1.35;
-  font-size:13px;
-  letter-spacing:0;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  overflow-x:hidden;
-}
-
-.app{
-  position:relative;
-  width:100%;
-  max-width:100%;
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  padding:0 0 0;
-  background: #0c0f12;
-}
-@media (max-width: 768px) {
-  .app { padding-bottom: 56px; }
-}
-
-/* Optional reusable card style */
-
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  transition:none;
-}
-
-.card:hover{
-  background:var(--card-hover);
-  border-color:#3b4a63;
-}
-
-    /* Header - desktop top bar with logo + nav + user */
+    /* HEADER */
     .top-header {
       background: #12171c;
       padding: 0 14px;
@@ -128,13 +90,9 @@ body{
       color: #fff;
       flex-shrink: 0;
     }
-    .logo .dollar {
-      color: var(--accent);
-      font-size: 1.2rem;
-    }
+    .logo .dollar { color: var(--accent); }
     .logo span { color: var(--accent-light); }
 
-    /* Desktop horizontal nav inside header */
     .header-nav {
       display: flex;
       align-items: center;
@@ -165,7 +123,6 @@ body{
     }
     .header-nav .nav-item.active i { color: var(--accent); }
 
-    /* User block in header (right) */
     .header-user {
       display: flex;
       align-items: center;
@@ -196,12 +153,9 @@ body{
     }
     .user-meta { display: flex; flex-direction: column; gap: 0; }
     .user-meta .name { font-weight: 500; font-size: 0.8rem; color: #fff; line-height: 1.2; }
-    .user-meta .balance-row {
-      display: flex; align-items: center; gap: 4px; font-size: 0.75rem;
-    }
+    .user-meta .balance-row { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; }
     .user-meta .balance-row .diamond { color: var(--accent-2); }
     .user-meta .balance-row .amount { color: var(--accent-light); font-weight: 600; }
-
     .icon-btn {
       width: 30px; height: 30px;
       border-radius: 4px;
@@ -221,7 +175,7 @@ body{
       color: var(--danger);
     }
 
-    /* Static Logs Bar - denser */
+    /* LOGS BAR */
     .logs-bar {
       background: #0e1216;
       border-top: 1px solid var(--border);
@@ -248,19 +202,8 @@ body{
       object-fit: cover;
     }
     .log-card .info { display: flex; flex-direction: column; line-height: 1.2; overflow: hidden; }
-    .log-card .uname {
-      font-size: 0.68rem;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 80px;
-    }
-    .log-card .amount {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--accent-light);
-    }
+    .log-card .uname { font-size: 0.68rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+    .log-card .amount { font-size: 0.78rem; font-weight: 700; color: var(--accent-light); }
 
     main {
       flex: 1;
@@ -270,14 +213,7 @@ body{
       width: 100%;
       margin: 0 auto;
     }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 12px;
-      margin-bottom: 8px;
-    }
+    .card { padding: 12px; margin-bottom: 8px; }
     .card h2 {
       font-size: 0.95rem;
       font-weight: 500;
@@ -286,26 +222,16 @@ body{
       border-bottom: 1px solid var(--border);
       padding-bottom: 6px;
     }
-
     .hero { text-align: center; padding: 10px 8px 6px; }
-    .hero h1 {
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: var(--accent-light);
-      line-height: 1.25;
-      margin-bottom: 6px;
-    }
+    .hero h1 { font-size: 1.25rem; font-weight: 500; color: var(--accent-light); line-height: 1.25; margin-bottom: 6px; }
     .hero p { color: var(--muted); font-size: 0.82rem; }
-
     .feature-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
       margin: 10px 0;
     }
-    @media (max-width: 600px) {
-      .feature-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 600px) { .feature-grid { grid-template-columns: 1fr; } }
     .feature-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -315,29 +241,7 @@ body{
     }
     .feature-card h3 { font-size: 0.88rem; font-weight: 500; margin-bottom: 8px; }
     .feature-card h3 span { color: var(--accent-light); }
-    .feature-card .icons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      font-size: 1.25rem;
-      color: #e8eaed;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .stat-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 8px 6px;
-      text-align: center;
-    }
-    .stat-box .value { font-size: 1rem; font-weight: 700; color: var(--accent-light); }
-    .stat-box .label { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+    .feature-card .icons { display: flex; justify-content: center; gap: 12px; font-size: 1.25rem; color: #e8eaed; }
 
     .btn {
       display: inline-flex;
@@ -356,8 +260,6 @@ body{
     .btn-primary { background: var(--accent); color: #041210; }
     .btn-primary:hover { background: #00a396; color: #041210; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
     .btn-ghost {
       background: transparent;
       color: var(--muted);
@@ -377,13 +279,7 @@ body{
       margin-bottom: 8px;
     }
     input:focus, select:focus { outline: none; border-color: var(--accent); }
-    label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 3px;
-    }
+    label { display: block; font-size: 0.72rem; font-weight: 500; color: var(--muted); margin-bottom: 3px; }
 
     .offer-grid, .reward-grid {
       display: grid;
@@ -398,33 +294,19 @@ body{
       text-align: center;
     }
     .reward-item { cursor: pointer; }
-    .reward-item:hover {
-      border-color: var(--accent);
-      background: var(--card-hover);
-    }
-    .offer img, .reward-item img {
-      height: 28px;
-      max-width: 100%;
-      object-fit: contain;
-      margin-bottom: 6px;
-    }
+    .reward-item:hover { border-color: var(--accent); background: var(--card-hover); }
     .reward-item .name { font-weight: 500; font-size: 0.8rem; }
-    .reward-item .min { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
-
-
     .reward-item .tag {
       display: inline-block; margin-top: 4px; font-size: 0.58rem; font-weight: 600;
       text-transform: uppercase; padding: 1px 5px; border-radius: 2px;
       background: rgba(0,184,169,0.15); color: var(--accent-light);
     }
-
     .cr-toolbar {
       display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: flex-end;
     }
     .cr-toolbar .field { flex: 1; min-width: 120px; }
     .cr-toolbar .field label { margin-bottom: 3px; }
     .cr-toolbar .field input, .cr-toolbar .field select { margin-bottom: 0; }
-    .cr-toolbar .field-btn { flex: 0 0 auto; }
     .denom-grid {
       display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px;
     }
@@ -445,13 +327,8 @@ body{
     .brand-back:hover { color: var(--accent-light); }
     .cr-count { font-size: 0.72rem; color: var(--muted); margin: 4px 0 8px; }
 
-    .section-label {
-      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px; margin: 12px 0 8px;
-      text-transform: uppercase;
-    }
     .history-item .meta-line { font-size: 0.72rem; color: var(--muted); margin-top: 2px; word-break: break-all; }
-
-    .log-item, .history-item {
+    .history-item {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -459,18 +336,7 @@ body{
       border-bottom: 1px solid var(--border);
       font-size: 0.78rem;
     }
-    .log-item:last-child, .history-item:last-child { border-bottom: none; }
-    .log-icon {
-      width: 24px; height: 24px;
-      border-radius: 2px;
-      background: rgba(0,184,169,0.15);
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      flex-shrink: 0;
-    }
+    .history-item:last-child { border-bottom: none; }
     .history-item { justify-content: space-between; }
 
     .leaderboard table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
@@ -482,10 +348,7 @@ body{
       border-bottom: 1px solid var(--border);
       font-size: 0.72rem;
     }
-    .leaderboard td {
-      padding: 6px 4px;
-      border-bottom: 1px solid var(--border);
-    }
+    .leaderboard td { padding: 6px 4px; border-bottom: 1px solid var(--border); }
 
     .captcha {
       background: var(--bg);
@@ -500,7 +363,6 @@ body{
       user-select: none;
       color: var(--accent-light);
     }
-
     .alert {
       padding: 7px 10px;
       border-radius: 2px;
@@ -511,7 +373,6 @@ body{
     .alert-error { background: rgba(234,67,53,0.12); color: #f28b82; border: 1px solid rgba(234,67,53,0.25); }
     .alert-success { background: rgba(52,168,83,0.12); color: #81c995; border: 1px solid rgba(52,168,83,0.25); }
     .alert-info { background: rgba(0,184,169,0.12); color: #5eead4; border: 1px solid rgba(0,184,169,0.25); }
-
     .divider {
       text-align: center;
       color: var(--muted);
@@ -528,88 +389,10 @@ body{
       background: var(--border);
       z-index: 0;
     }
-    .divider span {
-      background: var(--card);
-      padding: 0 10px;
-      position: relative;
-      z-index: 1;
-    }
+    .divider span { background: var(--card); padding: 0 10px; position: relative; z-index: 1; }
 
-    .chat-box { display: flex; flex-direction: column; height: calc(100vh - 120px); min-height: 280px; }
-
-    /* Desktop chat side panel */
-    .chat-panel {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 360px;
-      max-width: 92vw;
-      height: 100vh;
-      background: #12171c;
-      border-left: 1px solid var(--border);
-      z-index: 160;
-      display: flex;
-      flex-direction: column;
-      box-shadow: -8px 0 28px rgba(0,0,0,0.45);
-      animation: chatSlideIn 0.22s ease forwards;
-    }
-    .chat-panel:hover {
-      box-shadow: -12px 0 36px rgba(0,0,0,0.55);
-      border-left-color: rgba(0,184,169,0.35);
-    }
-    @keyframes chatSlideIn {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
-    }
-    .chat-panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 12px 10px;
-      border-bottom: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .chat-panel-header i { color: var(--accent); margin-right: 6px; }
-    .chat-panel-close {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chat-panel-close:hover {
-      color: var(--text);
-      background: var(--card-hover);
-      border-color: var(--accent);
-    }
-    .chat-panel-messages {
-      flex: 1;
-      overflow-y: auto;
-      margin: 0 10px 8px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg);
-    }
-    .chat-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
-      z-index: 150;
-    }
-    @media (max-width: 768px) {
-      .chat-panel {
-        width: 100%;
-        max-width: 100%;
-      }
-    }
+    /* CHAT — FIXED for mobile */
+    .chat-box { display: flex; flex-direction: column; min-height: 320px; }
     .chat-messages {
       flex: 1;
       overflow-y: auto;
@@ -618,6 +401,8 @@ body{
       border: 1px solid var(--border);
       border-radius: 2px;
       background: var(--bg);
+      max-height: 400px;
+      min-height: 180px;
     }
     .chat-msg {
       padding: 5px 10px;
@@ -652,9 +437,39 @@ body{
       font-weight: 700;
       margin-left: 4px;
     }
-    .chat-input-row { display: flex; gap: 6px; }
-    .chat-input-row input { margin-bottom: 0; flex: 1; }
-    .chat-input-row button { width: auto; padding: 6px 12px; flex-shrink: 0; }
+    .chat-input-row {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .chat-input-row input {
+      margin-bottom: 0;
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+      font-size: 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .chat-input-row input:focus { border-color: var(--accent); outline: none; }
+    .chat-input-row button {
+      width: auto;
+      padding: 8px 16px;
+      flex-shrink: 0;
+      border-radius: 4px;
+      background: var(--accent);
+      color: #041210;
+      border: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .chat-input-row button:disabled { opacity: 0.5; }
+    .chat-input-row button:hover:not(:disabled) { background: #00a396; }
     .chat-sound-toggle {
       font-size: 0.72rem;
       color: var(--muted);
@@ -705,18 +520,11 @@ body{
       margin-bottom: 10px;
     }
     .modal-header h3 { font-size: 0.95rem; font-weight: 500; }
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; }
     .steps { display: flex; gap: 4px; margin-bottom: 12px; }
     .step-dot { flex: 1; height: 3px; border-radius: 1px; background: var(--border); }
     .step-dot.active { background: var(--accent); }
     .step-dot.done { background: var(--success); }
-
     .summary {
       background: var(--bg);
       border-radius: 2px;
@@ -725,22 +533,13 @@ body{
       margin-bottom: 10px;
       border: 1px solid var(--border);
     }
-    .summary div { margin-bottom: 4px; }
     .summary strong { color: var(--muted); font-weight: 500; }
-
     .btn-row { display: flex; gap: 6px; }
     .btn-row .btn { flex: 1; }
-
     #gbtn { display: flex; justify-content: center; min-height: 36px; }
+    .empty { text-align: center; color: var(--muted); padding: 16px 10px; font-size: 0.8rem; }
 
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 16px 10px;
-      font-size: 0.8rem;
-    }
-
-    /* Mobile bottom nav - hidden on desktop */
+    /* BOTTOM NAV */
     .bottom-nav {
       display: none;
       position: fixed;
@@ -773,7 +572,6 @@ body{
       background: rgba(0,184,169,0.12);
     }
     .bottom-nav .nav-item.active i { color: var(--accent); }
-
     @media (max-width: 768px) {
       .header-nav { display: none; }
       .bottom-nav { display: flex; }
@@ -796,1439 +594,973 @@ body{
       background: var(--card);
       border-bottom: 1px solid var(--border);
     }
-    .iframe-bar button {
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
+    .iframe-bar button { background: none; border: none; color: var(--text); font-size: 1.1rem; cursor: pointer; }
     iframe { flex: 1; border: none; width: 100%; }
+
+    /* DESKTOP CHAT PANEL (side) */
+    .chat-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 360px;
+      max-width: 92vw;
+      height: 100vh;
+      background: #12171c;
+      border-left: 1px solid var(--border);
+      z-index: 160;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 28px rgba(0,0,0,0.45);
+      animation: chatSlideIn 0.22s ease forwards;
+    }
+    .chat-panel:hover { box-shadow: -12px 0 36px rgba(0,0,0,0.55); border-left-color: rgba(0,184,169,0.35); }
+    @keyframes chatSlideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    .chat-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 12px 10px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .chat-panel-header i { color: var(--accent); margin-right: 6px; }
+    .chat-panel-close {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-panel-close:hover { color: var(--text); background: var(--card-hover); border-color: var(--accent); }
+    .chat-panel-messages {
+      flex: 1;
+      overflow-y: auto;
+      margin: 0 10px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      min-height: 200px;
+      padding: 4px 0;
+    }
+    .chat-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 150;
+    }
+    @media (max-width: 768px) {
+      .chat-panel {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+    .chat-panel .chat-input-row {
+      padding: 0 10px 10px;
+    }
+    .chat-panel .chat-sound-toggle {
+      padding: 0 10px;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useCallback } = React;
 
-  <script type="text/babel" data-presets="react">
-    const { useState, useEffect, useRef, useCallback } = React;
+/* ====== CONFIG ====== */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
+const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
+const memoryStore = {};
+const storage = {
+  get(key) { try { return localStorage.getItem(key); } catch (e) { return memoryStore[key] || null; } },
+  set(key, val) { try { localStorage.setItem(key, val); } catch (e) { memoryStore[key] = val; } },
+  remove(key) { try { localStorage.removeItem(key); } catch (e) { delete memoryStore[key]; } }
+};
 
-    /* ====== CONFIG ====== */
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
-    const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
+const CR_COUNTRIES = [
+  { code: "US", name: "United States" }, { code: "GB", name: "United Kingdom" },
+  { code: "CA", name: "Canada" }, { code: "AU", name: "Australia" },
+  { code: "DE", name: "Germany" }, { code: "FR", name: "France" },
+  { code: "IT", name: "Italy" }, { code: "ES", name: "Spain" },
+  { code: "NL", name: "Netherlands" }, { code: "BE", name: "Belgium" },
+  { code: "AT", name: "Austria" }, { code: "CH", name: "Switzerland" },
+  { code: "SE", name: "Sweden" }, { code: "NO", name: "Norway" },
+  { code: "DK", name: "Denmark" }, { code: "FI", name: "Finland" },
+  { code: "IE", name: "Ireland" }, { code: "PT", name: "Portugal" },
+  { code: "PL", name: "Poland" }, { code: "CZ", name: "Czechia" },
+  { code: "RO", name: "Romania" }, { code: "HU", name: "Hungary" },
+  { code: "GR", name: "Greece" }, { code: "TR", name: "Türkiye" },
+  { code: "UA", name: "Ukraine" }, { code: "RU", name: "Russia" },
+  { code: "BR", name: "Brazil" }, { code: "MX", name: "Mexico" },
+  { code: "AR", name: "Argentina" }, { code: "CL", name: "Chile" },
+  { code: "CO", name: "Colombia" }, { code: "PE", name: "Peru" },
+  { code: "JP", name: "Japan" }, { code: "KR", name: "South Korea" },
+  { code: "CN", name: "China" }, { code: "HK", name: "Hong Kong" },
+  { code: "TW", name: "Taiwan" }, { code: "SG", name: "Singapore" },
+  { code: "MY", name: "Malaysia" }, { code: "TH", name: "Thailand" },
+  { code: "VN", name: "Vietnam" }, { code: "PH", name: "Philippines" },
+  { code: "ID", name: "Indonesia" }, { code: "IN", name: "India" },
+  { code: "AE", name: "United Arab Emirates" }, { code: "SA", name: "Saudi Arabia" },
+  { code: "IL", name: "Israel" }, { code: "EG", name: "Egypt" },
+  { code: "ZA", name: "South Africa" }, { code: "NG", name: "Nigeria" },
+  { code: "NZ", name: "New Zealand" }
+];
 
-    const memoryStore = {};
-    const storage = {
-      get(key) { try { return localStorage.getItem(key); } catch (e) { return memoryStore[key] || null; } },
-      set(key, val) { try { localStorage.setItem(key, val); } catch (e) { memoryStore[key] = val; } },
-      remove(key) { try { localStorage.removeItem(key); } catch (e) { delete memoryStore[key]; } }
-    };
-
-
-    /* Popular countries for gift-card catalog (ISO codes used by CryptoRefills) */
-    const CR_COUNTRIES = [
-      { code: "US", name: "United States" },
-      { code: "GB", name: "United Kingdom" },
-      { code: "CA", name: "Canada" },
-      { code: "AU", name: "Australia" },
-      { code: "DE", name: "Germany" },
-      { code: "FR", name: "France" },
-      { code: "IT", name: "Italy" },
-      { code: "ES", name: "Spain" },
-      { code: "NL", name: "Netherlands" },
-      { code: "BE", name: "Belgium" },
-      { code: "AT", name: "Austria" },
-      { code: "CH", name: "Switzerland" },
-      { code: "SE", name: "Sweden" },
-      { code: "NO", name: "Norway" },
-      { code: "DK", name: "Denmark" },
-      { code: "FI", name: "Finland" },
-      { code: "IE", name: "Ireland" },
-      { code: "PT", name: "Portugal" },
-      { code: "PL", name: "Poland" },
-      { code: "CZ", name: "Czechia" },
-      { code: "RO", name: "Romania" },
-      { code: "HU", name: "Hungary" },
-      { code: "GR", name: "Greece" },
-      { code: "TR", name: "Türkiye" },
-      { code: "UA", name: "Ukraine" },
-      { code: "RU", name: "Russia" },
-      { code: "BR", name: "Brazil" },
-      { code: "MX", name: "Mexico" },
-      { code: "AR", name: "Argentina" },
-      { code: "CL", name: "Chile" },
-      { code: "CO", name: "Colombia" },
-      { code: "PE", name: "Peru" },
-      { code: "JP", name: "Japan" },
-      { code: "KR", name: "South Korea" },
-      { code: "CN", name: "China" },
-      { code: "HK", name: "Hong Kong" },
-      { code: "TW", name: "Taiwan" },
-      { code: "SG", name: "Singapore" },
-      { code: "MY", name: "Malaysia" },
-      { code: "TH", name: "Thailand" },
-      { code: "VN", name: "Vietnam" },
-      { code: "PH", name: "Philippines" },
-      { code: "ID", name: "Indonesia" },
-      { code: "IN", name: "India" },
-      { code: "AE", name: "United Arab Emirates" },
-      { code: "SA", name: "Saudi Arabia" },
-      { code: "IL", name: "Israel" },
-      { code: "EG", name: "Egypt" },
-      { code: "ZA", name: "South Africa" },
-      { code: "NG", name: "Nigeria" },
-      { code: "NZ", name: "New Zealand" }
-    ];
-
-    /** Normalize CryptoRefills brand payloads into a flat list. */
-    function normalizeCRBrands(raw) {
-      if (!raw) return [];
-      let list = raw;
-      if (Array.isArray(raw)) list = raw;
-      else if (raw && typeof raw === "object") {
-        if (Array.isArray(raw.brands)) list = raw.brands;
-        else if (Array.isArray(raw.data)) list = raw.data;
-        else if (Array.isArray(raw.items)) list = raw.items;
-        else if (Array.isArray(raw.results)) list = raw.results;
-        else if (Array.isArray(raw.families)) list = raw.families;
-        else {
-          // Flatten category maps, but only keep objects that look like brands
-          const out = [];
-          Object.keys(raw).forEach(k => {
-            const v = raw[k];
-            if (Array.isArray(v)) {
-              v.forEach(x => out.push(x));
-            } else if (v && typeof v === "object") {
-              // skip nested meta/pagination objects
-              if (v.name || v.brand_name || v.family_name || v.title || v.logo_url || v.logo_base_url) {
-                out.push(v);
-              } else {
-                Object.keys(v).forEach(k2 => {
-                  const v2 = v[k2];
-                  if (Array.isArray(v2)) v2.forEach(x => out.push(x));
-                  else if (v2 && typeof v2 === "object" && (v2.name || v2.brand_name || v2.family_name || v2.title)) {
-                    out.push(v2);
-                  }
-                });
-              }
-            }
-          });
-          list = out;
-        }
-      }
-      if (!Array.isArray(list)) return [];
-
-      const seen = {};
-      const result = [];
-      list.forEach((b, i) => {
-        if (!b || typeof b !== "object") return;
-        const name = String(b.name || b.brand_name || b.family_name || b.title || b.brand || b.label || "").trim();
-        // Drop empty / placeholder names like "Brand 0"
-        if (!name || /^brand\s*\d+$/i.test(name)) return;
-        const family = String(b.family_name || b.brand_name || b.name || name).trim();
-        const key = family.toLowerCase();
-        if (seen[key]) return;
-        seen[key] = true;
-        let logo = b.logo_url || b.logo || b.image || b.image_url || "";
-        if (!logo && b.logo_base_url) logo = String(b.logo_base_url) + ".webp";
-        result.push({
-          id: String(b.id || b.slug || family) + "_" + i,
-          name: name,
-          family_name: family,
-          brand_name: String(b.brand_name || family || name).trim(),
-          logo: logo,
-          country_code: b.country_code || "",
-          raw: b
-        });
-      });
-      result.sort((a, b) => a.name.localeCompare(b.name));
-      return result;
-    }
-
-    /** Extract denomination options from products response. */
-    function normalizeCRProducts(raw, brandName) {
-      if (!raw) return { fixed: [], ranges: [] };
-      let list = raw;
-      if (raw.products) list = raw.products;
-      if (raw.data) list = raw.data;
-      if (raw.items) list = raw.items;
-      if (!Array.isArray(list) && typeof list === "object") {
-        // single product object
-        if (raw.denominations || raw.denomination || raw.face_values) list = [raw];
-        else list = Object.values(list).filter(x => x && typeof x === "object");
-      }
-      if (!Array.isArray(list)) list = [];
-
-      const fixed = [];
-      const ranges = [];
-      const seen = {};
-
-      function addFixed(label, value, currency) {
-        const v = Number(value);
-        if (!isFinite(v) || v <= 0) return;
-        const key = v.toFixed(2) + "|" + (currency || "");
-        if (seen[key]) return;
-        seen[key] = true;
-        fixed.push({
-          label: label || (currency ? (currency + " " + v) : ("$" + v)),
-          value: v,
-          denomination: label || (v + " " + (currency || "USD")),
-          currency: currency || "USD"
-        });
-      }
-
-      list.forEach(p => {
-        const pBrand = p.brand_name || p.family_name || p.name || "";
-        // if brand filter was used, still accept all returned
-        const dens = p.denominations || p.denomination_list || p.face_values || p.values || p.amounts || [];
-        if (Array.isArray(dens)) {
-          dens.forEach(d => {
-            if (d == null) return;
-            if (typeof d === "number" || typeof d === "string") {
-              const num = parseFloat(String(d).replace(/[^0-9.]/g, ""));
-              addFixed(String(d), num, p.currency || "USD");
-            } else if (typeof d === "object") {
-              const num = parseFloat(d.value || d.face_value || d.amount || d.denomination || 0);
-              const lab = d.label || d.denomination || d.localized || (d.currency ? (d.currency + " " + num) : null);
-              addFixed(lab, num, d.currency || p.currency || "USD");
-            }
-          });
-        }
-        // single denomination fields
-        if (p.denomination && typeof p.denomination === "string" && p.denomination.toLowerCase() !== "range") {
-          const num = parseFloat(String(p.denomination).replace(/[^0-9.]/g, ""));
-          addFixed(p.denomination, num, p.currency || "USD");
-        }
-        if (p.face_value || p.value || p.amount) {
-          const num = parseFloat(p.face_value || p.value || p.amount);
-          addFixed(null, num, p.currency || "USD");
-        }
-        // range products
-        const isRange = String(p.denomination || p.type || p.kind || "").toLowerCase().indexOf("range") >= 0
-          || p.min_value != null || p.max_value != null || p.min != null || p.max != null;
-        if (isRange) {
-          ranges.push({
-            min: Number(p.min_value || p.min || 1) || 1,
-            max: Number(p.max_value || p.max || 500) || 500,
-            currency: p.currency || "USD",
-            brand_name: pBrand || brandName
-          });
-        }
-      });
-
-      fixed.sort((a, b) => a.value - b.value);
-      return { fixed, ranges };
-    }
-
-    const PTS_PER_USD = 1000;
-    function toUSD(pts) {
-      const n = Number(pts);
-      if (!isFinite(n)) return "0.00";
-      return (n / PTS_PER_USD).toFixed(2);
-    }
-    function toPts(usd) {
-      const n = Number(usd);
-      if (!isFinite(n)) return 0;
-      return Math.round(n * PTS_PER_USD);
-    }
-    function formatUSD(pts) {
-      return "$" + toUSD(pts);
-    }
-
-    let audioCtx = null;
-    function playDing() {
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === "suspended") audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.35);
-      } catch (e) {}
-    }
-
-    async function api(action, params = {}) {
-      try {
-        const qs = new URLSearchParams(Object.assign({ action }, params)).toString();
-        const res = await fetch(SCRIPT_URL + "?" + qs);
-        return await res.json();
-      } catch (e) {
-        return { error: "Network error" };
-      }
-    }
-
-    async function postApi(action, body = {}) {
-      try {
-        const params = new URLSearchParams();
-        params.append("action", action);
-        Object.keys(body).forEach(k => params.append(k, body[k]));
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-          body: params.toString()
-        });
-        return await res.json();
-      } catch (e) {
-        return { error: "Network error" };
-      }
-    }
-
-    function App() {
-      const [tab, setTab] = useState("home");
-      const [user, setUser] = useState(null);
-      const [logs, setLogs] = useState([]);
-      const [leaders, setLeaders] = useState([]);
-      const [iframeUrl, setIframeUrl] = useState(null);
-      const [msg, setMsg] = useState(null);
-      const [captcha, setCaptcha] = useState("");
-      const [form, setForm] = useState({ account: "", clientId: "", captcha: "", username: "", bonusCode: "" });
-      const [offerwalls, setOfferwalls] = useState([]);
-      const [owLoading, setOwLoading] = useState(true);
-      const [chatMessages, setChatMessages] = useState([]);
-      const [chatInput, setChatInput] = useState("");
-      const [soundOn, setSoundOn] = useState(true);
-      const lastMsgId = useRef(null);
-      const chatEndRef = useRef(null);
-      const pollRef = useRef(null);
-      const soundRef = useRef(true);
-      const userRef = useRef(null);
-      const gInited = useRef(false);
-      const [cashouts, setCashouts] = useState([]);
-      const [modal, setModal] = useState(null);
-      const [step, setStep] = useState(1);
-      const [amount, setAmount] = useState("");
-      const [details, setDetails] = useState("");
-      const [submitting, setSubmitting] = useState(false);
-      const [loggingIn, setLoggingIn] = useState(false);
-      const [chatOpen, setChatOpen] = useState(false);
-      const [refreshingCR, setRefreshingCR] = useState(false);
-      const [crCountry, setCrCountry] = useState("US");
-      const [crSearch, setCrSearch] = useState("");
-      const [crBrands, setCrBrands] = useState([]);
-      const [crBrandsLoading, setCrBrandsLoading] = useState(false);
-      const [crBrandsError, setCrBrandsError] = useState("");
-      const [crBrandPage, setCrBrandPage] = useState(1);
-      const [crSelectedBrand, setCrSelectedBrand] = useState(null);
-      const [crDenoms, setCrDenoms] = useState({ fixed: [], ranges: [] });
-      const [crDenomsLoading, setCrDenomsLoading] = useState(false);
-      const [crSelectedDenom, setCrSelectedDenom] = useState(null);
-      const [crCustomAmount, setCrCustomAmount] = useState("");
-      const CR_PAGE_SIZE = 48;
-
-      useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
-      useEffect(() => { userRef.current = user; }, [user]);
-
-      function showMsg(text, type = "error") {
-        setMsg({ text, type });
-        setTimeout(() => setMsg(null), 4000);
-      }
-      function genCaptcha() { setCaptcha(String(Math.floor(10000 + Math.random() * 90000))); }
-      function saveUser(u) {
-        setUser(u);
-        userRef.current = u;
-        storage.set("buxiq_user", JSON.stringify(u));
-      }
-      function logout() {
-        setUser(null);
-        storage.remove("buxiq_user");
-        try { if (window.google) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
-        gInited.current = false;
-        setTab("home");
-        showMsg("Logged out", "success");
-      }
-      function toggleSound() {
-        const next = !soundOn;
-        setSoundOn(next);
-        storage.set("buxiq_sound", next ? "1" : "0");
-      }
-
-      const loadLogs = useCallback(async () => {
-        const data = await api("logs");
-        if (data.logs) setLogs(data.logs);
-      }, []);
-      const loadLeaders = useCallback(async () => {
-        const data = await api("leaders");
-        if (data.leaders) setLeaders(data.leaders);
-      }, []);
-      const loadOfferwalls = useCallback(async () => {
-        setOwLoading(true);
-        const data = await api("getOfferwalls");
-        setOfferwalls(Array.isArray(data.offerwalls) ? data.offerwalls : []);
-        setOwLoading(false);
-      }, []);
-      const refreshBalance = useCallback(async () => {
-        const u = userRef.current;
-        if (!u) return;
-        const data = await api("balance", { account: u.account });
-        if (data.balance !== undefined) saveUser({ ...u, balance: data.balance, level: data.level || u.level });
-      }, []);
-      const loadCashouts = useCallback(async (account) => {
-        const data = await api("getCashouts", { account });
-        setCashouts(data.cashouts || []);
-      }, []);
-
-      const loadCRBrands = useCallback(async (country) => {
-        const c = country || crCountry || "US";
-        setCrBrandsLoading(true);
-        setCrBrandsError("");
-        setCrSelectedBrand(null);
-        setCrDenoms({ fixed: [], ranges: [] });
-        setCrSelectedDenom(null);
-        setCrBrandPage(1);
-        const data = await api("getCRBrands", { country: c, country_code: c });
-        setCrBrandsLoading(false);
-        if (data.error) {
-          setCrBrands([]);
-          setCrBrandsError(data.error);
-          return;
-        }
-        const list = normalizeCRBrands(data.brands);
-        setCrBrands(list);
-        if (!list.length) setCrBrandsError("No brands returned for this country.");
-      }, [crCountry]);
-
-      const openCRBrand = useCallback(async (brand) => {
-        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        setCrSelectedBrand(brand);
-        setCrDenoms({ fixed: [], ranges: [] });
-        setCrSelectedDenom(null);
-        setCrCustomAmount("");
-        if (user.email) setDetails(String(user.email));
-        setCrDenomsLoading(true);
-        const data = await api("getCRProducts", {
-          country: crCountry,
-          country_code: crCountry,
-          family_name: brand.family_name || brand.brand_name || brand.name,
-          brand_name: brand.brand_name || brand.family_name || brand.name,
-          coin: "USDC",
-          lang: "en"
-        });
-        setCrDenomsLoading(false);
-        if (data.error) {
-          showMsg(data.error);
-          setCrDenoms({ fixed: [], ranges: [] });
-          return;
-        }
-        const norm = normalizeCRProducts(data.products, brand.brand_name || brand.name);
-        setCrDenoms(norm);
-        if (!norm.fixed.length && !norm.ranges.length) {
-          // still allow custom amount attempt
-          setCrDenoms({ fixed: [], ranges: [{ min: 1, max: 500, currency: "USD", brand_name: brand.name }] });
-        }
-      }, [user, crCountry]);
-      const loadChat = useCallback(async (isInitial) => {
-        const data = await api("getChat", { limit: 50 });
-        if (!data.messages) return;
-        const msgs = data.messages;
-        const newestId = msgs.length ? msgs[msgs.length - 1].id : null;
-        if (!isInitial && newestId && lastMsgId.current && newestId !== lastMsgId.current && soundRef.current) playDing();
-        lastMsgId.current = newestId;
-        setChatMessages(msgs);
-      }, []);
-
-      const creditEarnings = useCallback(async (userId, amt, txnId) => {
-        // Postback amount is in USD; convert to points for backend storage
-        const pts = toPts(amt);
-        const data = await postApi("creditEarnings", {
-          userId, amount: pts, transactionId: txnId || String(Date.now())
-        });
-        if (data.error) { showMsg("Credit failed: " + data.error); return; }
-        showMsg(formatUSD(pts) + " credited!", "success");
-        const u = userRef.current;
-        if (u && (String(u.account) === String(userId) || u.username === userId)) refreshBalance();
-        loadLogs(); loadLeaders();
-        if (soundRef.current) playDing();
-      }, [refreshBalance, loadLogs, loadLeaders]);
-
-      const handleGoogleCredential = useCallback((response) => {
-        if (!response || !response.credential) { showMsg("Google login failed"); return; }
-        let payload;
-        try {
-          payload = JSON.parse(decodeURIComponent(escape(atob(response.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))));
-        } catch (e) { showMsg("Could not read Google account"); return; }
-        setLoggingIn(true);
-        postApi("googleLogin", {
-          googleId: payload.sub,
-          email: payload.email,
-          name: payload.name || "",
-          picture: payload.picture || ""
-        }).then(data => {
-          setLoggingIn(false);
-          if (data.error) { showMsg(data.error); return; }
-          saveUser(data.user);
-          setTab("earn");
-          showMsg(data.isNew ? "Account created! Welcome!" : "Welcome back!", "success");
-        });
-      }, []);
-
-      useEffect(() => {
-        if (user) return;
-        let tries = 0;
-        const timer = setInterval(() => {
-          tries++;
-          const el = document.getElementById("gbtn");
-          const g = window.google && window.google.accounts && window.google.accounts.id;
-          if (g && el) {
-            clearInterval(timer);
-            try {
-              if (!gInited.current) {
-                g.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential, cancel_on_tap_outside: true });
-                gInited.current = true;
-              }
-              el.innerHTML = "";
-              g.renderButton(el, { theme: "filled_blue", size: "large", width: 320, text: "continue_with", shape: "pill", logo_alignment: "left" });
-            } catch (e) {}
-          } else if (tries > 40) clearInterval(timer);
-        }, 250);
-        return () => clearInterval(timer);
-      }, [tab, user, handleGoogleCredential]);
-
-      useEffect(() => {
-        const saved = storage.get("buxiq_user");
-        if (saved) { try { const u = JSON.parse(saved); setUser(u); userRef.current = u; } catch (e) {} }
-        const soundPref = storage.get("buxiq_sound");
-        if (soundPref !== null) { setSoundOn(soundPref === "1"); soundRef.current = soundPref === "1"; }
-        genCaptcha();
-        loadLeaders(); loadLogs(); loadOfferwalls();
-        const p = new URLSearchParams(window.location.search);
-        const uid = p.get("user_id") || p.get("userid");
-        const amt = p.get("amount") || p.get("reward");
-        const txn = p.get("transaction_id") || p.get("txn_id");
-        if (uid && amt && !isNaN(parseFloat(amt))) {
-          creditEarnings(uid, parseFloat(amt), txn);
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-      }, []);
-
-      useEffect(() => {
-        if (chatOpen || tab === "chat") {
-          loadChat(true);
-          pollRef.current = setInterval(() => loadChat(false), 4000);
-        }
-        return () => clearInterval(pollRef.current);
-      }, [chatOpen, tab, loadChat]);
-      useEffect(() => { if (tab === "shop" && user) loadCashouts(user.account); }, [tab, user, loadCashouts]);
-      useEffect(() => {
-        if (tab === "shop" && user) loadCRBrands(crCountry);
-      }, [tab, user, crCountry]); // eslint-disable-line react-hooks/exhaustive-deps
-      useEffect(() => { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
-      useEffect(() => { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
-
-      async function handleLogin() {
-        if (!form.account || !form.clientId) { showMsg("Enter account and client ID"); return; }
-        if (form.captcha.trim() !== captcha) { showMsg("Invalid CAPTCHA"); genCaptcha(); setForm({...form, captcha: ""}); return; }
-        setLoggingIn(true);
-        const data = await api("login", { account: form.account, clientId: form.clientId });
-        setLoggingIn(false);
-        if (data.error) { showMsg(data.error); genCaptcha(); return; }
-        saveUser(data.user);
-        setTab("earn");
-        showMsg("Welcome back!", "success");
-      }
-
-      async function sendChat() {
-        const text = chatInput.trim();
-        if (!text) return;
-        if (!user) { showMsg("Please login to chat"); setTab("earn"); return; }
-        if (text.length > 300) { showMsg("Message too long (max 300)"); return; }
-        setChatInput("");
-        const data = await postApi("sendChat", {
-          account: user.account, username: user.username || user.account, message: text
-        });
-        if (data.error) { showMsg(data.error); return; }
-        loadChat(false);
-      }
-
-      function openModal(reward) {
-        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        setModal(reward); setStep(1); setAmount("");
-        setDetails((user.email || "").trim());
-      }
-      function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
-
-      function nextStep() {
-        const balPts = Number((user && user.balance) || 0);
-        const amtUsd = parseFloat(amount);
-        if (step === 1) {
-          if (!amount || isNaN(amtUsd) || amtUsd <= 0) { showMsg("Enter a valid amount"); return; }
-          if (amtUsd < modal.min) { showMsg("Minimum is $" + modal.min); return; }
-          const amtPts = toPts(amtUsd);
-          if (amtPts > balPts) { showMsg("Insufficient balance"); return; }
-          setStep(2);
-        } else if (step === 2) {
-          if (!details.trim()) { showMsg("Enter receiving details"); return; }
-          if (modal.provider === "cryptorefills" && details.indexOf("@") < 0) {
-            showMsg("Enter a valid delivery email"); return;
+function normalizeCRBrands(raw) {
+  if (!raw) return [];
+  let list = raw;
+  if (Array.isArray(raw)) list = raw;
+  else if (raw && typeof raw === "object") {
+    if (Array.isArray(raw.brands)) list = raw.brands;
+    else if (Array.isArray(raw.data)) list = raw.data;
+    else if (Array.isArray(raw.items)) list = raw.items;
+    else if (Array.isArray(raw.results)) list = raw.results;
+    else if (Array.isArray(raw.families)) list = raw.families;
+    else {
+      const out = [];
+      Object.keys(raw).forEach(k => {
+        const v = raw[k];
+        if (Array.isArray(v)) { v.forEach(x => out.push(x)); }
+        else if (v && typeof v === "object") {
+          if (v.name || v.brand_name || v.family_name || v.title || v.logo_url) out.push(v);
+          else {
+            Object.keys(v).forEach(k2 => {
+              const v2 = v[k2];
+              if (Array.isArray(v2)) v2.forEach(x => out.push(x));
+              else if (v2 && typeof v2 === "object" && (v2.name || v2.brand_name)) out.push(v2);
+            });
           }
-          setStep(3);
         }
-      }
+      });
+      list = out;
+    }
+  }
+  if (!Array.isArray(list)) return [];
+  const seen = {};
+  const result = [];
+  list.forEach((b, i) => {
+    if (!b || typeof b !== "object") return;
+    const name = String(b.name || b.brand_name || b.family_name || b.title || b.brand || "").trim();
+    if (!name || /^brand\s*\d+$/i.test(name)) return;
+    const family = String(b.family_name || b.brand_name || b.name || name).trim();
+    const key = family.toLowerCase();
+    if (seen[key]) return;
+    seen[key] = true;
+    let logo = b.logo_url || b.logo || b.image || "";
+    if (!logo && b.logo_base_url) logo = String(b.logo_base_url) + ".webp";
+    result.push({
+      id: String(b.id || b.slug || family) + "_" + i,
+      name, family_name: family, brand_name: String(b.brand_name || family || name).trim(),
+      logo, country_code: b.country_code || "", raw: b
+    });
+  });
+  result.sort((a, b) => a.name.localeCompare(b.name));
+  return result;
+}
 
-      async function submitCashout() {
-        setSubmitting(true);
-        const amtUsd = parseFloat(amount);
-        const amtPts = toPts(amtUsd);
-        const isCR = modal.provider === "cryptorefills";
-        let data;
-        if (isCR) {
-          // Best-effort public IP for CryptoRefills X-Forwarded-For (optional)
-          let clientIp = "";
-          try {
-            const ipRes = await fetch("https://api.ipify.org?format=json");
-            const ipJson = await ipRes.json();
-            if (ipJson && ipJson.ip) clientIp = String(ipJson.ip);
-          } catch (e) {}
-          data = await postApi("submitCRCashout", {
-            account: user.account,
-            username: user.username || user.account,
-            brand_name: modal.brand_name || modal.name,
-            country_code: modal.country_code || "US",
-            amountUsd: amtUsd.toFixed(2),
-            amount: amtPts,
-            details: details.trim(),
-            email: details.trim(),
-            coin: "USDC",
-            network: "Solana",
-            ip: clientIp,
-            userAgent: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "RewardBux"
-          });
-        } else {
-          data = await postApi("submitCashout", {
-            account: user.account,
-            username: user.username || user.account,
-            rewardType: modal.id,
-            rewardName: modal.name,
-            amount: amtPts,
-            amountUsd: amtUsd.toFixed(2),
-            details: details.trim()
-          });
+function normalizeCRProducts(raw, brandName) {
+  if (!raw) return { fixed: [], ranges: [] };
+  let list = raw;
+  if (raw.products) list = raw.products;
+  if (raw.data) list = raw.data;
+  if (raw.items) list = raw.items;
+  if (!Array.isArray(list) && typeof list === "object") {
+    if (raw.denominations || raw.denomination || raw.face_values) list = [raw];
+    else list = Object.values(list).filter(x => x && typeof x === "object");
+  }
+  if (!Array.isArray(list)) list = [];
+  const fixed = [], ranges = [], seen = {};
+  function addFixed(label, value, currency) {
+    const v = Number(value);
+    if (!isFinite(v) || v <= 0) return;
+    const key = v.toFixed(2) + "|" + (currency || "");
+    if (seen[key]) return;
+    seen[key] = true;
+    fixed.push({
+      label: label || (currency ? (currency + " " + v) : ("$" + v)),
+      value: v, denomination: label || (v + " " + (currency || "USD")), currency: currency || "USD"
+    });
+  }
+  list.forEach(p => {
+    const dens = p.denominations || p.denomination_list || p.face_values || p.values || p.amounts || [];
+    if (Array.isArray(dens)) {
+      dens.forEach(d => {
+        if (d == null) return;
+        if (typeof d === "number" || typeof d === "string") {
+          const num = parseFloat(String(d).replace(/[^0-9.]/g, ""));
+          addFixed(String(d), num, p.currency || "USD");
+        } else if (typeof d === "object") {
+          const num = parseFloat(d.value || d.face_value || d.amount || d.denomination || 0);
+          const lab = d.label || d.denomination || d.localized || (d.currency ? (d.currency + " " + num) : null);
+          addFixed(lab, num, d.currency || p.currency || "USD");
         }
-        setSubmitting(false);
-        if (data.error) {
-          showMsg(data.error + (data.refunded ? " (balance refunded)" : ""));
-          return;
-        }
-        showMsg(isCR ? ("Gift card order submitted! Email: " + details.trim()) : "Cashout submitted!", "success");
-        const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
-        saveUser({ ...user, balance: newBal });
-        loadCashouts(user.account);
-        closeModal();
-      }
+      });
+    }
+    if (p.denomination && typeof p.denomination === "string" && p.denomination.toLowerCase() !== "range") {
+      const num = parseFloat(String(p.denomination).replace(/[^0-9.]/g, ""));
+      addFixed(p.denomination, num, p.currency || "USD");
+    }
+    if (p.face_value || p.value || p.amount) {
+      const num = parseFloat(p.face_value || p.value || p.amount);
+      addFixed(null, num, p.currency || "USD");
+    }
+    const isRange = String(p.denomination || p.type || p.kind || "").toLowerCase().indexOf("range") >= 0
+      || p.min_value != null || p.max_value != null || p.min != null || p.max != null;
+    if (isRange) {
+      ranges.push({
+        min: Number(p.min_value || p.min || 1) || 1,
+        max: Number(p.max_value || p.max || 500) || 500,
+        currency: p.currency || "USD",
+        brand_name: p.brand_name || brandName
+      });
+    }
+  });
+  fixed.sort((a, b) => a.value - b.value);
+  return { fixed, ranges };
+}
 
-      async function refreshPendingCR() {
-        if (!user) return;
-        setRefreshingCR(true);
-        const data = await api("refreshCRCashouts", { account: user.account });
-        setRefreshingCR(false);
-        if (data.error) { showMsg(data.error); return; }
-        showMsg("Updated " + (data.updated || 0) + " order(s)", "success");
-        loadCashouts(user.account);
-      }
+const PTS_PER_USD = 1000;
+function toUSD(pts) { const n = Number(pts); return isFinite(n) ? (n / PTS_PER_USD).toFixed(2) : "0.00"; }
+function toPts(usd) { const n = Number(usd); return isFinite(n) ? Math.round(n * PTS_PER_USD) : 0; }
+function formatUSD(pts) { return "$" + toUSD(pts); }
 
-      function statusBadge(status) {
-        const s = String(status || "unsent").toLowerCase();
-        if (s === "sent") return <span className="badge badge-sent">Sent</span>;
-        if (s === "pending") return <span className="badge badge-pending">Pending</span>;
-        return <span className="badge badge-unsent">Unsent</span>;
-      }
+let audioCtx = null;
+function playDing() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+  } catch (e) {}
+}
 
-      async function redeemBonus() {
-        if (!user) {
-          showMsg("Please login first", "error");
-          setTab("earn");
-          return;
-        }
-        const code = (form.bonusCode || "").trim();
-        if (!code) {
-          showMsg("Please enter a bonus code", "error");
-          return;
-        }
-        const data = await api("redeemBonus", {
-          account: user.account,
-          username: user.username || user.account,
-          bonusCode: code
-        });
-        if (data.error) {
-          showMsg(data.error, "error");
-          return;
-        }
-        showMsg("Successfully redeemed $" + data.amountUsd + "!", "success");
-        setForm(f => ({ ...f, bonusCode: "" }));
-        if (data.newBalance) {
-          saveUser({ ...user, balance: data.newBalance });
-        } else {
-          refreshBalance();
-        }
-      }
+async function api(action, params = {}) {
+  try {
+    const qs = new URLSearchParams(Object.assign({ action }, params)).toString();
+    const res = await fetch(SCRIPT_URL + "?" + qs);
+    return await res.json();
+  } catch (e) { return { error: "Network error" }; }
+}
+async function postApi(action, body = {}) {
+  try {
+    const params = new URLSearchParams();
+    params.append("action", action);
+    Object.keys(body).forEach(k => params.append(k, body[k]));
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: params.toString()
+    });
+    return await res.json();
+  } catch (e) { return { error: "Network error" }; }
+}
 
-      function openOffer(ow) {
-        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        const uid = String(user.account || user.username || "");
-        const uname = String(user.username || uid);
-        let url = String(ow.urlTemplate || "");
-        if (!url) { showMsg("Offerwall URL missing"); return; }
-        url = url
-          .replace(/\{user\}/gi, encodeURIComponent(uid))
-          .replace(/\{userid\}/gi, encodeURIComponent(uid))
-          .replace(/\{user_id\}/gi, encodeURIComponent(uid))
-          .replace(/\{account\}/gi, encodeURIComponent(uid))
-          .replace(/\{username\}/gi, encodeURIComponent(uname))
-          .replace(/\$\{userid\}/gi, encodeURIComponent(uid))
-          .replace(/\$\{account\}/gi, encodeURIComponent(uid))
-          .replace(/\$\{username\}/gi, encodeURIComponent(uname));
-        url += (url.indexOf("?") !== -1 ? "&" : "?") + "t=" + Date.now();
-        setIframeUrl(url);
-      }
+function App() {
+  const [tab, setTab] = useState("home");
+  const [user, setUser] = useState(null);
+  const [logs, setLogs] = useState([]);
+  const [leaders, setLeaders] = useState([]);
+  const [iframeUrl, setIframeUrl] = useState(null);
+  const [msg, setMsg] = useState(null);
+  const [captcha, setCaptcha] = useState("");
+  const [form, setForm] = useState({ account: "", clientId: "", captcha: "", username: "", bonusCode: "" });
+  const [offerwalls, setOfferwalls] = useState([]);
+  const [owLoading, setOwLoading] = useState(true);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+  const [soundOn, setSoundOn] = useState(true);
+  const lastMsgId = useRef(null);
+  const chatEndRef = useRef(null);
+  const pollRef = useRef(null);
+  const soundRef = useRef(true);
+  const userRef = useRef(null);
+  const gInited = useRef(false);
+  const [cashouts, setCashouts] = useState([]);
+  const [modal, setModal] = useState(null);
+  const [step, setStep] = useState(1);
+  const [amount, setAmount] = useState("");
+  const [details, setDetails] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [refreshingCR, setRefreshingCR] = useState(false);
+  const [crCountry, setCrCountry] = useState("US");
+  const [crSearch, setCrSearch] = useState("");
+  const [crBrands, setCrBrands] = useState([]);
+  const [crBrandsLoading, setCrBrandsLoading] = useState(false);
+  const [crBrandsError, setCrBrandsError] = useState("");
+  const [crBrandPage, setCrBrandPage] = useState(1);
+  const [crSelectedBrand, setCrSelectedBrand] = useState(null);
+  const [crDenoms, setCrDenoms] = useState({ fixed: [], ranges: [] });
+  const [crDenomsLoading, setCrDenomsLoading] = useState(false);
+  const [crSelectedDenom, setCrSelectedDenom] = useState(null);
+  const [crCustomAmount, setCrCustomAmount] = useState("");
+  const CR_PAGE_SIZE = 48;
 
-      function selectTab(id) {
-        if (id === "chat") {
-          setChatOpen(prev => !prev);
-          return;
-        }
-        setChatOpen(false);
-        setTab(id);
-      }
+  useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
+  useEffect(() => { userRef.current = user; }, [user]);
 
-      const tabs = [
-        { id: "home", icon: "fa-home", label: "Home" },
-        { id: "earn", icon: "fa-hand-holding-dollar", label: "Earn" },
-        { id: "shop", icon: "fa-shopping-cart", label: "Shop" },
-        { id: "leaders", icon: "fa-trophy", label: "Leaders" },
-        { id: "chat", icon: "fa-comments", label: "Chat" },
-        { id: "bonus", icon: "fa-gift", label: "Bonus" },
-        { id: "help", icon: "fa-circle-question", label: "Help" }
-      ];
+  function showMsg(text, type = "error") {
+    setMsg({ text, type });
+    setTimeout(() => setMsg(null), 4000);
+  }
+  function genCaptcha() { setCaptcha(String(Math.floor(10000 + Math.random() * 90000))); }
+  function saveUser(u) { setUser(u); userRef.current = u; storage.set("buxiq_user", JSON.stringify(u)); }
+  function logout() {
+    setUser(null); storage.remove("buxiq_user");
+    try { if (window.google) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
+    gInited.current = false; setTab("home");
+    showMsg("Logged out", "success");
+  }
+  function toggleSound() {
+    const next = !soundOn;
+    setSoundOn(next);
+    storage.set("buxiq_sound", next ? "1" : "0");
+  }
 
-      return (
-        <div className="app">
-          {/* HEADER */}
-          <div className="top-header">
-            <div className="header-row">
-              <div className="logo">
-                <span className="dollar">$</span>Reward<span>Bux</span>
+  const loadLogs = useCallback(async () => { const data = await api("logs"); if (data.logs) setLogs(data.logs); }, []);
+  const loadLeaders = useCallback(async () => { const data = await api("leaders"); if (data.leaders) setLeaders(data.leaders); }, []);
+  const loadOfferwalls = useCallback(async () => {
+    setOwLoading(true);
+    const data = await api("getOfferwalls");
+    setOfferwalls(Array.isArray(data.offerwalls) ? data.offerwalls : []);
+    setOwLoading(false);
+  }, []);
+  const refreshBalance = useCallback(async () => {
+    const u = userRef.current;
+    if (!u) return;
+    const data = await api("balance", { account: u.account });
+    if (data.balance !== undefined) saveUser({ ...u, balance: data.balance, level: data.level || u.level });
+  }, []);
+  const loadCashouts = useCallback(async (account) => {
+    const data = await api("getCashouts", { account });
+    setCashouts(data.cashouts || []);
+  }, []);
+
+  const loadCRBrands = useCallback(async (country) => {
+    const c = country || crCountry || "US";
+    setCrBrandsLoading(true);
+    setCrBrandsError("");
+    setCrSelectedBrand(null);
+    setCrDenoms({ fixed: [], ranges: [] });
+    setCrSelectedDenom(null);
+    setCrBrandPage(1);
+    const data = await api("getCRBrands", { country: c, country_code: c });
+    setCrBrandsLoading(false);
+    if (data.error) { setCrBrands([]); setCrBrandsError(data.error); return; }
+    const list = normalizeCRBrands(data.brands);
+    setCrBrands(list);
+    if (!list.length) setCrBrandsError("No brands returned.");
+  }, [crCountry]);
+
+  const openCRBrand = useCallback(async (brand) => {
+    if (!user) { showMsg("Please login first"); setTab("earn"); return; }
+    setCrSelectedBrand(brand);
+    setCrDenoms({ fixed: [], ranges: [] });
+    setCrSelectedDenom(null);
+    setCrCustomAmount("");
+    if (user.email) setDetails(String(user.email));
+    setCrDenomsLoading(true);
+    const data = await api("getCRProducts", {
+      country: crCountry, country_code: crCountry,
+      family_name: brand.family_name || brand.brand_name || brand.name,
+      brand_name: brand.brand_name || brand.family_name || brand.name,
+      coin: "USDC", lang: "en"
+    });
+    setCrDenomsLoading(false);
+    if (data.error) { showMsg(data.error); setCrDenoms({ fixed: [], ranges: [] }); return; }
+    const norm = normalizeCRProducts(data.products, brand.brand_name || brand.name);
+    setCrDenoms(norm);
+    if (!norm.fixed.length && !norm.ranges.length) {
+      setCrDenoms({ fixed: [], ranges: [{ min: 1, max: 500, currency: "USD", brand_name: brand.name }] });
+    }
+  }, [user, crCountry]);
+
+  const loadChat = useCallback(async (isInitial) => {
+    const data = await api("getChat", { limit: 50 });
+    if (!data.messages) return;
+    const msgs = data.messages;
+    const newestId = msgs.length ? msgs[msgs.length - 1].id : null;
+    if (!isInitial && newestId && lastMsgId.current && newestId !== lastMsgId.current && soundRef.current) playDing();
+    lastMsgId.current = newestId;
+    setChatMessages(msgs);
+  }, []);
+
+  const creditEarnings = useCallback(async (userId, amt, txnId) => {
+    const pts = toPts(amt);
+    const data = await postApi("creditEarnings", { userId, amount: pts, transactionId: txnId || String(Date.now()) });
+    if (data.error) { showMsg("Credit failed: " + data.error); return; }
+    showMsg(formatUSD(pts) + " credited!", "success");
+    const u = userRef.current;
+    if (u && (String(u.account) === String(userId) || u.username === userId)) refreshBalance();
+    loadLogs(); loadLeaders();
+    if (soundRef.current) playDing();
+  }, [refreshBalance, loadLogs, loadLeaders]);
+
+  const handleGoogleCredential = useCallback((response) => {
+    if (!response || !response.credential) { showMsg("Google login failed"); return; }
+    let payload;
+    try {
+      payload = JSON.parse(decodeURIComponent(escape(atob(response.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))));
+    } catch (e) { showMsg("Could not read Google account"); return; }
+    setLoggingIn(true);
+    postApi("googleLogin", {
+      googleId: payload.sub, email: payload.email, name: payload.name || "", picture: payload.picture || ""
+    }).then(data => {
+      setLoggingIn(false);
+      if (data.error) { showMsg(data.error); return; }
+      saveUser(data.user);
+      setTab("earn");
+      showMsg(data.isNew ? "Account created! Welcome!" : "Welcome back!", "success");
+    });
+  }, []);
+
+  useEffect(() => {
+    if (user) return;
+    let tries = 0;
+    const timer = setInterval(() => {
+      tries++;
+      const el = document.getElementById("gbtn");
+      const g = window.google && window.google.accounts && window.google.accounts.id;
+      if (g && el) {
+        clearInterval(timer);
+        try {
+          if (!gInited.current) {
+            g.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential, cancel_on_tap_outside: true });
+            gInited.current = true;
+          }
+          el.innerHTML = "";
+          g.renderButton(el, { theme: "filled_blue", size: "large", width: 320, text: "continue_with", shape: "pill", logo_alignment: "left" });
+        } catch (e) {}
+      } else if (tries > 40) clearInterval(timer);
+    }, 250);
+    return () => clearInterval(timer);
+  }, [tab, user, handleGoogleCredential]);
+
+  useEffect(() => {
+    const saved = storage.get("buxiq_user");
+    if (saved) { try { const u = JSON.parse(saved); setUser(u); userRef.current = u; } catch (e) {} }
+    const soundPref = storage.get("buxiq_sound");
+    if (soundPref !== null) { setSoundOn(soundPref === "1"); soundRef.current = soundPref === "1"; }
+    genCaptcha();
+    loadLeaders(); loadLogs(); loadOfferwalls();
+    const p = new URLSearchParams(window.location.search);
+    const uid = p.get("user_id") || p.get("userid");
+    const amt = p.get("amount") || p.get("reward");
+    const txn = p.get("transaction_id") || p.get("txn_id");
+    if (uid && amt && !isNaN(parseFloat(amt))) {
+      creditEarnings(uid, parseFloat(amt), txn);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (chatOpen || tab === "chat") {
+      loadChat(true);
+      pollRef.current = setInterval(() => loadChat(false), 4000);
+    }
+    return () => clearInterval(pollRef.current);
+  }, [chatOpen, tab, loadChat]);
+  useEffect(() => { if (tab === "shop" && user) loadCashouts(user.account); }, [tab, user, loadCashouts]);
+  useEffect(() => {
+    if (tab === "shop" && user) loadCRBrands(crCountry);
+  }, [tab, user, crCountry]);
+  useEffect(() => { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
+  useEffect(() => { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
+
+  async function handleLogin() {
+    if (!form.account || !form.clientId) { showMsg("Enter account and client ID"); return; }
+    if (form.captcha.trim() !== captcha) { showMsg("Invalid CAPTCHA"); genCaptcha(); setForm({...form, captcha: ""}); return; }
+    setLoggingIn(true);
+    const data = await api("login", { account: form.account, clientId: form.clientId });
+    setLoggingIn(false);
+    if (data.error) { showMsg(data.error); genCaptcha(); return; }
+    saveUser(data.user);
+    setTab("earn");
+    showMsg("Welcome back!", "success");
+  }
+
+  async function sendChat() {
+    const text = chatInput.trim();
+    if (!text) return;
+    if (!user) { showMsg("Please login to chat"); setTab("earn"); return; }
+    if (text.length > 300) { showMsg("Message too long (max 300)"); return; }
+    setChatInput("");
+    const data = await postApi("sendChat", {
+      account: user.account, username: user.username || user.account, message: text
+    });
+    if (data.error) { showMsg(data.error); return; }
+    loadChat(false);
+  }
+
+  function openModal(reward) {
+    if (!user) { showMsg("Please login first"); setTab("earn"); return; }
+    setModal(reward); setStep(1); setAmount("");
+    setDetails((user.email || "").trim());
+  }
+  function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
+
+  function nextStep() {
+    const balPts = Number((user && user.balance) || 0);
+    const amtUsd = parseFloat(amount);
+    if (step === 1) {
+      if (!amount || isNaN(amtUsd) || amtUsd <= 0) { showMsg("Enter a valid amount"); return; }
+      if (amtUsd < modal.min) { showMsg("Minimum is $" + modal.min); return; }
+      const amtPts = toPts(amtUsd);
+      if (amtPts > balPts) { showMsg("Insufficient balance"); return; }
+      setStep(2);
+    } else if (step === 2) {
+      if (!details.trim()) { showMsg("Enter receiving details"); return; }
+      if (modal.provider === "cryptorefills" && details.indexOf("@") < 0) { showMsg("Enter valid email"); return; }
+      setStep(3);
+    }
+  }
+
+  async function submitCashout() {
+    setSubmitting(true);
+    const amtUsd = parseFloat(amount);
+    const amtPts = toPts(amtUsd);
+    const isCR = modal.provider === "cryptorefills";
+    let data;
+    if (isCR) {
+      let clientIp = "";
+      try {
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipJson = await ipRes.json();
+        if (ipJson && ipJson.ip) clientIp = String(ipJson.ip);
+      } catch (e) {}
+      data = await postApi("submitCRCashout", {
+        account: user.account, username: user.username || user.account,
+        brand_name: modal.brand_name || modal.name,
+        country_code: modal.country_code || "US",
+        amountUsd: amtUsd.toFixed(2), amount: amtPts,
+        details: details.trim(), email: details.trim(),
+        coin: "USDC", network: "Solana", ip: clientIp,
+        userAgent: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "RewardBux"
+      });
+    } else {
+      data = await postApi("submitCashout", {
+        account: user.account, username: user.username || user.account,
+        rewardType: modal.id, rewardName: modal.name,
+        amount: amtPts, amountUsd: amtUsd.toFixed(2), details: details.trim()
+      });
+    }
+    setSubmitting(false);
+    if (data.error) { showMsg(data.error + (data.refunded ? " (balance refunded)" : "")); return; }
+    showMsg(isCR ? ("Gift card order submitted! Email: " + details.trim()) : "Cashout submitted!", "success");
+    const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
+    saveUser({ ...user, balance: newBal });
+    loadCashouts(user.account);
+    closeModal();
+  }
+
+  async function refreshPendingCR() {
+    if (!user) return;
+    setRefreshingCR(true);
+    const data = await api("refreshCRCashouts", { account: user.account });
+    setRefreshingCR(false);
+    if (data.error) { showMsg(data.error); return; }
+    showMsg("Updated " + (data.updated || 0) + " order(s)", "success");
+    loadCashouts(user.account);
+  }
+
+  function statusBadge(status) {
+    const s = String(status || "unsent").toLowerCase();
+    if (s === "sent") return <span className="badge badge-sent">Sent</span>;
+    if (s === "pending") return <span className="badge badge-pending">Pending</span>;
+    return <span className="badge badge-unsent">Unsent</span>;
+  }
+
+  async function redeemBonus() {
+    if (!user) { showMsg("Please login first", "error"); setTab("earn"); return; }
+    const code = (form.bonusCode || "").trim();
+    if (!code) { showMsg("Please enter a bonus code", "error"); return; }
+    const data = await api("redeemBonus", { account: user.account, username: user.username || user.account, bonusCode: code });
+    if (data.error) { showMsg(data.error, "error"); return; }
+    showMsg("Successfully redeemed $" + data.amountUsd + "!", "success");
+    setForm(f => ({ ...f, bonusCode: "" }));
+    if (data.newBalance) { saveUser({ ...user, balance: data.newBalance }); }
+    else { refreshBalance(); }
+  }
+
+  function openOffer(ow) {
+    if (!user) { showMsg("Please login first"); setTab("earn"); return; }
+    const uid = String(user.account || user.username || "");
+    const uname = String(user.username || uid);
+    let url = String(ow.urlTemplate || "");
+    if (!url) { showMsg("Offerwall URL missing"); return; }
+    url = url.replace(/\{user\}/gi, encodeURIComponent(uid)).replace(/\{userid\}/gi, encodeURIComponent(uid))
+             .replace(/\{user_id\}/gi, encodeURIComponent(uid)).replace(/\{account\}/gi, encodeURIComponent(uid))
+             .replace(/\{username\}/gi, encodeURIComponent(uname));
+    url += (url.indexOf("?") !== -1 ? "&" : "?") + "t=" + Date.now();
+    setIframeUrl(url);
+  }
+
+  function selectTab(id) {
+    if (id === "chat") { setChatOpen(prev => !prev); return; }
+    setChatOpen(false);
+    setTab(id);
+  }
+
+  const tabs = [
+    { id: "home", icon: "fa-home", label: "Home" },
+    { id: "earn", icon: "fa-hand-holding-dollar", label: "Earn" },
+    { id: "shop", icon: "fa-shopping-cart", label: "Shop" },
+    { id: "leaders", icon: "fa-trophy", label: "Leaders" },
+    { id: "chat", icon: "fa-comments", label: "Chat" },
+    { id: "bonus", icon: "fa-gift", label: "Bonus" },
+    { id: "help", icon: "fa-circle-question", label: "Help" }
+  ];
+
+  return (
+    <div className="app">
+      {/* HEADER */}
+      <div className="top-header">
+        <div className="header-row">
+          <div className="logo"><span className="dollar">$</span>Reward<span>Bux</span></div>
+          <div className="header-nav">
+            {tabs.map(t => (
+              <div key={t.id} className={"nav-item" + ((t.id === "chat" ? chatOpen : tab === t.id) ? " active" : "")} onClick={() => selectTab(t.id)}>
+                <i className={"fas " + t.icon} /><span>{t.label}</span>
               </div>
+            ))}
+          </div>
+          <div className="header-user">
+            {user ? (
+              <>
+                <div className="avatar-wrap">
+                  <img src={user.avatar || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff")} alt="" />
+                  <div className="level-badge">{user.level || 1}</div>
+                </div>
+                <div className="user-meta">
+                  <div className="name">{user.username || user.account || "User"}</div>
+                  <div className="balance-row"><span className="diamond"><i className="fas fa-gem"></i></span><span className="amount">{formatUSD(user.balance || 0)}</span></div>
+                </div>
+                <button className="icon-btn logout" onClick={logout} title="Logout"><i className="fas fa-sign-out-alt"></i></button>
+              </>
+            ) : (
+              <button className="btn btn-primary" style={{ width: "auto", padding: "6px 14px", fontSize: "0.78rem" }} onClick={() => setTab("earn")}>Signup / Login</button>
+            )}
+          </div>
+        </div>
+        {logs.length > 0 && (
+          <div className="logs-bar"><div className="logs-row">
+            {logs.slice(0, 15).map((l, i) => (
+              <div key={i} className="log-card">
+                <img src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(l.username || "U") + "&background=0d9488&color=fff&size=64"} alt="" />
+                <div className="info"><span className="uname">{l.username}</span><span className="amount">{formatUSD(l.amount || 0)}</span></div>
+              </div>
+            ))}
+          </div></div>
+        )}
+      </div>
 
-              <div className="header-nav">
-                {tabs.map(t => (
-                  <div
-                    key={t.id}
-                    className={"nav-item" + ((t.id === "chat" ? chatOpen : tab === t.id) ? " active" : "")}
-                    onClick={() => selectTab(t.id)}
-                  >
-                    <i className={"fas " + t.icon} />
-                    <span>{t.label}</span>
+      <main>
+        {msg && <div className={"alert alert-" + msg.type}>{msg.text}</div>}
+
+        {tab === "home" && (
+          <>
+            <div className="hero"><h1>Earn free rewards — crypto, PayPal & gift cards</h1><p>Thousands of members cash out every day. Start in minutes.</p></div>
+            <div className="feature-grid">
+              <div className="feature-card"><h3>Take <span>Surveys</span></h3><div className="icons"><i className="fas fa-list-check"></i><i className="fas fa-pen-to-square"></i></div></div>
+              <div className="feature-card"><h3>Try <span>Apps</span></h3><div className="icons"><i className="fas fa-mobile-screen"></i><i className="fas fa-download"></i></div></div>
+              <div className="feature-card"><h3>Play <span>Games</span></h3><div className="icons"><i className="fas fa-gamepad"></i><i className="fas fa-trophy"></i></div></div>
+            </div>
+            <div style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.78rem', margin: '12px 0 8px', letterSpacing: '0.5px' }}>— CASH OUT WITH —</div>
+            <div className="feature-grid">
+              <div className="feature-card"><h3>Crypto <span>Payouts</span></h3><div className="icons"><i className="fab fa-bitcoin"></i><i className="fab fa-ethereum"></i></div></div>
+              <div className="feature-card"><h3>PayPal <span>Cash</span></h3><div className="icons"><i className="fab fa-paypal"></i><i className="fas fa-wallet"></i></div></div>
+              <div className="feature-card"><h3>Gift <span>Cards</span></h3><div className="icons"><i className="fas fa-gift"></i><i className="fas fa-store"></i></div></div>
+            </div>
+            {!user && <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={() => setTab("earn")}><i className="fas fa-right-to-bracket" /> Login to Start Earning</button>}
+          </>
+        )}
+
+        {tab === "earn" && (!user ? (
+          <div className="card">
+            <h2>Login</h2>
+            <div id="gbtn" />
+            <div className="divider"><span>OR</span></div>
+            <label>Account #</label><input value={form.account} onChange={e => setForm({...form, account: e.target.value})} placeholder="Account number" />
+            <label>Client ID</label><input value={form.clientId} onChange={e => setForm({...form, clientId: e.target.value})} placeholder="Client ID" />
+            <label>CAPTCHA</label><div className="captcha">{captcha}</div>
+            <input value={form.captcha} onChange={e => setForm({...form, captcha: e.target.value})} onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="Enter CAPTCHA" />
+            <button className="btn btn-primary" onClick={handleLogin} disabled={loggingIn}>{loggingIn ? "Signing in…" : "Login"}</button>
+          </div>
+        ) : (
+          <div className="card">
+            <h2>Earning Portal</h2>
+            <p style={{ color: "var(--muted)", marginBottom: 16, fontSize: "0.9rem" }}>Complete offers to earn rewards</p>
+            {owLoading ? <div className="empty">Loading offerwalls…</div> : offerwalls.length === 0 ? <div className="empty">No offerwalls available.</div> : (
+              <div className="offer-grid">
+                {offerwalls.map(o => (
+                  <div key={o.id} className="offer">
+                    {o.logo ? <img src={o.logo} alt={o.name} onError={e => e.target.style.display="none"} /> : null}
+                    <div style={{ fontSize: "0.85rem", marginBottom: 10, fontWeight: 500 }}>{o.name}</div>
+                    <button className="btn btn-primary" style={{ padding: "8px" }} onClick={() => openOffer(o)}>Open</button>
                   </div>
                 ))}
               </div>
-
-              <div className="header-user">
-                {user ? (
-                  <>
-                    <div className="avatar-wrap">
-                      <img
-                        src={user.avatar || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff")}
-                        alt=""
-                      />
-                      <div className="level-badge">{user.level || 1}</div>
-                    </div>
-                    <div className="user-meta">
-                      <div className="name">{user.username || user.account || "User"}</div>
-                      <div className="balance-row">
-                        <span className="diamond"><i className="fas fa-gem"></i></span>
-                        <span className="amount">{formatUSD(user.balance || 0)}</span>
-                      </div>
-                    </div>
-                    <button className="icon-btn logout" onClick={logout} title="Logout">
-                      <i className="fas fa-sign-out-alt"></i>
-                    </button>
-                  </>
-                ) : (
-                  <button className="btn btn-primary" style={{ width: "auto", padding: "6px 14px", fontSize: "0.78rem" }} onClick={() => setTab("earn")}>
-                    Signup / Login
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Static Logs Bar */}
-            {logs.length > 0 && (
-              <div className="logs-bar">
-                <div className="logs-row">
-                  {logs.slice(0, 15).map((l, i) => (
-                    <div key={i} className="log-card">
-                      <img 
-                        src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(l.username || "U") + "&background=0d9488&color=fff&size=64"} 
-                        alt="" 
-                      />
-                      <div className="info">
-                        <span className="uname">{l.username}</span>
-                        <span className="amount">{formatUSD(l.amount || 0)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             )}
           </div>
+        ))}
 
-          <main>
-            {msg && <div className={"alert alert-" + msg.type}>{msg.text}</div>}
-
-            {tab === "home" && (
-              <>
-                <div className="hero">
-                  <h1>Earn free rewards — crypto, PayPal & gift cards</h1>
-                  <p>Thousands of members cash out every day. Start in minutes.</p>
-                </div>
-
-                <div className="feature-grid">
-                  <div className="feature-card">
-                    <h3>Take <span>Surveys</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-list-check"></i>
-                      <i className="fas fa-pen-to-square"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>Try <span>Apps</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-mobile-screen"></i>
-                      <i className="fas fa-download"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>Play <span>Games</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-gamepad"></i>
-                      <i className="fas fa-trophy"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.78rem', margin: '12px 0 8px', letterSpacing: '0.5px' }}>
-                  — CASH OUT WITH —
-                </div>
-
-                <div className="feature-grid">
-                  <div className="feature-card">
-                    <h3>Crypto <span>Payouts</span></h3>
-                    <div className="icons">
-                      <i className="fab fa-bitcoin"></i>
-                      <i className="fab fa-ethereum"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>PayPal <span>Cash</span></h3>
-                    <div className="icons">
-                      <i className="fab fa-paypal"></i>
-                      <i className="fas fa-wallet"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>Gift <span>Cards</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-gift"></i>
-                      <i className="fas fa-store"></i>
-                    </div>
-                  </div>
-                </div>
-
-                {!user && (
-                  <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={() => setTab("earn")}>
-                    <i className="fas fa-right-to-bracket" /> Login to Start Earning
-                  </button>
-                )}
-              </>
-            )}
-
-            {tab === "earn" && (!user ? (
-              <div className="card">
-                <h2>Login</h2>
-                <div id="gbtn" />
-                <div className="divider"><span>OR</span></div>
-                <label>Account #</label>
-                <input value={form.account} onChange={e => setForm({...form, account: e.target.value})} placeholder="Account number" />
-                <label>Client ID</label>
-                <input value={form.clientId} onChange={e => setForm({...form, clientId: e.target.value})} placeholder="Client ID" />
-                <label>CAPTCHA</label>
-                <div className="captcha">{captcha}</div>
-                <input value={form.captcha} onChange={e => setForm({...form, captcha: e.target.value})}
-                  onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="Enter CAPTCHA" />
-                <button className="btn btn-primary" onClick={handleLogin} disabled={loggingIn}>
-                  {loggingIn ? "Signing in…" : "Login"}
-                </button>
-              </div>
+        {tab === "shop" && (
+          <div className="card">
+            <h2>Cashout</h2>
+            <p style={{ color: "var(--muted)", marginBottom: 14, fontSize: "0.875rem" }}>
+              Balance: <strong style={{color:'var(--accent-light)'}}>{formatUSD((user && user.balance) || 0)}</strong>
+              <span style={{ marginLeft: 8, fontSize: "0.75rem" }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
+            </p>
+            {!user ? (
+              <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
             ) : (
-              <div className="card">
-                <h2>Earning Portal</h2>
-                <p style={{ color: "var(--muted)", marginBottom: 16, fontSize: "0.9rem" }}>Complete offers to earn rewards</p>
-                {owLoading ? (
-                  <div className="empty">Loading offerwalls…</div>
-                ) : offerwalls.length === 0 ? (
-                  <div className="empty">No offerwalls available.</div>
-                ) : (
-                  <div className="offer-grid">
-                    {offerwalls.map(o => (
-                      <div key={o.id} className="offer">
-                        {o.logo ? <img src={o.logo} alt={o.name} onError={e => e.target.style.display="none"} /> : null}
-                        <div style={{ fontSize: "0.85rem", marginBottom: 10, fontWeight: 500 }}>{o.name}</div>
-                        <button className="btn btn-primary" style={{ padding: "8px" }} onClick={() => openOffer(o)}>Open</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {tab === "shop" && (
               <>
-                <div className="card">
-                  <h2>Cashout</h2>
-                  <p style={{ color: "var(--muted)", marginBottom: 14, fontSize: "0.875rem" }}>
-                    Balance: <strong style={{color:'var(--accent-light)'}}>{formatUSD((user && user.balance) || 0)}</strong>
-                    <span style={{ marginLeft: 8, fontSize: "0.75rem" }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
-                  </p>
-                  {!user ? (
-                    <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
-                  ) : (
-                    <>
-                      <div className="section-label">Gift cards (CryptoRefills catalog)</div>
-
-                      {!crSelectedBrand ? (
-                        <>
-                          <div className="cr-toolbar">
-                            <div className="field">
-                              <label>Country</label>
-                              <select
-                                value={crCountry}
-                                onChange={e => { setCrCountry(e.target.value); setCrSearch(""); }}
-                              >
-                                {CR_COUNTRIES.map(c => (
-                                  <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="field">
-                              <label>Search brands</label>
-                              <input
-                                value={crSearch}
-                                onChange={e => { setCrSearch(e.target.value); setCrBrandPage(1); }}
-                                placeholder="e.g. Amazon, Steam, Amex…"
-                              />
-                            </div>
-                            <div className="field-btn">
-                              <button
-                                className="btn btn-ghost"
-                                style={{ width: "auto", padding: "7px 12px" }}
-                                onClick={() => loadCRBrands(crCountry)}
-                                disabled={crBrandsLoading}
-                              >
-                                <i className={"fas " + (crBrandsLoading ? "fa-spinner fa-spin" : "fa-sync")} />
-                              </button>
-                            </div>
-                          </div>
-
-                          {crBrandsError && (
-                            <div className="alert alert-error">{crBrandsError}</div>
-                          )}
-
-                          {crBrandsLoading ? (
-                            <div className="empty">Loading brands for {crCountry}…</div>
-                          ) : (() => {
-                            const q = crSearch.trim().toLowerCase();
-                            const filtered = !q ? crBrands : crBrands.filter(b =>
-                              (b.name + " " + b.family_name + " " + b.brand_name).toLowerCase().indexOf(q) >= 0
-                            );
-                            const pageItems = filtered.slice(0, crBrandPage * CR_PAGE_SIZE);
-                            return (
-                              <>
-                                <div className="cr-count">
-                                  {filtered.length} brand{filtered.length === 1 ? "" : "s"}
-                                  {q ? " matching \"" + crSearch.trim() + "\"" : ""} in {crCountry}
-                                </div>
-                                {filtered.length === 0 ? (
-                                  <div className="empty">No brands found. Try another country or search.</div>
-                                ) : (
-                                  <div className="reward-grid">
-                                    {pageItems.map(b => (
-                                      <div key={b.id} className="reward-item" onClick={() => openCRBrand(b)}>
-                                        {b.logo ? (
-                                          <img src={b.logo} alt={b.name} onError={e => { e.target.style.display = "none"; }} />
-                                        ) : (
-                                          <div style={{ height: 28, marginBottom: 6, fontSize: "1.2rem", color: "var(--accent)" }}>
-                                            <i className="fas fa-gift" />
-                                          </div>
-                                        )}
-                                        <div className="name">{b.name}</div>
-                                        <div className="tag">Select</div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                                {pageItems.length < filtered.length && (
-                                  <button
-                                    className="btn btn-ghost"
-                                    style={{ marginTop: 10 }}
-                                    onClick={() => setCrBrandPage(p => p + 1)}
-                                  >
-                                    Show more ({filtered.length - pageItems.length} left)
-                                  </button>
-                                )}
-                              </>
-                            );
-                          })()}
-                        </>
-                      ) : (
-                        <>
-                          <button className="brand-back" onClick={() => {
-                            setCrSelectedBrand(null);
-                            setCrDenoms({ fixed: [], ranges: [] });
-                            setCrSelectedDenom(null);
-                            setCrCustomAmount("");
-                          }}>
-                            <i className="fas fa-arrow-left" /> Back to brands
-                          </button>
-
-                          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                            {crSelectedBrand.logo ? (
-                              <img src={crSelectedBrand.logo} alt="" style={{ height: 32, maxWidth: 80, objectFit: "contain" }}
-                                onError={e => { e.target.style.display = "none"; }} />
-                            ) : null}
-                            <div>
-                              <div style={{ fontWeight: 600, color: "#fff" }}>{crSelectedBrand.name}</div>
-                              <div style={{ fontSize: "0.72rem", color: "var(--muted)" }}>Country: {crCountry}</div>
-                            </div>
-                          </div>
-
-                          {crDenomsLoading ? (
-                            <div className="empty">Loading denominations…</div>
-                          ) : (
-                            <>
-                              {crDenoms.fixed.length > 0 && (
-                                <>
-                                  <label>Choose amount</label>
-                                  <div className="denom-grid">
-                                    {crDenoms.fixed.map((d, i) => (
-                                      <button
-                                        key={i}
-                                        type="button"
-                                        className={"denom-chip" + (crSelectedDenom && crSelectedDenom.value === d.value && !crCustomAmount ? " active" : "")}
-                                        onClick={() => { setCrSelectedDenom(d); setCrCustomAmount(""); }}
-                                      >
-                                        {d.label}
-                                      </button>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
-
-                              {(crDenoms.ranges.length > 0 || crDenoms.fixed.length === 0) && (
-                                <>
-                                  <label>{crDenoms.fixed.length ? "Or custom amount (USD)" : "Amount (USD)"}</label>
-                                  <input
-                                    type="number"
-                                    step="0.01"
-                                    min={crDenoms.ranges[0] ? crDenoms.ranges[0].min : 1}
-                                    max={crDenoms.ranges[0] ? crDenoms.ranges[0].max : undefined}
-                                    value={crCustomAmount}
-                                    onChange={e => {
-                                      setCrCustomAmount(e.target.value);
-                                      setCrSelectedDenom(null);
-                                    }}
-                                    placeholder={crDenoms.ranges[0]
-                                      ? ("Min " + crDenoms.ranges[0].min + (crDenoms.ranges[0].max ? " – max " + crDenoms.ranges[0].max : ""))
-                                      : "e.g. 25"}
-                                  />
-                                </>
-                              )}
-
-                              <label>Delivery email</label>
-                              <input
-                                value={details}
-                                onChange={e => setDetails(e.target.value)}
-                                placeholder="you@email.com"
-                              />
-
-                              <button
-                                className="btn btn-primary"
-                                disabled={submitting}
-                                onClick={async () => {
-                                  const email = (details || user.email || "").trim();
-                                  if (!email || email.indexOf("@") < 0) {
-                                    showMsg("Enter a valid delivery email");
-                                    return;
-                                  }
-                                  let amtUsd = 0;
-                                  let denomination = "";
-                                  if (crCustomAmount && parseFloat(crCustomAmount) > 0) {
-                                    amtUsd = parseFloat(crCustomAmount);
-                                    denomination = "range";
-                                  } else if (crSelectedDenom) {
-                                    amtUsd = crSelectedDenom.value;
-                                    denomination = crSelectedDenom.denomination || (amtUsd + " USD");
-                                  } else {
-                                    showMsg("Select or enter an amount");
-                                    return;
-                                  }
-                                  if (amtUsd <= 0) { showMsg("Invalid amount"); return; }
-                                  const amtPts = toPts(amtUsd);
-                                  if (amtPts > Number(user.balance || 0)) {
-                                    showMsg("Insufficient balance");
-                                    return;
-                                  }
-                                  setSubmitting(true);
-                                  let clientIp = "";
-                                  try {
-                                    const ipRes = await fetch("https://api.ipify.org?format=json");
-                                    const ipJson = await ipRes.json();
-                                    if (ipJson && ipJson.ip) clientIp = String(ipJson.ip);
-                                  } catch (e) {}
-                                  const data = await postApi("submitCRCashout", {
-                                    account: user.account,
-                                    username: user.username || user.account,
-                                    brand_name: crSelectedBrand.brand_name || crSelectedBrand.family_name || crSelectedBrand.name,
-                                    country_code: crCountry,
-                                    amountUsd: amtUsd.toFixed(2),
-                                    amount: amtPts,
-                                    denomination: denomination,
-                                    details: email,
-                                    email: email,
-                                    coin: "USDC",
-                                    network: "Solana",
-                                    ip: clientIp,
-                                    userAgent: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "RewardBux"
-                                  });
-                                  setSubmitting(false);
-                                  if (data.error) {
-                                    showMsg(data.error + (data.refunded ? " (balance refunded)" : ""));
-                                    return;
-                                  }
-                                  showMsg("Gift card order submitted! Email: " + email, "success");
-                                  const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
-                                  saveUser({ ...user, balance: newBal });
-                                  loadCashouts(user.account);
-                                  setCrSelectedBrand(null);
-                                  setCrSelectedDenom(null);
-                                  setCrCustomAmount("");
-                                }}
-                              >
-                                {submitting ? "Submitting…" : "Redeem gift card"}
-                              </button>
-                            </>
-                          )}
-                        </>
-                      )}
-
-
-                    </>
-                  )}
-                </div>
-                {user && (
-                  <div className="card">
-                    <h2 style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                      <span>Your Cashouts</span>
-                      {cashouts.some(c => String(c.status||"").toLowerCase()==="pending" && c.crOrderId) && (
-                        <button
-                          className="btn btn-ghost"
-                          style={{ width: "auto", padding: "4px 10px", fontSize: "0.72rem" }}
-                          onClick={refreshPendingCR}
-                          disabled={refreshingCR}
-                        >
-                          <i className={"fas " + (refreshingCR ? "fa-spinner fa-spin" : "fa-sync")} />{" "}
-                          {refreshingCR ? "Checking…" : "Refresh status"}
-                        </button>
-                      )}
-                    </h2>
-                    {cashouts.length === 0 ? (
-                      <div className="empty">No cashout requests yet</div>
-                    ) : cashouts.map((c, i) => (
-                      <div key={c.id || i} className="history-item">
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 600 }}>{c.rewardName || c.rewardType}</div>
-                          <div className="meta-line">
-                            {formatUSD(c.amount || 0)} · {c.time}
-                            {c.crOrderId ? " · CR " + String(c.crOrderId).slice(0, 10) : ""}
-                          </div>
-                          {c.giftCode ? (
-                            <div className="meta-line" style={{ color: "var(--accent-light)" }}>Code: {c.giftCode}</div>
-                          ) : null}
-                          {c.crStatus && String(c.status).toLowerCase() !== "sent" ? (
-                            <div className="meta-line">Provider: {c.crStatus}</div>
-                          ) : null}
-                        </div>
-                        {statusBadge(c.status)}
+                <div className="section-label">Gift cards (CryptoRefills catalog)</div>
+                {!crSelectedBrand ? (
+                  <>
+                    <div className="cr-toolbar">
+                      <div className="field"><label>Country</label>
+                        <select value={crCountry} onChange={e => { setCrCountry(e.target.value); setCrSearch(""); }}>
+                          {CR_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
+                        </select>
                       </div>
-                    ))}
-                  </div>
+                      <div className="field"><label>Search brands</label>
+                        <input value={crSearch} onChange={e => { setCrSearch(e.target.value); setCrBrandPage(1); }} placeholder="e.g. Amazon, Steam…" />
+                      </div>
+                      <div className="field-btn">
+                        <button className="btn btn-ghost" style={{ width: "auto", padding: "7px 12px" }} onClick={() => loadCRBrands(crCountry)} disabled={crBrandsLoading}>
+                          <i className={"fas " + (crBrandsLoading ? "fa-spinner fa-spin" : "fa-sync")} />
+                        </button>
+                      </div>
+                    </div>
+                    {crBrandsError && <div className="alert alert-error">{crBrandsError}</div>}
+                    {crBrandsLoading ? <div className="empty">Loading brands for {crCountry}…</div> : (() => {
+                      const q = crSearch.trim().toLowerCase();
+                      const filtered = !q ? crBrands : crBrands.filter(b => (b.name + " " + b.family_name + " " + b.brand_name).toLowerCase().indexOf(q) >= 0);
+                      const pageItems = filtered.slice(0, crBrandPage * CR_PAGE_SIZE);
+                      return (
+                        <>
+                          <div className="cr-count">{filtered.length} brand{filtered.length === 1 ? "" : "s"} {q ? "matching \"" + crSearch.trim() + "\"" : ""}</div>
+                          {filtered.length === 0 ? <div className="empty">No brands found.</div> : (
+                            <div className="reward-grid">
+                              {pageItems.map(b => (
+                                <div key={b.id} className="reward-item" onClick={() => openCRBrand(b)}>
+                                  {b.logo ? <img src={b.logo} alt={b.name} onError={e => { e.target.style.display = "none"; }} /> : <div style={{ height: 28, marginBottom: 6, fontSize: "1.2rem", color: "var(--accent)" }}><i className="fas fa-gift" /></div>}
+                                  <div className="name">{b.name}</div><div className="tag">Select</div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {pageItems.length < filtered.length && <button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => setCrBrandPage(p => p + 1)}>Show more ({filtered.length - pageItems.length} left)</button>}
+                        </>
+                      );
+                    })()}
+                  </>
+                ) : (
+                  <>
+                    <button className="brand-back" onClick={() => { setCrSelectedBrand(null); setCrDenoms({ fixed: [], ranges: [] }); setCrSelectedDenom(null); setCrCustomAmount(""); }}>
+                      <i className="fas fa-arrow-left" /> Back to brands
+                    </button>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                      {crSelectedBrand.logo ? <img src={crSelectedBrand.logo} alt="" style={{ height: 32, maxWidth: 80, objectFit: "contain" }} onError={e => { e.target.style.display = "none"; }} /> : null}
+                      <div><div style={{ fontWeight: 600, color: "#fff" }}>{crSelectedBrand.name}</div><div style={{ fontSize: "0.72rem", color: "var(--muted)" }}>Country: {crCountry}</div></div>
+                    </div>
+                    {crDenomsLoading ? <div className="empty">Loading denominations…</div> : (
+                      <>
+                        {crDenoms.fixed.length > 0 && (
+                          <><label>Choose amount</label><div className="denom-grid">
+                            {crDenoms.fixed.map((d, i) => (
+                              <button key={i} type="button" className={"denom-chip" + (crSelectedDenom && crSelectedDenom.value === d.value && !crCustomAmount ? " active" : "")} onClick={() => { setCrSelectedDenom(d); setCrCustomAmount(""); }}>{d.label}</button>
+                            ))}
+                          </div></>
+                        )}
+                        {(crDenoms.ranges.length > 0 || crDenoms.fixed.length === 0) && (
+                          <><label>{crDenoms.fixed.length ? "Or custom amount (USD)" : "Amount (USD)"}</label>
+                          <input type="number" step="0.01" min={crDenoms.ranges[0] ? crDenoms.ranges[0].min : 1} max={crDenoms.ranges[0] ? crDenoms.ranges[0].max : undefined} value={crCustomAmount} onChange={e => { setCrCustomAmount(e.target.value); setCrSelectedDenom(null); }} placeholder={crDenoms.ranges[0] ? ("Min " + crDenoms.ranges[0].min + (crDenoms.ranges[0].max ? " – max " + crDenoms.ranges[0].max : "")) : "e.g. 25"} /></>
+                        )}
+                        <label>Delivery email</label>
+                        <input value={details} onChange={e => setDetails(e.target.value)} placeholder="you@email.com" />
+                        <button className="btn btn-primary" disabled={submitting} onClick={async () => {
+                          const email = (details || user.email || "").trim();
+                          if (!email || email.indexOf("@") < 0) { showMsg("Enter valid email"); return; }
+                          let amtUsd = 0, denomination = "";
+                          if (crCustomAmount && parseFloat(crCustomAmount) > 0) { amtUsd = parseFloat(crCustomAmount); denomination = "range"; }
+                          else if (crSelectedDenom) { amtUsd = crSelectedDenom.value; denomination = crSelectedDenom.denomination || (amtUsd + " USD"); }
+                          else { showMsg("Select or enter an amount"); return; }
+                          if (amtUsd <= 0) { showMsg("Invalid amount"); return; }
+                          const amtPts = toPts(amtUsd);
+                          if (amtPts > Number(user.balance || 0)) { showMsg("Insufficient balance"); return; }
+                          setSubmitting(true);
+                          let clientIp = "";
+                          try { const ipRes = await fetch("https://api.ipify.org?format=json"); const ipJson = await ipRes.json(); if (ipJson && ipJson.ip) clientIp = String(ipJson.ip); } catch (e) {}
+                          const data = await postApi("submitCRCashout", {
+                            account: user.account, username: user.username || user.account,
+                            brand_name: crSelectedBrand.brand_name || crSelectedBrand.family_name || crSelectedBrand.name,
+                            country_code: crCountry, amountUsd: amtUsd.toFixed(2), amount: amtPts, denomination,
+                            details: email, email, coin: "USDC", network: "Solana", ip: clientIp,
+                            userAgent: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "RewardBux"
+                          });
+                          setSubmitting(false);
+                          if (data.error) { showMsg(data.error + (data.refunded ? " (balance refunded)" : "")); return; }
+                          showMsg("Gift card order submitted! Email: " + email, "success");
+                          const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
+                          saveUser({ ...user, balance: newBal });
+                          loadCashouts(user.account);
+                          setCrSelectedBrand(null); setCrSelectedDenom(null); setCrCustomAmount("");
+                        }}>{submitting ? "Submitting…" : "Redeem gift card"}</button>
+                      </>
+                    )}
+                  </>
                 )}
               </>
             )}
-
-            {tab === "chat" && (
-              <div className="card chat-box">
-                <h2>Community Chat</h2>
-                <div className="chat-sound-toggle" onClick={toggleSound}>
-                  <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
-                  {soundOn ? "Ding sound ON" : "Ding sound OFF"}
-                </div>
-                <div className="chat-messages">
-                  {chatMessages.length === 0 ? (
-                    <div className="empty">No messages yet. Say hi!</div>
-                  ) : chatMessages.map(m => (
-                    <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
-                      <div className="meta">
-                        <span>
-                          <span className="name">{m.username}</span>
-                          {m.isAdmin ? <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span> : null}
-                        </span>
-                        <span>{m.time}</span>
-                      </div>
-                      <div>{m.message}</div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-                <div className="chat-input-row">
-                  <input value={chatInput}
-                    onChange={e => setChatInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && sendChat()}
-                    placeholder={user ? "Type a message..." : "Login to chat"}
-                    maxLength={300} disabled={!user} />
-                  <button className="btn btn-primary" onClick={sendChat} disabled={!user}>
-                    <i className="fas fa-paper-plane" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {tab === "leaders" && (
-              <div className="card leaderboard">
-                <h2>Leaderboard</h2>
-                {leaders.length === 0 ? (
-                  <div className="empty">No data yet</div>
-                ) : (
-                  <table>
-                    <thead><tr><th>#</th><th>User</th><th>Earnings</th><th>Lvl</th></tr></thead>
-                    <tbody>
-                      {leaders.map((l, i) => (
-                        <tr key={i}>
-                          <td>{i + 1}</td>
-                          <td>{l.username}</td>
-                          <td>{formatUSD(l.balance || 0)}</td>
-                          <td>{l.level}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-
-            {tab === "bonus" && (
-              <div className="card">
-                <h2>Redeem Bonus Code</h2>
-                <div className="alert alert-warn">
-                  First come, first served. Each code can only be used once.
-                </div>
-
-                {!user ? (
-                  <button className="btn btn-primary" onClick={() => setTab("earn")}>
-                    Login to Redeem Bonus
-                  </button>
-                ) : (
-                  <>
-                    <label>Username</label>
-                    <input 
-                      value={user.username || user.account || ""} 
-                      disabled 
-                      style={{ opacity: 0.7 }}
-                    />
-                    <label>Bonus Code</label>
-                    <input 
-                      value={form.bonusCode} 
-                      onChange={e => setForm({...form, bonusCode: e.target.value.toUpperCase()})} 
-                      placeholder="Enter code"
-                      onKeyDown={e => e.key === "Enter" && redeemBonus()}
-                    />
-                    <button className="btn btn-primary" onClick={redeemBonus}>
-                      Redeem Code
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-
-            {tab === "help" && (
-              <div className="card">
-                <h2>Help & Support</h2>
-                <div style={{ marginBottom: 16 }}>
-                  <strong>How to earn?</strong>
-                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Login → Earn → open an offerwall.</p>
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <strong>How to cash out?</strong>
-                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>
-                    Shop → pick a gift card → amount → delivery email → submit.
-                    CryptoRefills orders are fulfilled after processing; use Refresh status if pending.
-                  </p>
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <strong>Cashout status</strong>
-                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>
-                    <span className="badge badge-unsent">Unsent</span> waiting ·
-                    <span className="badge badge-pending" style={{ marginLeft: 6 }}>Pending</span> processing ·
-                    <span className="badge badge-sent" style={{ marginLeft: 6 }}>Sent</span> paid
-                  </p>
-                </div>
-                <button className="btn btn-primary" onClick={() => alert("Email support@rewardbux.com")}>
-                  Contact Support
-                </button>
-              </div>
-            )}
-          </main>
-
-          {/* MOBILE BOTTOM NAV */}
-          <div className="bottom-nav">
-            {tabs.map(t => (
-              <div
-                key={t.id}
-                className={"nav-item" + ((t.id === "chat" ? chatOpen : tab === t.id) ? " active" : "")}
-                onClick={() => selectTab(t.id)}
-              >
-                <i className={"fas " + t.icon} />
-                <span>{t.label}</span>
-              </div>
-            ))}
           </div>
+        )}
 
-          {/* DESKTOP CHAT SIDE PANEL */}
-          {chatOpen && (
-            <>
-              <div className="chat-backdrop" onClick={() => setChatOpen(false)} />
-              <div className="chat-panel open">
-                <div className="chat-panel-header">
-                  <span><i className="fas fa-comments" /> Community Chat</span>
-                  <button className="chat-panel-close" onClick={() => setChatOpen(false)} title="Close">
-                    <i className="fas fa-times" />
-                  </button>
-                </div>
-                <div className="chat-sound-toggle" onClick={toggleSound} style={{ padding: "0 10px", marginBottom: 6 }}>
-                  <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
-                  {soundOn ? "Ding sound ON" : "Ding sound OFF"}
-                </div>
-                <div className="chat-messages chat-panel-messages">
-                  {chatMessages.length === 0 ? (
-                    <div className="empty">No messages yet. Say hi!</div>
-                  ) : chatMessages.map(m => (
-                    <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
-                      <div className="meta">
-                        <span>
-                          <span className="name">{m.username}</span>
-                          {m.isAdmin ? <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span> : null}
-                        </span>
-                        <span>{m.time}</span>
-                      </div>
-                      <div>{m.message}</div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-                <div className="chat-input-row" style={{ padding: "0 10px 10px" }}>
-                  <input value={chatInput}
-                    onChange={e => setChatInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && sendChat()}
-                    placeholder={user ? "Type a message..." : "Login to chat"}
-                    maxLength={300} disabled={!user} />
-                  <button className="btn btn-primary" onClick={sendChat} disabled={!user}>
-                    <i className="fas fa-paper-plane" />
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {iframeUrl && (
-            <div className="iframe-overlay">
-              <div className="iframe-bar">
-                <span style={{ fontWeight: 600 }}>Offer Wall</span>
-                <button onClick={() => { setIframeUrl(null); refreshBalance(); }}><i className="fas fa-times" /></button>
-              </div>
-              <iframe src={iframeUrl} title="Offerwall" sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-top-navigation-by-user-activation" />
+        {/* CHAT TAB — fully functional on mobile */}
+        {tab === "chat" && (
+          <div className="card chat-box">
+            <h2>Community Chat</h2>
+            <div className="chat-sound-toggle" onClick={toggleSound}>
+              <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
+              {soundOn ? "Ding sound ON" : "Ding sound OFF"}
             </div>
-          )}
-
-          {modal && (
-            <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
-              <div className="modal">
-                <div className="modal-header">
-                  <h3>{modal.name}</h3>
-                  <button className="modal-close" onClick={closeModal}><i className="fas fa-times" /></button>
-                </div>
-                <div className="steps">
-                  <div className={"step-dot" + (step > 1 ? " done" : step === 1 ? " active" : "")} />
-                  <div className={"step-dot" + (step > 2 ? " done" : step === 2 ? " active" : "")} />
-                  <div className={"step-dot" + (step === 3 ? " active" : "")} />
-                </div>
-                {step === 1 && (
-                  <>
-                    <label>Amount (USD)</label>
-                    <input type="number" step="0.01" min={modal.min}
-                      max={user ? toUSD(user.balance) : undefined}
-                      value={amount} onChange={e => setAmount(e.target.value)}
-                      placeholder={"Min $" + modal.min} autoFocus />
-                    <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 16 }}>
-                      Available: {formatUSD((user && user.balance) || 0)}
-                      <span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
-                    </p>
-                    {modal.provider === "cryptorefills" && (
-                      <div className="alert alert-info" style={{ marginBottom: 12 }}>
-                        Delivered by CryptoRefills to your email after processing.
-                      </div>
-                    )}
-                    <button className="btn btn-primary" onClick={nextStep}>Next</button>
-                  </>
-                )}
-                {step === 2 && (
-                  <>
-                    <label>{modal.detailsLabel}</label>
-                    <input value={details} onChange={e => setDetails(e.target.value)}
-                      placeholder={modal.detailsPlaceholder} autoFocus />
-                    <div className="btn-row">
-                      <button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button>
-                      <button className="btn btn-primary" onClick={nextStep}>Next</button>
-                    </div>
-                  </>
-                )}
-                {step === 3 && (
-                  <>
-                    <div className="summary">
-                      <div><strong>Reward:</strong> {modal.name}</div>
-                      <div><strong>Amount:</strong> ${parseFloat(amount || 0).toFixed(2)}</div>
-                      <div><strong>Details:</strong> {details}</div>
-                      {modal.provider === "cryptorefills" && (
-                        <div><strong>Provider:</strong> CryptoRefills (USDC)</div>
-                      )}
-                    </div>
-                    <div className="btn-row">
-                      <button className="btn btn-ghost" onClick={() => setStep(2)} disabled={submitting}>Back</button>
-                      <button className="btn btn-primary" onClick={submitCashout} disabled={submitting}>
-                        {submitting ? "Submitting..." : "Submit"}
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
+            <div className="chat-messages" style={{ maxHeight: '340px' }}>
+              {chatMessages.length === 0 ? <div className="empty">No messages yet. Say hi!</div> :
+                chatMessages.map(m => (
+                  <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
+                    <div className="meta"><span><span className="name">{m.username}</span>{m.isAdmin ? <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span> : null}</span><span>{m.time}</span></div>
+                    <div>{m.message}</div>
+                  </div>
+                ))
+              }
+              <div ref={chatEndRef} />
             </div>
-          )}
+            <div className="chat-input-row">
+              <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat()} placeholder={user ? "Type a message..." : "Login to chat"} maxLength={300} disabled={!user} />
+              <button onClick={sendChat} disabled={!user}><i className="fas fa-paper-plane" /></button>
+            </div>
+          </div>
+        )}
+
+        {tab === "leaders" && (
+          <div className="card leaderboard">
+            <h2>Leaderboard</h2>
+            {leaders.length === 0 ? <div className="empty">No data yet</div> : (
+              <table><thead><tr><th>#</th><th>User</th><th>Earnings</th><th>Lvl</th></tr></thead><tbody>
+                {leaders.map((l, i) => <tr key={i}><td>{i+1}</td><td>{l.username}</td><td>{formatUSD(l.balance || 0)}</td><td>{l.level}</td></tr>)}
+              </tbody></table>
+            )}
+          </div>
+        )}
+
+        {tab === "bonus" && (
+          <div className="card">
+            <h2>Redeem Bonus Code</h2>
+            <div className="alert alert-warn">First come, first served. Each code can only be used once.</div>
+            {!user ? <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Redeem Bonus</button> : (
+              <>
+                <label>Username</label><input value={user.username || user.account || ""} disabled style={{ opacity: 0.7 }} />
+                <label>Bonus Code</label><input value={form.bonusCode} onChange={e => setForm({...form, bonusCode: e.target.value.toUpperCase()})} placeholder="Enter code" onKeyDown={e => e.key === "Enter" && redeemBonus()} />
+                <button className="btn btn-primary" onClick={redeemBonus}>Redeem Code</button>
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === "help" && (
+          <div className="card">
+            <h2>Help & Support</h2>
+            <div style={{ marginBottom: 16 }}><strong>How to earn?</strong><p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Login → Earn → open an offerwall.</p></div>
+            <div style={{ marginBottom: 16 }}><strong>How to cash out?</strong><p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Shop → pick a gift card → amount → delivery email → submit.</p></div>
+            <div style={{ marginBottom: 16 }}><strong>Cashout status</strong><p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}><span className="badge badge-unsent">Unsent</span> waiting · <span className="badge badge-pending" style={{ marginLeft: 6 }}>Pending</span> processing · <span className="badge badge-sent" style={{ marginLeft: 6 }}>Sent</span> paid</p></div>
+            <button className="btn btn-primary" onClick={() => alert("support@rewardbux.com")}>Contact Support</button>
+          </div>
+        )}
+      </main>
+
+      {/* MOBILE BOTTOM NAV */}
+      <div className="bottom-nav">
+        {tabs.map(t => (
+          <div key={t.id} className={"nav-item" + ((t.id === "chat" ? chatOpen : tab === t.id) ? " active" : "")} onClick={() => selectTab(t.id)}>
+            <i className={"fas " + t.icon} /><span>{t.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* CHAT SIDE PANEL (desktop) */}
+      {chatOpen && (
+        <>
+          <div className="chat-backdrop" onClick={() => setChatOpen(false)} />
+          <div className="chat-panel open">
+            <div className="chat-panel-header"><span><i className="fas fa-comments" /> Community Chat</span>
+              <button className="chat-panel-close" onClick={() => setChatOpen(false)}><i className="fas fa-times" /></button>
+            </div>
+            <div className="chat-sound-toggle" onClick={toggleSound} style={{ padding: "0 10px", marginBottom: 6 }}>
+              <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
+              {soundOn ? "Ding sound ON" : "Ding sound OFF"}
+            </div>
+            <div className="chat-messages chat-panel-messages">
+              {chatMessages.length === 0 ? <div className="empty">No messages yet.</div> :
+                chatMessages.map(m => (
+                  <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
+                    <div className="meta"><span><span className="name">{m.username}</span>{m.isAdmin ? <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span> : null}</span><span>{m.time}</span></div>
+                    <div>{m.message}</div>
+                  </div>
+                ))
+              }
+              <div ref={chatEndRef} />
+            </div>
+            <div className="chat-input-row">
+              <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat()} placeholder={user ? "Type a message..." : "Login to chat"} maxLength={300} disabled={!user} />
+              <button onClick={sendChat} disabled={!user}><i className="fas fa-paper-plane" /></button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {iframeUrl && (
+        <div className="iframe-overlay">
+          <div className="iframe-bar"><span style={{ fontWeight: 600 }}>Offer Wall</span><button onClick={() => { setIframeUrl(null); refreshBalance(); }}><i className="fas fa-times" /></button></div>
+          <iframe src={iframeUrl} title="Offerwall" sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-top-navigation-by-user-activation" />
         </div>
-      );
-    }
+      )}
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
+      {modal && (
+        <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
+          <div className="modal">
+            <div className="modal-header"><h3>{modal.name}</h3><button className="modal-close" onClick={closeModal}><i className="fas fa-times" /></button></div>
+            <div className="steps"><div className={"step-dot" + (step > 1 ? " done" : step === 1 ? " active" : "")} /><div className={"step-dot" + (step > 2 ? " done" : step === 2 ? " active" : "")} /><div className={"step-dot" + (step === 3 ? " active" : "")} /></div>
+            {step === 1 && (<><label>Amount (USD)</label><input type="number" step="0.01" min={modal.min} max={user ? toUSD(user.balance) : undefined} value={amount} onChange={e => setAmount(e.target.value)} placeholder={"Min $" + modal.min} autoFocus /><p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 16 }}>Available: {formatUSD((user && user.balance) || 0)}<span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span></p><button className="btn btn-primary" onClick={nextStep}>Next</button></>)}
+            {step === 2 && (<><label>{modal.detailsLabel}</label><input value={details} onChange={e => setDetails(e.target.value)} placeholder={modal.detailsPlaceholder} autoFocus /><div className="btn-row"><button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button><button className="btn btn-primary" onClick={nextStep}>Next</button></div></>)}
+            {step === 3 && (<><div className="summary"><div><strong>Reward:</strong> {modal.name}</div><div><strong>Amount:</strong> ${parseFloat(amount || 0).toFixed(2)}</div><div><strong>Details:</strong> {details}</div></div><div className="btn-row"><button className="btn btn-ghost" onClick={() => setStep(2)} disabled={submitting}>Back</button><button className="btn btn-primary" onClick={submitCashout} disabled={submitting}>{submitting ? "Submitting..." : "Submit"}</button></div></>)}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
 </body>
 </html>
