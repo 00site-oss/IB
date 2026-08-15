@@ -4,36 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RewardBux Admin</title>
-  <meta name="theme-color" content="#0b1229" />
+  <meta name="theme-color" content="#0c0f12" />
   <link rel="icon" href="https://i.imgur.com/wppiqAy.png" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
   <style>
     :root {
-      --bg: #0b1229;
-      --card: #131c35;
-      --card-hover: #1a2545;
-      --border: #1e2a4a;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --accent: #3b82f6;
-      --accent-light: #60a5fa;
-      --success: #22c55e;
-      --danger: #ef4444;
-      --warning: #f59e0b;
+      --bg: #0c0f12;
+      --bg-secondary: #151a1f;
+      --card: #171c22;
+      --card-hover: #1e252d;
+      --border: #2c353f;
+      --text: #d8dde3;
+      --muted: #8b949e;
+      --accent: #00b8a9;
+      --accent-2: #e8a838;
+      --accent-light: #5eead4;
+      --success: #3dd68c;
+      --danger: #f07178;
+      --warning: #e8a838;
+      --radius: 3px;
+      --shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Roboto', 'Noto Sans', 'Droid Sans', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      line-height: 1.5;
-      font-size: 14px;
+      line-height: 1.35;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
     }
     .app {
       max-width: 1100px;
@@ -41,7 +44,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.12), transparent), var(--bg);
+      background: var(--bg);
     }
 
     /* Login */
@@ -51,53 +54,82 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      background: var(--bg);
     }
     .login-box {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 40px 32px;
+      border-radius: var(--radius);
+      padding: 28px 24px;
       width: 100%;
-      max-width: 400px;
+      max-width: 360px;
       text-align: center;
+      box-shadow: var(--shadow);
     }
-    .login-box h1 { font-size: 1.6rem; margin-bottom: 8px; color: #fff; }
-    .login-box p { color: var(--muted); margin-bottom: 28px; font-size: 0.9rem; }
+    .login-box .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .login-box .logo .dollar { color: var(--accent); }
+    .login-box .logo span { color: var(--accent-light); }
+    .login-box h1 { font-size: 1.15rem; margin-bottom: 4px; color: #fff; font-weight: 500; }
+    .login-box p { color: var(--muted); margin-bottom: 18px; font-size: 0.8rem; }
     .login-box input {
       width: 100%;
-      padding: 12px 14px;
-      border-radius: 10px;
+      padding: 9px 11px;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
       background: var(--bg);
       color: var(--text);
-      font-size: 0.95rem;
-      margin-bottom: 16px;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
       font-family: inherit;
     }
     .login-box input:focus { outline: none; border-color: var(--accent); }
 
     /* Header */
     header {
-      background: rgba(11, 18, 41, 0.95);
-      backdrop-filter: blur(12px);
+      background: #12171c;
       border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
+      padding: 0 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 50;
+      min-height: 48px;
     }
-    .logo { font-weight: 700; font-size: 1.3rem; display: flex; align-items: center; gap: 6px; }
-    .logo span { color: var(--accent-light); }
-    .header-right { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      font-weight: 700;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      color: #fff;
+    }
+    .logo .dollar { color: var(--accent); }
+    .logo span.brand { color: var(--accent-light); }
+    .logo .admin-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 500;
+      margin-left: 8px;
+      letter-spacing: 0.3px;
+    }
+    .header-right { display: flex; align-items: center; gap: 10px; }
     .admin-badge {
-      background: rgba(59, 130, 246, 0.15);
+      background: rgba(0,184,169,0.14);
       color: var(--accent-light);
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
+      padding: 3px 10px;
+      border-radius: var(--radius);
+      font-size: 0.72rem;
       font-weight: 600;
     }
 
@@ -111,92 +143,94 @@
     }
     .admin-nav::-webkit-scrollbar { display: none; }
     .nav-tab {
-      padding: 14px 18px;
-      font-size: 0.85rem;
+      padding: 10px 14px;
+      font-size: 0.78rem;
       font-weight: 500;
       color: var(--muted);
       cursor: pointer;
       border-bottom: 2px solid transparent;
       white-space: nowrap;
-      transition: all 0.15s;
     }
-    .nav-tab:hover { color: var(--text); }
+    .nav-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
     .nav-tab.active {
       color: var(--accent-light);
       border-bottom-color: var(--accent);
+      background: rgba(0,184,169,0.08);
     }
-    .nav-tab i { margin-right: 6px; }
+    .nav-tab i { margin-right: 5px; }
 
-    main { flex: 1; padding: 20px; }
+    main { flex: 1; padding: 14px 16px; }
 
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 20px;
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
     }
     .card h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 12px;
       color: #fff;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
     }
     .stat-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
+      border-radius: var(--radius);
+      padding: 14px 10px;
       text-align: center;
     }
-    .stat-card .value { font-size: 1.6rem; font-weight: 700; color: var(--accent-light); }
-    .stat-card .label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+    .stat-card .value { font-size: 1.4rem; font-weight: 700; color: var(--accent-light); }
+    .stat-card .label { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
 
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
     th {
       text-align: left;
-      padding: 10px 12px;
+      padding: 7px 8px;
       color: var(--muted);
       font-weight: 500;
       border-bottom: 1px solid var(--border);
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       white-space: nowrap;
     }
-    td { padding: 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tr:hover td { background: rgba(255,255,255,0.02); }
 
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 8px 14px;
+      gap: 5px;
+      padding: 7px 12px;
       border: none;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      font-weight: 500;
       font-family: inherit;
       cursor: pointer;
-      transition: all 0.15s;
     }
-    .btn-sm { padding: 6px 10px; font-size: 0.8rem; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #2563eb; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-success:hover { background: #16a34a; }
+    .btn-sm { padding: 5px 9px; font-size: 0.72rem; }
+    .btn-primary { background: var(--accent); color: #041210; }
+    .btn-primary:hover { background: #00a396; }
+    .btn-success { background: var(--success); color: #041210; }
+    .btn-success:hover { background: #32c47e; }
     .btn-danger { background: var(--danger); color: #fff; }
-    .btn-danger:hover { background: #dc2626; }
+    .btn-danger:hover { background: #e05c63; }
     .btn-ghost {
       background: transparent;
       color: var(--muted);
@@ -207,27 +241,27 @@
 
     input, select, textarea {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius);
       border: 1px solid var(--border);
       background: var(--bg);
       color: var(--text);
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-family: inherit;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
     label {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 500;
       color: var(--muted);
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
     @media (max-width: 600px) {
       .form-row { grid-template-columns: 1fr; }
@@ -235,643 +269,300 @@
 
     .badge {
       display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius);
+      font-size: 0.65rem;
+      font-weight: 500;
       text-transform: uppercase;
     }
-    .badge-pending { background: rgba(245,158,11,0.2); color: #fbbf24; }
-    .badge-sent { background: rgba(34,197,94,0.2); color: #4ade80; }
-    .badge-unsent { background: rgba(239,68,68,0.2); color: #f87171; }
-    .badge-rejected { background: rgba(100,116,139,0.2); color: #94a3b8; }
+    .badge-pending { background: rgba(232,168,56,0.2); color: var(--warning); }
+    .badge-sent { background: rgba(61,214,140,0.2); color: var(--success); }
+    .badge-unsent { background: rgba(240,113,120,0.2); color: var(--danger); }
+    .badge-rejected { background: rgba(139,148,158,0.2); color: var(--muted); }
 
     .alert {
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 0.875rem;
-      margin-bottom: 16px;
+      padding: 8px 11px;
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      margin-bottom: 12px;
     }
-    .alert-success { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
-    .alert-error { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
-    .alert-info { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+    .alert-success { background: rgba(61,214,140,0.12); color: #81c995; border: 1px solid rgba(61,214,140,0.25); }
+    .alert-error { background: rgba(240,113,120,0.12); color: #f28b82; border: 1px solid rgba(240,113,120,0.25); }
+    .alert-info { background: rgba(0,184,169,0.12); color: var(--accent-light); border: 1px solid rgba(0,184,169,0.25); }
 
     .empty {
       text-align: center;
       color: var(--muted);
-      padding: 40px 20px;
-      font-size: 0.95rem;
+      padding: 28px 14px;
+      font-size: 0.82rem;
     }
-    .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-
+    .action-btns { display: flex; gap: 5px; flex-wrap: wrap; }
     .search-bar {
       display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
     .search-bar input { margin-bottom: 0; flex: 1; }
+
+    code {
+      background: var(--bg);
+      padding: 1px 5px;
+      border-radius: 2px;
+      font-size: 0.85em;
+      color: var(--accent-light);
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
-
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+<script>
+const { useState, useEffect, useCallback } = React;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
+const ADMIN_PASSWORD = "admin123";
+async function api(action, params = {}) {
+  try {
+    const qs = new URLSearchParams({ action, token: ADMIN_PASSWORD, ...params }).toString();
+    const res = await fetch(SCRIPT_URL + "?" + qs);
+    return await res.json();
+  } catch (e) {
+    return { error: "Network error" };
+  }
+}
+async function postApi(action, body = {}) {
+  try {
+    const params = new URLSearchParams();
+    params.append("action", action);
+    params.append("token", ADMIN_PASSWORD);
+    Object.keys(body).forEach((k) => params.append(k, body[k]));
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: params.toString()
+    });
+    return await res.json();
+  } catch (e) {
+    return { error: "Network error" };
+  }
+}
 
-  <script type="text/babel" data-presets="react">
-    const { useState, useEffect, useCallback } = React;
-
-    // ====== CONFIG ======
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
-    const ADMIN_PASSWORD = "admin123";   // must match code.gs
-
-    async function api(action, params = {}) {
-      try {
-        const qs = new URLSearchParams({ action, token: ADMIN_PASSWORD, ...params }).toString();
-        const res = await fetch(SCRIPT_URL + "?" + qs);
-        return await res.json();
-      } catch (e) {
-        return { error: "Network error" };
+    const memoryStore = {};
+    let ls = null;
+    try {
+      const t = "__rb_admin_test__";
+      window.localStorage.setItem(t, "1");
+      window.localStorage.removeItem(t);
+      ls = window.localStorage;
+    } catch (e) { ls = null; }
+    const storage = {
+      get(key) {
+        try { if (ls) return ls.getItem(key); } catch (e) {}
+        return memoryStore[key] != null ? memoryStore[key] : null;
+      },
+      set(key, val) {
+        try { if (ls) { ls.setItem(key, val); return; } } catch (e) {}
+        memoryStore[key] = val;
+      },
+      remove(key) {
+        try { if (ls) { ls.removeItem(key); return; } } catch (e) {}
+        delete memoryStore[key];
       }
-    }
-
-    async function postApi(action, body = {}) {
-      try {
-        const params = new URLSearchParams();
-        params.append("action", action);
-        params.append("token", ADMIN_PASSWORD);
-        Object.keys(body).forEach(k => params.append(k, body[k]));
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-          body: params.toString()
-        });
-        return await res.json();
-      } catch (e) {
-        return { error: "Network error" };
-      }
-    }
+    };
 
     function App() {
-      const [isLoggedIn, setIsLoggedIn] = useState(false);
-      const [password, setPassword] = useState("");
-      const [loginError, setLoginError] = useState("");
-      const [tab, setTab] = useState("dashboard");
-      const [msg, setMsg] = useState(null);
-
-      const [cashouts, setCashouts] = useState([]);
-      const [users, setUsers] = useState([]);
-      const [logs, setLogs] = useState([]);
-      const [offerwalls, setOfferwalls] = useState([]);
-      const [loading, setLoading] = useState(false);
-      const [search, setSearch] = useState("");
-
-      const [newOffer, setNewOffer] = useState({ name: "", urlTemplate: "", logo: "" });
-      const [bonusCode, setBonusCode] = useState({ code: "", amount: "" });
-
-      useEffect(() => {
-        if (localStorage.getItem("rewardbux_admin") === "true") {
-          setIsLoggedIn(true);
-        }
-      }, []);
-
-      function showMsg(text, type = "success") {
-        setMsg({ text, type });
-        setTimeout(() => setMsg(null), 4000);
-      }
-
-      function handleLogin(e) {
-        e.preventDefault();
-        if (password === ADMIN_PASSWORD) {
-          setIsLoggedIn(true);
-          localStorage.setItem("rewardbux_admin", "true");
-          setLoginError("");
-        } else {
-          setLoginError("Incorrect password");
-        }
-      }
-
-      function logout() {
-        setIsLoggedIn(false);
-        localStorage.removeItem("rewardbux_admin");
-        setPassword("");
-      }
-
-      // Loaders
-      const loadCashouts = useCallback(async () => {
-        setLoading(true);
-        const data = await api("adminGetCashouts");
-        if (data.cashouts) setCashouts(data.cashouts);
-        else if (data.error) showMsg(data.error, "error");
-        setLoading(false);
-      }, []);
-
-      const loadUsers = useCallback(async () => {
-        setLoading(true);
-        const data = await api("adminGetUsers");
-        if (data.users) setUsers(data.users);
-        else if (data.error) showMsg(data.error, "error");
-        setLoading(false);
-      }, []);
-
-      const loadLogs = useCallback(async () => {
-        const data = await api("logs");
-        if (data.logs) setLogs(data.logs);
-      }, []);
-
-      const loadOfferwalls = useCallback(async () => {
-        const data = await api("getOfferwalls");
-        if (data.offerwalls) setOfferwalls(data.offerwalls);
-      }, []);
-
-      useEffect(() => {
-        if (!isLoggedIn) return;
-        if (tab === "dashboard" || tab === "cashouts") loadCashouts();
-        if (tab === "dashboard" || tab === "users") loadUsers();
-        if (tab === "dashboard" || tab === "logs") loadLogs();
-        if (tab === "offerwalls") loadOfferwalls();
-      }, [isLoggedIn, tab]);
-
-      // Actions
-      async function updateCashoutStatus(id, status) {
-        const data = await postApi("adminUpdateCashout", { id, status });
-        if (data.error) {
-          showMsg(data.error, "error");
-          return;
-        }
-        showMsg(`Cashout marked as ${status}`);
-        loadCashouts();
-      }
-
-      async function addOfferwall() {
-        if (!newOffer.name || !newOffer.urlTemplate) {
-          showMsg("Name and URL Template are required", "error");
-          return;
-        }
-        const data = await postApi("adminAddOfferwall", newOffer);
-        if (data.error) {
-          showMsg(data.error, "error");
-          return;
-        }
-        showMsg("Offerwall added successfully!");
-        setNewOffer({ name: "", urlTemplate: "", logo: "" });
-        loadOfferwalls();
-      }
-
-      async function createBonus() {
-        if (!bonusCode.code || !bonusCode.amount) {
-          showMsg("Code and amount required", "error");
-          return;
-        }
-        const data = await postApi("adminCreateBonus", {
-          code: bonusCode.code,
-          amount: bonusCode.amount
-        });
-        if (data.error) {
-          showMsg(data.error, "error");
-          return;
-        }
-        showMsg("Bonus code created!");
-        setBonusCode({ code: "", amount: "" });
-      }
-
-      const filteredCashouts = cashouts.filter(c => {
-        if (!search) return true;
-        const s = search.toLowerCase();
-        return (
-          (c.username || "").toLowerCase().includes(s) ||
-          (c.account || "").toLowerCase().includes(s) ||
-          (c.rewardName || "").toLowerCase().includes(s) ||
-          (c.details || "").toLowerCase().includes(s)
-        );
-      });
-
-      const pendingCount = cashouts.filter(c =>
-        ["unsent", "pending", ""].includes(String(c.status || "unsent").toLowerCase())
-      ).length;
-
-      // LOGIN SCREEN
-      if (!isLoggedIn) {
-        return (
-          <div className="login-screen">
-            <div className="login-box">
-              <div className="logo" style={{ justifyContent: "center", marginBottom: 8 }}>
-                <span style={{ color: "var(--accent-light)" }}>$</span>Reward<span>Bux</span>
-              </div>
-              <h1>Admin Panel</h1>
-              <p>Enter the admin password to continue</p>
-             
-              <form onSubmit={handleLogin}>
-                <input
-                  type="password"
-                  placeholder="Admin Password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  autoFocus
-                />
-                {loginError && <div className="alert alert-error">{loginError}</div>}
-                <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "12px" }}>
-                  Login
-                </button>
-              </form>
-              <p style={{ marginTop: 20, fontSize: "0.8rem", color: "var(--muted)" }}>
-                Default password: <code>admin123</code>
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-      // MAIN PANEL
-      return (
-        <div className="app">
-          <header>
-            <div className="logo">
-              <span style={{ color: "var(--accent-light)" }}>$</span>Reward<span>Bux</span>
-              <span style={{ fontSize: "0.85rem", color: "var(--muted)", fontWeight: 500, marginLeft: 8 }}>Admin</span>
-            </div>
-            <div className="header-right">
-              <span className="admin-badge"><i className="fas fa-shield-alt"></i> Admin</span>
-              <button className="btn btn-ghost btn-sm" onClick={logout}>
-                <i className="fas fa-sign-out-alt"></i> Logout
-              </button>
-            </div>
-          </header>
-
-          <nav className="admin-nav">
-            {[
-              { id: "dashboard", icon: "fa-chart-pie", label: "Dashboard" },
-              { id: "cashouts", icon: "fa-money-bill-wave", label: `Cashouts ${pendingCount > 0 ? `(${pendingCount})` : ""}` },
-              { id: "users", icon: "fa-users", label: "Users" },
-              { id: "offerwalls", icon: "fa-th-large", label: "Offerwalls" },
-              { id: "bonus", icon: "fa-gift", label: "Bonus Codes" },
-              { id: "logs", icon: "fa-history", label: "Activity Logs" },
-            ].map(t => (
-              <div
-                key={t.id}
-                className={"nav-tab" + (tab === t.id ? " active" : "")}
-                onClick={() => setTab(t.id)}
-              >
-                <i className={"fas " + t.icon}></i>
-                {t.label}
-              </div>
-            ))}
-          </nav>
-
-          <main>
-            {msg && <div className={"alert alert-" + msg.type}>{msg.text}</div>}
-
-            {/* DASHBOARD */}
-            {tab === "dashboard" && (
-              <>
-                <div className="stats-grid">
-                  <div className="stat-card">
-                    <div className="value">{pendingCount}</div>
-                    <div className="label">Pending Cashouts</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="value">{cashouts.length}</div>
-                    <div className="label">Total Cashouts</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="value">{users.length || "—"}</div>
-                    <div className="label">Total Users</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="value">{logs.length}</div>
-                    <div className="label">Recent Logs</div>
-                  </div>
-                </div>
-
-                <div className="card">
-                  <h2><i className="fas fa-clock" style={{ color: "var(--warning)" }}></i> Pending Cashouts</h2>
-                  {pendingCount === 0 ? (
-                    <div className="empty">No pending cashouts 🎉</div>
-                  ) : (
-                    <div className="table-wrap">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>User</th>
-                            <th>Reward</th>
-                            <th>Amount</th>
-                            <th>Details</th>
-                            <th>Time</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {cashouts
-                            .filter(c => ["unsent", "pending", ""].includes(String(c.status || "unsent").toLowerCase()))
-                            .slice(0, 10)
-                            .map((c, i) => (
-                              <tr key={c.id || i}>
-                                <td><strong>{c.username || c.account}</strong></td>
-                                <td>{c.rewardName || c.rewardType}</td>
-                                <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
-                                  ${parseFloat(c.amount || 0).toFixed(2)}
-                                </td>
-                                <td style={{ maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}>
-                                  {c.details}
-                                </td>
-                                <td>{c.time || "—"}</td>
-                                <td>
-                                  <div className="action-btns">
-                                    <button className="btn btn-success btn-sm" onClick={() => updateCashoutStatus(c.id, "sent")}>
-                                      Mark Sent
-                                    </button>
-                                    <button className="btn btn-danger btn-sm" onClick={() => updateCashoutStatus(c.id, "rejected")}>
-                                      Reject
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-
-            {/* CASHOUTS */}
-            {tab === "cashouts" && (
-              <div className="card">
-                <h2><i className="fas fa-money-bill-wave"></i> All Cashouts</h2>
-               
-                <div className="search-bar">
-                  <input
-                    placeholder="Search by username, account, reward or details..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                  />
-                  <button className="btn btn-ghost" onClick={loadCashouts}>
-                    <i className="fas fa-sync-alt"></i>
-                  </button>
-                </div>
-
-                {loading ? (
-                  <div className="empty">Loading...</div>
-                ) : filteredCashouts.length === 0 ? (
-                  <div className="empty">No cashouts found</div>
-                ) : (
-                  <div className="table-wrap">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>User</th>
-                          <th>Reward</th>
-                          <th>Amount</th>
-                          <th>Details</th>
-                          <th>Status</th>
-                          <th>Time</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredCashouts.map((c, i) => {
-                          const status = String(c.status || "unsent").toLowerCase();
-                          return (
-                            <tr key={c.id || i}>
-                              <td>
-                                <strong>{c.username || c.account}</strong>
-                                <div style={{ fontSize: "0.75rem", color: "var(--muted)" }}>{c.account}</div>
-                              </td>
-                              <td>{c.rewardName || c.rewardType}</td>
-                              <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
-                                ${parseFloat(c.amount || 0).toFixed(2)}
-                              </td>
-                              <td style={{ maxWidth: 180, wordBreak: "break-all" }}>{c.details}</td>
-                              <td>
-                                {status === "sent" && <span className="badge badge-sent">Sent</span>}
-                                {status === "pending" && <span className="badge badge-pending">Pending</span>}
-                                {status === "rejected" && <span className="badge badge-rejected">Rejected</span>}
-                                {(status === "unsent" || status === "") && <span className="badge badge-unsent">Unsent</span>}
-                              </td>
-                              <td>{c.time || "—"}</td>
-                              <td>
-                                <div className="action-btns">
-                                  {status !== "sent" && (
-                                    <button className="btn btn-success btn-sm" onClick={() => updateCashoutStatus(c.id, "sent")}>
-                                      Sent
-                                    </button>
-                                  )}
-                                  {status !== "rejected" && (
-                                    <button className="btn btn-danger btn-sm" onClick={() => updateCashoutStatus(c.id, "rejected")}>
-                                      Reject
-                                    </button>
-                                  )}
-                                  {status === "sent" && (
-                                    <button className="btn btn-ghost btn-sm" onClick={() => updateCashoutStatus(c.id, "unsent")}>
-                                      Undo
-                                    </button>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* USERS */}
-            {tab === "users" && (
-              <div className="card">
-                <h2><i className="fas fa-users"></i> Users</h2>
-                <button className="btn btn-ghost btn-sm" style={{ marginBottom: 16 }} onClick={loadUsers}>
-                  <i className="fas fa-sync-alt"></i> Refresh
-                </button>
-
-                {users.length === 0 ? (
-                  <div className="empty">No users found</div>
-                ) : (
-                  <div className="table-wrap">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Username</th>
-                          <th>Account</th>
-                          <th>Balance</th>
-                          <th>Level</th>
-                          <th>Email</th>
-                          <th>Joined</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {users.map((u, i) => (
-                          <tr key={u.account || i}>
-                            <td><strong>{u.username || "—"}</strong></td>
-                            <td>{u.account}</td>
-                            <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
-                              ${parseFloat(u.balance || 0).toFixed(2)}
-                            </td>
-                            <td>{u.level || 1}</td>
-                            <td>{u.email || "—"}</td>
-                            <td>{u.joined || "—"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* OFFERWALLS */}
-            {tab === "offerwalls" && (
-              <>
-                <div className="card">
-                  <h2><i className="fas fa-plus-circle"></i> Add Offerwall</h2>
-                  <div className="form-row">
-                    <div>
-                      <label>Name</label>
-                      <input
-                        value={newOffer.name}
-                        onChange={e => setNewOffer({...newOffer, name: e.target.value})}
-                        placeholder="e.g. AdGate Media"
-                      />
-                    </div>
-                    <div>
-                      <label>Logo URL (optional)</label>
-                      <input
-                        value={newOffer.logo}
-                        onChange={e => setNewOffer({...newOffer, logo: e.target.value})}
-                        placeholder="https://..."
-                      />
-                    </div>
-                  </div>
-                  <label>URL Template</label>
-                  <input
-                    value={newOffer.urlTemplate}
-                    onChange={e => setNewOffer({...newOffer, urlTemplate: e.target.value})}
-                    placeholder="https://example.com/?user={user}&userid={userid}"
-                  />
-                  <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 14 }}>
-                    Use <code>{`{user}`}</code>, <code>{`{userid}`}</code>, <code>{`{username}`}</code> as placeholders
-                  </p>
-                  <button className="btn btn-primary" onClick={addOfferwall}>
-                    <i className="fas fa-plus"></i> Add Offerwall
-                  </button>
-                </div>
-
-                <div className="card">
-                  <h2><i className="fas fa-th-large"></i> Current Offerwalls</h2>
-                  <button className="btn btn-ghost btn-sm" style={{ marginBottom: 16 }} onClick={loadOfferwalls}>
-                    <i className="fas fa-sync-alt"></i> Refresh
-                  </button>
-                 
-                  {offerwalls.length === 0 ? (
-                    <div className="empty">No offerwalls yet</div>
-                  ) : (
-                    <div className="table-wrap">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>URL Template</th>
-                            <th>Logo</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {offerwalls.map((o, i) => (
-                            <tr key={o.id || i}>
-                              <td><strong>{o.name}</strong></td>
-                              <td style={{ maxWidth: 280, wordBreak: "break-all", fontSize: "0.8rem" }}>
-                                {o.urlTemplate}
-                              </td>
-                              <td>
-                                {o.logo ? (
-                                  <img src={o.logo} alt="" style={{ height: 28, maxWidth: 80, objectFit: "contain" }} />
-                                ) : "—"}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-
-            {/* BONUS CODES */}
-            {tab === "bonus" && (
-              <div className="card">
-                <h2><i className="fas fa-gift"></i> Create Bonus Code</h2>
-                <div className="form-row">
-                  <div>
-                    <label>Code</label>
-                    <input
-                      value={bonusCode.code}
-                      onChange={e => setBonusCode({...bonusCode, code: e.target.value.toUpperCase()})}
-                      placeholder="e.g. WELCOME50"
-                    />
-                  </div>
-                  <div>
-                    <label>Amount (USD)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={bonusCode.amount}
-                      onChange={e => setBonusCode({...bonusCode, amount: e.target.value})}
-                      placeholder="e.g. 0.50"
-                    />
-                  </div>
-                </div>
-                <button className="btn btn-primary" onClick={createBonus}>
-                  <i className="fas fa-plus"></i> Create Bonus Code
-                </button>
-              </div>
-            )}
-
-            {/* LOGS */}
-            {tab === "logs" && (
-              <div className="card">
-                <h2><i className="fas fa-history"></i> Recent Activity</h2>
-                <button className="btn btn-ghost btn-sm" style={{ marginBottom: 16 }} onClick={loadLogs}>
-                  <i className="fas fa-sync-alt"></i> Refresh
-                </button>
-
-                {logs.length === 0 ? (
-                  <div className="empty">No recent activity</div>
-                ) : (
-                  <div className="table-wrap">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>Username</th>
-                          <th>Amount</th>
-                          <th>Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {logs.slice(0, 50).map((l, i) => (
-                          <tr key={i}>
-                            <td><strong>{l.username}</strong></td>
-                            <td style={{ color: "var(--accent-light)", fontWeight: 600 }}>
-                              +${parseFloat(l.amount || 0).toFixed(2)}
-                            </td>
-                            <td>{l.time || "—"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
-          </main>
-        </div>
-      );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [tab, setTab] = useState("dashboard");
+  const [msg, setMsg] = useState(null);
+  const [cashouts, setCashouts] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [offerwalls, setOfferwalls] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [newOffer, setNewOffer] = useState({ name: "", urlTemplate: "", logo: "" });
+  const [bonusCode, setBonusCode] = useState({ code: "", amount: "" });
+  useEffect(() => {
+    if (storage.get("rewardbux_admin") === "true") {
+      setIsLoggedIn(true);
     }
+  }, []);
+  function showMsg(text, type = "success") {
+    setMsg({ text, type });
+    setTimeout(() => setMsg(null), 4e3);
+  }
+  function handleLogin(e) {
+    e.preventDefault();
+    if (password === ADMIN_PASSWORD) {
+      setIsLoggedIn(true);
+      storage.set("rewardbux_admin", "true");
+      setLoginError("");
+    } else {
+      setLoginError("Incorrect password");
+    }
+  }
+  function logout() {
+    setIsLoggedIn(false);
+    storage.remove("rewardbux_admin");
+    setPassword("");
+  }
+  const loadCashouts = useCallback(async () => {
+    setLoading(true);
+    const data = await api("adminGetCashouts");
+    if (data.cashouts) setCashouts(data.cashouts);
+    else if (data.error) showMsg(data.error, "error");
+    setLoading(false);
+  }, []);
+  const loadUsers = useCallback(async () => {
+    setLoading(true);
+    const data = await api("adminGetUsers");
+    if (data.users) setUsers(data.users);
+    else if (data.error) showMsg(data.error, "error");
+    setLoading(false);
+  }, []);
+  const loadLogs = useCallback(async () => {
+    const data = await api("logs");
+    if (data.logs) setLogs(data.logs);
+  }, []);
+  const loadOfferwalls = useCallback(async () => {
+    const data = await api("getOfferwalls");
+    if (data.offerwalls) setOfferwalls(data.offerwalls);
+  }, []);
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    if (tab === "dashboard" || tab === "cashouts") loadCashouts();
+    if (tab === "dashboard" || tab === "users") loadUsers();
+    if (tab === "dashboard" || tab === "logs") loadLogs();
+    if (tab === "offerwalls") loadOfferwalls();
+  }, [isLoggedIn, tab]);
+  async function updateCashoutStatus(id, status) {
+    const data = await postApi("adminUpdateCashout", { id, status });
+    if (data.error) {
+      showMsg(data.error, "error");
+      return;
+    }
+    showMsg("Cashout marked as " + status);
+    loadCashouts();
+  }
+  async function addOfferwall() {
+    if (!newOffer.name || !newOffer.urlTemplate) {
+      showMsg("Name and URL Template are required", "error");
+      return;
+    }
+    const data = await postApi("adminAddOfferwall", newOffer);
+    if (data.error) {
+      showMsg(data.error, "error");
+      return;
+    }
+    showMsg("Offerwall added successfully!");
+    setNewOffer({ name: "", urlTemplate: "", logo: "" });
+    loadOfferwalls();
+  }
+  async function createBonus() {
+    if (!bonusCode.code || !bonusCode.amount) {
+      showMsg("Code and amount required", "error");
+      return;
+    }
+    const data = await postApi("adminCreateBonus", {
+      code: bonusCode.code,
+      amount: bonusCode.amount
+    });
+    if (data.error) {
+      showMsg(data.error, "error");
+      return;
+    }
+    showMsg("Bonus code created!");
+    setBonusCode({ code: "", amount: "" });
+  }
+  const filteredCashouts = cashouts.filter((c) => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return (c.username || "").toLowerCase().includes(s) || (c.account || "").toLowerCase().includes(s) || (c.rewardName || "").toLowerCase().includes(s) || (c.details || "").toLowerCase().includes(s);
+  });
+  const pendingCount = cashouts.filter(
+    (c) => ["unsent", "pending", ""].includes(String(c.status || "unsent").toLowerCase())
+  ).length;
+  if (!isLoggedIn) {
+    return /* @__PURE__ */ React.createElement("div", { className: "login-screen" }, /* @__PURE__ */ React.createElement("div", { className: "login-box" }, /* @__PURE__ */ React.createElement("div", { className: "logo" }, /* @__PURE__ */ React.createElement("span", { className: "dollar" }, "$"), "Reward", /* @__PURE__ */ React.createElement("span", { className: "brand" }, "Bux")), /* @__PURE__ */ React.createElement("h1", null, "Admin Panel"), /* @__PURE__ */ React.createElement("p", null, "Enter the admin password to continue"), /* @__PURE__ */ React.createElement("form", { onSubmit: handleLogin }, /* @__PURE__ */ React.createElement(
+      "input",
+      {
+        type: "password",
+        placeholder: "Admin Password",
+        value: password,
+        onChange: (e) => setPassword(e.target.value),
+        autoFocus: true
+      }
+    ), loginError && /* @__PURE__ */ React.createElement("div", { className: "alert alert-error" }, loginError), /* @__PURE__ */ React.createElement("button", { type: "submit", className: "btn btn-primary", style: { width: "100%", padding: "10px" } }, "Login")), /* @__PURE__ */ React.createElement("p", { style: { marginTop: 14, fontSize: "0.72rem", color: "var(--muted)" } }, "Default password: ", /* @__PURE__ */ React.createElement("code", null, "admin123"))));
+  }
+  return /* @__PURE__ */ React.createElement("div", { className: "app" }, /* @__PURE__ */ React.createElement("header", null, /* @__PURE__ */ React.createElement("div", { className: "logo" }, /* @__PURE__ */ React.createElement("span", { className: "dollar" }, "$"), "Reward", /* @__PURE__ */ React.createElement("span", { className: "brand" }, "Bux"), /* @__PURE__ */ React.createElement("span", { className: "admin-label" }, "Admin")), /* @__PURE__ */ React.createElement("div", { className: "header-right" }, /* @__PURE__ */ React.createElement("span", { className: "admin-badge" }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-shield-alt" }), " Admin"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost btn-sm", onClick: logout }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-sign-out-alt" }), " Logout"))), /* @__PURE__ */ React.createElement("nav", { className: "admin-nav" }, [
+    { id: "dashboard", icon: "fa-chart-pie", label: "Dashboard" },
+    { id: "cashouts", icon: "fa-money-bill-wave", label: "Cashouts" + (pendingCount > 0 ? " (" + pendingCount + ")" : "") },
+    { id: "users", icon: "fa-users", label: "Users" },
+    { id: "offerwalls", icon: "fa-th-large", label: "Offerwalls" },
+    { id: "bonus", icon: "fa-gift", label: "Bonus Codes" },
+    { id: "logs", icon: "fa-history", label: "Activity Logs" }
+  ].map((t) => /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      key: t.id,
+      className: "nav-tab" + (tab === t.id ? " active" : ""),
+      onClick: () => setTab(t.id)
+    },
+    /* @__PURE__ */ React.createElement("i", { className: "fas " + t.icon }),
+    t.label
+  ))), /* @__PURE__ */ React.createElement("main", null, msg && /* @__PURE__ */ React.createElement("div", { className: "alert alert-" + msg.type }, msg.text), tab === "dashboard" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "stats-grid" }, /* @__PURE__ */ React.createElement("div", { className: "stat-card" }, /* @__PURE__ */ React.createElement("div", { className: "value" }, pendingCount), /* @__PURE__ */ React.createElement("div", { className: "label" }, "Pending Cashouts")), /* @__PURE__ */ React.createElement("div", { className: "stat-card" }, /* @__PURE__ */ React.createElement("div", { className: "value" }, cashouts.length), /* @__PURE__ */ React.createElement("div", { className: "label" }, "Total Cashouts")), /* @__PURE__ */ React.createElement("div", { className: "stat-card" }, /* @__PURE__ */ React.createElement("div", { className: "value" }, users.length || "\u2014"), /* @__PURE__ */ React.createElement("div", { className: "label" }, "Total Users")), /* @__PURE__ */ React.createElement("div", { className: "stat-card" }, /* @__PURE__ */ React.createElement("div", { className: "value" }, logs.length), /* @__PURE__ */ React.createElement("div", { className: "label" }, "Recent Logs"))), /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, /* @__PURE__ */ React.createElement("i", { className: "fas fa-clock", style: { color: "var(--warning)" } }), " Pending Cashouts"), pendingCount === 0 ? /* @__PURE__ */ React.createElement("div", { className: "empty" }, "No pending cashouts") : /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", null, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "User"), /* @__PURE__ */ React.createElement("th", null, "Reward"), /* @__PURE__ */ React.createElement("th", null, "Amount"), /* @__PURE__ */ React.createElement("th", null, "Details"), /* @__PURE__ */ React.createElement("th", null, "Time"), /* @__PURE__ */ React.createElement("th", null, "Action"))), /* @__PURE__ */ React.createElement("tbody", null, cashouts.filter((c) => ["unsent", "pending", ""].includes(String(c.status || "unsent").toLowerCase())).slice(0, 10).map((c, i) => /* @__PURE__ */ React.createElement("tr", { key: c.id || i }, /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("strong", null, c.username || c.account)), /* @__PURE__ */ React.createElement("td", null, c.rewardName || c.rewardType), /* @__PURE__ */ React.createElement("td", { style: { color: "var(--accent-light)", fontWeight: 600 } }, "$", parseFloat(c.amount || 0).toFixed(2)), /* @__PURE__ */ React.createElement("td", { style: { maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" } }, c.details), /* @__PURE__ */ React.createElement("td", null, c.time || "\u2014"), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("div", { className: "action-btns" }, /* @__PURE__ */ React.createElement("button", { className: "btn btn-success btn-sm", onClick: () => updateCashoutStatus(c.id, "sent") }, "Mark Sent"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger btn-sm", onClick: () => updateCashoutStatus(c.id, "rejected") }, "Reject")))))))))), tab === "cashouts" && /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, /* @__PURE__ */ React.createElement("i", { className: "fas fa-money-bill-wave" }), " All Cashouts"), /* @__PURE__ */ React.createElement("div", { className: "search-bar" }, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      placeholder: "Search by username, account, reward or details...",
+      value: search,
+      onChange: (e) => setSearch(e.target.value)
+    }
+  ), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost", onClick: loadCashouts }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-sync-alt" }))), loading ? /* @__PURE__ */ React.createElement("div", { className: "empty" }, "Loading...") : filteredCashouts.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "empty" }, "No cashouts found") : /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", null, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "User"), /* @__PURE__ */ React.createElement("th", null, "Reward"), /* @__PURE__ */ React.createElement("th", null, "Amount"), /* @__PURE__ */ React.createElement("th", null, "Details"), /* @__PURE__ */ React.createElement("th", null, "Status"), /* @__PURE__ */ React.createElement("th", null, "Time"), /* @__PURE__ */ React.createElement("th", null, "Actions"))), /* @__PURE__ */ React.createElement("tbody", null, filteredCashouts.map((c, i) => {
+    const status = String(c.status || "unsent").toLowerCase();
+    return /* @__PURE__ */ React.createElement("tr", { key: c.id || i }, /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("strong", null, c.username || c.account), /* @__PURE__ */ React.createElement("div", { style: { fontSize: "0.7rem", color: "var(--muted)" } }, c.account)), /* @__PURE__ */ React.createElement("td", null, c.rewardName || c.rewardType), /* @__PURE__ */ React.createElement("td", { style: { color: "var(--accent-light)", fontWeight: 600 } }, "$", parseFloat(c.amount || 0).toFixed(2)), /* @__PURE__ */ React.createElement("td", { style: { maxWidth: 180, wordBreak: "break-all" } }, c.details), /* @__PURE__ */ React.createElement("td", null, status === "sent" && /* @__PURE__ */ React.createElement("span", { className: "badge badge-sent" }, "Sent"), status === "pending" && /* @__PURE__ */ React.createElement("span", { className: "badge badge-pending" }, "Pending"), status === "rejected" && /* @__PURE__ */ React.createElement("span", { className: "badge badge-rejected" }, "Rejected"), (status === "unsent" || status === "") && /* @__PURE__ */ React.createElement("span", { className: "badge badge-unsent" }, "Unsent")), /* @__PURE__ */ React.createElement("td", null, c.time || "\u2014"), /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("div", { className: "action-btns" }, status !== "sent" && /* @__PURE__ */ React.createElement("button", { className: "btn btn-success btn-sm", onClick: () => updateCashoutStatus(c.id, "sent") }, "Sent"), status !== "rejected" && /* @__PURE__ */ React.createElement("button", { className: "btn btn-danger btn-sm", onClick: () => updateCashoutStatus(c.id, "rejected") }, "Reject"), status === "sent" && /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost btn-sm", onClick: () => updateCashoutStatus(c.id, "unsent") }, "Undo"))));
+  }))))), tab === "users" && /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, /* @__PURE__ */ React.createElement("i", { className: "fas fa-users" }), " Users"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost btn-sm", style: { marginBottom: 12 }, onClick: loadUsers }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-sync-alt" }), " Refresh"), users.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "empty" }, "No users found") : /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", null, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Username"), /* @__PURE__ */ React.createElement("th", null, "Account"), /* @__PURE__ */ React.createElement("th", null, "Balance"), /* @__PURE__ */ React.createElement("th", null, "Level"), /* @__PURE__ */ React.createElement("th", null, "Email"), /* @__PURE__ */ React.createElement("th", null, "Joined"))), /* @__PURE__ */ React.createElement("tbody", null, users.map((u, i) => /* @__PURE__ */ React.createElement("tr", { key: u.account || i }, /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("strong", null, u.username || "\u2014")), /* @__PURE__ */ React.createElement("td", null, u.account), /* @__PURE__ */ React.createElement("td", { style: { color: "var(--accent-light)", fontWeight: 600 } }, "$", parseFloat(u.balance || 0).toFixed(2)), /* @__PURE__ */ React.createElement("td", null, u.level || 1), /* @__PURE__ */ React.createElement("td", null, u.email || "\u2014"), /* @__PURE__ */ React.createElement("td", null, u.joined || "\u2014"))))))), tab === "offerwalls" && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, /* @__PURE__ */ React.createElement("i", { className: "fas fa-plus-circle" }), " Add Offerwall"), /* @__PURE__ */ React.createElement("div", { className: "form-row" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", null, "Name"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: newOffer.name,
+      onChange: (e) => setNewOffer({ ...newOffer, name: e.target.value }),
+      placeholder: "e.g. AdGate Media"
+    }
+  )), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", null, "Logo URL (optional)"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: newOffer.logo,
+      onChange: (e) => setNewOffer({ ...newOffer, logo: e.target.value }),
+      placeholder: "https://..."
+    }
+  ))), /* @__PURE__ */ React.createElement("label", null, "URL Template"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: newOffer.urlTemplate,
+      onChange: (e) => setNewOffer({ ...newOffer, urlTemplate: e.target.value }),
+      placeholder: "https://example.com/?user={user}&userid={userid}"
+    }
+  ), /* @__PURE__ */ React.createElement("p", { style: { fontSize: "0.72rem", color: "var(--muted)", marginBottom: 12 } }, "Use ", /* @__PURE__ */ React.createElement("code", null, "{user}"), ", ", /* @__PURE__ */ React.createElement("code", null, "{userid}"), ", ", /* @__PURE__ */ React.createElement("code", null, "{username}"), " as placeholders"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", onClick: addOfferwall }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-plus" }), " Add Offerwall")), /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, /* @__PURE__ */ React.createElement("i", { className: "fas fa-th-large" }), " Current Offerwalls"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost btn-sm", style: { marginBottom: 12 }, onClick: loadOfferwalls }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-sync-alt" }), " Refresh"), offerwalls.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "empty" }, "No offerwalls yet") : /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", null, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Name"), /* @__PURE__ */ React.createElement("th", null, "URL Template"), /* @__PURE__ */ React.createElement("th", null, "Logo"))), /* @__PURE__ */ React.createElement("tbody", null, offerwalls.map((o, i) => /* @__PURE__ */ React.createElement("tr", { key: o.id || i }, /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("strong", null, o.name)), /* @__PURE__ */ React.createElement("td", { style: { maxWidth: 280, wordBreak: "break-all", fontSize: "0.75rem" } }, o.urlTemplate), /* @__PURE__ */ React.createElement("td", null, o.logo ? /* @__PURE__ */ React.createElement("img", { src: o.logo, alt: "", style: { height: 24, maxWidth: 70, objectFit: "contain" } }) : "\u2014")))))))), tab === "bonus" && /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, /* @__PURE__ */ React.createElement("i", { className: "fas fa-gift" }), " Create Bonus Code"), /* @__PURE__ */ React.createElement("div", { className: "form-row" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", null, "Code"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: bonusCode.code,
+      onChange: (e) => setBonusCode({ ...bonusCode, code: e.target.value.toUpperCase() }),
+      placeholder: "e.g. WELCOME50"
+    }
+  )), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", null, "Amount (USD)"), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      type: "number",
+      step: "0.01",
+      value: bonusCode.amount,
+      onChange: (e) => setBonusCode({ ...bonusCode, amount: e.target.value }),
+      placeholder: "e.g. 0.50"
+    }
+  ))), /* @__PURE__ */ React.createElement("button", { className: "btn btn-primary", onClick: createBonus }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-plus" }), " Create Bonus Code")), tab === "logs" && /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, /* @__PURE__ */ React.createElement("i", { className: "fas fa-history" }), " Recent Activity"), /* @__PURE__ */ React.createElement("button", { className: "btn btn-ghost btn-sm", style: { marginBottom: 12 }, onClick: loadLogs }, /* @__PURE__ */ React.createElement("i", { className: "fas fa-sync-alt" }), " Refresh"), logs.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "empty" }, "No recent activity") : /* @__PURE__ */ React.createElement("div", { className: "table-wrap" }, /* @__PURE__ */ React.createElement("table", null, /* @__PURE__ */ React.createElement("thead", null, /* @__PURE__ */ React.createElement("tr", null, /* @__PURE__ */ React.createElement("th", null, "Username"), /* @__PURE__ */ React.createElement("th", null, "Amount"), /* @__PURE__ */ React.createElement("th", null, "Time"))), /* @__PURE__ */ React.createElement("tbody", null, logs.slice(0, 50).map((l, i) => /* @__PURE__ */ React.createElement("tr", { key: i }, /* @__PURE__ */ React.createElement("td", null, /* @__PURE__ */ React.createElement("strong", null, l.username)), /* @__PURE__ */ React.createElement("td", { style: { color: "var(--accent-light)", fontWeight: 600 } }, "+$", parseFloat(l.amount || 0).toFixed(2)), /* @__PURE__ */ React.createElement("td", null, l.time || "\u2014")))))))));
+}
+ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
