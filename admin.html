@@ -1,13 +1,9 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RewardBux</title>
+  <title>RewardBux · Admin</title>
   <meta name="theme-color" content="#0b1229" />
   <link rel="icon" href="https://i.imgur.com/wppiqAy.png" />
 
@@ -24,622 +20,181 @@
 
   <style>
     :root {
-  /* Background - deep charcoal terminal feel */
-  --bg: #0c0f12;
-  --bg-secondary: #151a1f;
-
-  /* Cards */
-  --card: #171c22;
-  --card-hover: #1e252d;
-  --border: #2c353f;
-
-  /* Text */
-  --text: #d8dde3;
-  --muted: #8b949e;
-
-  /* Accent - teal + warm amber (not Material blue) */
-  --accent: #00b8a9;
-  --accent-2: #e8a838;
-  --accent-light: #5eead4;
-
-  /* Status */
-  --success: #3dd68c;
-  --danger: #f07178;
-  --warning: #e8a838;
-
-  /* Effects - dense old desktop */
-  --radius: 3px;
-  --shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4);
-  --blur: none;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  font-family: 'Roboto', 'Noto Sans', 'Droid Sans', sans-serif;
-  color:var(--text);
-  background: #0c0f12;
-  min-height:100vh;
-  line-height:1.35;
-  font-size:13px;
-  letter-spacing:0;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  overflow-x:hidden;
-}
-
-.app{
-  position:relative;
-  width:100%;
-  max-width:100%;
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  padding:0 0 0;
-  background: #0c0f12;
-}
-@media (max-width: 768px) {
-  .app { padding-bottom: 56px; }
-}
-
-/* Optional reusable card style */
-
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  transition:none;
-}
-
-.card:hover{
-  background:var(--card-hover);
-  border-color:#3b4a63;
-}
-
-    /* Header - desktop top bar with logo + nav + user */
-    .top-header {
-      background: #12171c;
-      padding: 0 14px;
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      border-bottom: 1px solid var(--border);
+      --bg: #0c0f12;
+      --bg-secondary: #151a1f;
+      --card: #171c22;
+      --card-hover: #1e252d;
+      --border: #2c353f;
+      --text: #d8dde3;
+      --muted: #8b949e;
+      --accent: #00b8a9;
+      --accent-2: #e8a838;
+      --accent-light: #5eead4;
+      --success: #3dd68c;
+      --danger: #f07178;
+      --warning: #e8a838;
+      --radius: 3px;
+      --shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4);
     }
-    .header-row {
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.4;
+      min-height: 100vh;
+    }
+    .app { max-width: 1400px; margin:0 auto; padding:12px 16px; }
+    /* header */
+    .admin-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 12px;
-      min-height: 48px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      margin-bottom: 18px;
     }
-    .logo {
-      font-weight: 700;
+    .admin-header h1 {
       font-size: 1.2rem;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .logo .dollar {
-      color: var(--accent);
-      font-size: 1.2rem;
-    }
-    .logo span { color: var(--accent-light); }
-
-    /* Desktop horizontal nav inside header */
-    .header-nav {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      flex: 1;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .header-nav::-webkit-scrollbar { display: none; }
-    .header-nav .nav-item {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 12px;
-      color: var(--muted);
-      font-size: 0.78rem;
       font-weight: 500;
-      cursor: pointer;
-      border-radius: 4px;
-      white-space: nowrap;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .header-nav .nav-item i { font-size: 0.9rem; }
-    .header-nav .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-    .header-nav .nav-item.active {
-      color: var(--accent-light);
-      background: rgba(0,184,169,0.14);
+    .admin-header h1 i { color: var(--accent); }
+    .admin-header .badge-admin {
+      background: var(--accent);
+      color: #041210;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-left: 8px;
     }
-    .header-nav .nav-item.active i { color: var(--accent); }
-
-    /* User block in header (right) */
-    .header-user {
+    .admin-header .user-badge {
       display: flex;
       align-items: center;
       gap: 10px;
-      flex-shrink: 0;
-      margin-left: auto;
-    }
-    .avatar-wrap { position: relative; width: 34px; height: 34px; flex-shrink: 0; }
-    .avatar-wrap img {
-      width: 34px; height: 34px;
-      border-radius: 4px;
-      object-fit: cover;
-      border: 1px solid var(--border);
-    }
-    .level-badge {
-      position: absolute;
-      bottom: -3px; right: -4px;
-      background: var(--accent);
-      color: #041210;
-      font-size: 0.6rem;
-      font-weight: 700;
-      width: 16px; height: 16px;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--bg);
-    }
-    .user-meta { display: flex; flex-direction: column; gap: 0; }
-    .user-meta .name { font-weight: 500; font-size: 0.8rem; color: #fff; line-height: 1.2; }
-    .user-meta .balance-row {
-      display: flex; align-items: center; gap: 4px; font-size: 0.75rem;
-    }
-    .user-meta .balance-row .diamond { color: var(--accent-2); }
-    .user-meta .balance-row .amount { color: var(--accent-light); font-weight: 600; }
-
-    .icon-btn {
-      width: 30px; height: 30px;
-      border-radius: 4px;
-      background: var(--card);
-      border: 1px solid var(--border);
       color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 0.85rem;
-      cursor: pointer;
     }
-    .icon-btn:hover { background: var(--card-hover); color: var(--text); }
-    .icon-btn.logout:hover {
-      background: rgba(234, 67, 53, 0.15);
-      border-color: var(--danger);
-      color: var(--danger);
-    }
-
-    /* Static Logs Bar - denser */
-    .logs-bar {
-      background: #0e1216;
-      border-top: 1px solid var(--border);
-      padding: 5px 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .logs-bar::-webkit-scrollbar { display: none; }
-    .logs-row { display: flex; gap: 6px; width: max-content; }
-    .log-card {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 4px 8px 4px 4px;
-      min-width: 130px;
-      flex-shrink: 0;
-    }
-    .log-card img {
-      width: 24px; height: 24px;
-      border-radius: 2px;
-      object-fit: cover;
-    }
-    .log-card .info { display: flex; flex-direction: column; line-height: 1.2; overflow: hidden; }
-    .log-card .uname {
-      font-size: 0.68rem;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 80px;
-    }
-    .log-card .amount {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--accent-light);
-    }
-
-    main {
-      flex: 1;
-      padding: 10px 16px;
-      overflow-y: auto;
-      max-width: 900px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 12px;
-      margin-bottom: 8px;
-    }
-    .card h2 {
-      font-size: 0.95rem;
-      font-weight: 500;
-      margin-bottom: 8px;
-      color: #fff;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
-    }
-
-    .hero { text-align: center; padding: 10px 8px 6px; }
-    .hero h1 {
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: var(--accent-light);
-      line-height: 1.25;
-      margin-bottom: 6px;
-    }
-    .hero p { color: var(--muted); font-size: 0.82rem; }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 10px 0;
-    }
-    @media (max-width: 600px) {
-      .feature-grid { grid-template-columns: 1fr; }
-    }
-    .feature-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 14px 10px;
-      text-align: center;
-    }
-    .feature-card h3 { font-size: 0.88rem; font-weight: 500; margin-bottom: 8px; }
-    .feature-card h3 span { color: var(--accent-light); }
-    .feature-card .icons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      font-size: 1.25rem;
-      color: #e8eaed;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .stat-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 8px 6px;
-      text-align: center;
-    }
-    .stat-box .value { font-size: 1rem; font-weight: 700; color: var(--accent-light); }
-    .stat-box .label { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
-
+    .admin-header .user-badge strong { color: #fff; }
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      width: 100%;
-      padding: 7px 12px;
+      padding: 6px 14px;
       border: none;
-      border-radius: 2px;
-      font-size: 0.82rem;
+      border-radius: var(--radius);
+      font-size: 0.8rem;
       font-weight: 500;
       font-family: inherit;
       cursor: pointer;
+      transition: background 0.1s;
     }
     .btn-primary { background: var(--accent); color: #041210; }
-    .btn-primary:hover { background: #00a396; color: #041210; }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary:hover { background: #00a396; }
     .btn-success { background: var(--success); color: #fff; }
     .btn-danger { background: var(--danger); color: #fff; }
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
     .btn-ghost:hover { background: var(--card-hover); color: var(--text); }
+    .btn-sm { padding: 4px 10px; font-size: 0.7rem; }
 
-    input, select, textarea {
-      width: 100%;
-      padding: 7px 9px;
-      border-radius: 2px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 0.82rem;
-      font-family: inherit;
-      margin-bottom: 8px;
-    }
-    input:focus, select:focus { outline: none; border-color: var(--accent); }
-    label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 3px;
-    }
-
-    .offer-grid, .reward-grid {
+    .panel-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 8px;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
-    .offer, .reward-item {
-      background: var(--bg);
+    @media (max-width: 800px) { .panel-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 10px 8px;
-      text-align: center;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 12px;
     }
-    .reward-item { cursor: pointer; }
-    .reward-item:hover {
-      border-color: var(--accent);
-      background: var(--card-hover);
-    }
-    .offer img, .reward-item img {
-      height: 28px;
-      max-width: 100%;
-      object-fit: contain;
-      margin-bottom: 6px;
-    }
-    .reward-item .name { font-weight: 500; font-size: 0.8rem; }
-    .reward-item .min { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
-
-    .log-item, .history-item {
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #fff;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.78rem;
     }
-    .log-item:last-child, .history-item:last-child { border-bottom: none; }
-    .log-icon {
-      width: 24px; height: 24px;
-      border-radius: 2px;
-      background: rgba(0,184,169,0.15);
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      flex-shrink: 0;
-    }
-    .history-item { justify-content: space-between; }
+    .card h3 i { color: var(--accent); width: 20px; }
 
-    .leaderboard table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-    .leaderboard th {
+    .stat-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .stat-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 14px;
+      flex: 1;
+      min-width: 100px;
+    }
+    .stat-box .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; }
+    .stat-box .value { font-size: 1.1rem; font-weight: 600; color: var(--accent-light); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    th {
       text-align: left;
-      padding: 5px 4px;
+      padding: 6px 4px;
       color: var(--muted);
       font-weight: 500;
       border-bottom: 1px solid var(--border);
-      font-size: 0.72rem;
     }
-    .leaderboard td {
+    td {
       padding: 6px 4px;
       border-bottom: 1px solid var(--border);
+      vertical-align: middle;
     }
-
-    .captcha {
-      background: var(--bg);
-      border: 1px dashed var(--border);
-      border-radius: 2px;
-      padding: 8px;
-      text-align: center;
-      font-family: 'Roboto Mono', 'Courier New', monospace;
-      font-size: 1.15rem;
-      letter-spacing: 4px;
-      margin-bottom: 8px;
-      user-select: none;
-      color: var(--accent-light);
-    }
-
-    .alert {
-      padding: 7px 10px;
-      border-radius: 2px;
-      font-size: 0.78rem;
-      margin-bottom: 8px;
-    }
-    .alert-warn { background: rgba(251,188,4,0.12); color: #fbbc04; border: 1px solid rgba(251,188,4,0.25); }
-    .alert-error { background: rgba(234,67,53,0.12); color: #f28b82; border: 1px solid rgba(234,67,53,0.25); }
-    .alert-success { background: rgba(52,168,83,0.12); color: #81c995; border: 1px solid rgba(52,168,83,0.25); }
-    .alert-info { background: rgba(0,184,169,0.12); color: #5eead4; border: 1px solid rgba(0,184,169,0.25); }
-
-    .divider {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.72rem;
-      margin: 10px 0;
-      position: relative;
-    }
-    .divider::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 0; right: 0;
-      height: 1px;
-      background: var(--border);
-      z-index: 0;
-    }
-    .divider span {
-      background: var(--card);
-      padding: 0 10px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .chat-box { display: flex; flex-direction: column; height: calc(100vh - 120px); min-height: 280px; }
-
-    /* Desktop chat side panel */
-    .chat-panel {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 360px;
-      max-width: 92vw;
-      height: 100vh;
-      background: #12171c;
-      border-left: 1px solid var(--border);
-      z-index: 160;
-      display: flex;
-      flex-direction: column;
-      box-shadow: -8px 0 28px rgba(0,0,0,0.45);
-      animation: chatSlideIn 0.22s ease forwards;
-    }
-    .chat-panel:hover {
-      box-shadow: -12px 0 36px rgba(0,0,0,0.55);
-      border-left-color: rgba(0,184,169,0.35);
-    }
-    @keyframes chatSlideIn {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
-    }
-    .chat-panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 12px 10px;
-      border-bottom: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .chat-panel-header i { color: var(--accent); margin-right: 6px; }
-    .chat-panel-close {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chat-panel-close:hover {
-      color: var(--text);
-      background: var(--card-hover);
-      border-color: var(--accent);
-    }
-    .chat-panel-messages {
-      flex: 1;
-      overflow-y: auto;
-      margin: 0 10px 8px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg);
-    }
-    .chat-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
-      z-index: 150;
-    }
-    @media (max-width: 768px) {
-      .chat-panel {
-        width: 100%;
-        max-width: 100%;
-      }
-    }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 4px 0;
-      margin-bottom: 8px;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      background: var(--bg);
-    }
-    .chat-msg {
-      padding: 5px 10px;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.78rem;
-      word-break: break-word;
-    }
-    .chat-msg:last-child { border-bottom: none; }
-    .chat-msg.admin-msg {
-      background: rgba(251,188,4,0.1);
-      border-radius: 2px;
-      border-bottom: none;
-      margin: 2px 6px;
-    }
-    .chat-msg .meta {
-      font-size: 0.65rem;
-      color: var(--muted);
-      margin-bottom: 1px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .chat-msg .meta .name { color: var(--accent-light); font-weight: 500; }
-    .badge-owner {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      background: #fbbc04;
-      color: #000;
-      padding: 0 5px;
-      border-radius: 2px;
-      font-size: 0.58rem;
-      font-weight: 700;
-      margin-left: 4px;
-    }
-    .chat-input-row { display: flex; gap: 6px; }
-    .chat-input-row input { margin-bottom: 0; flex: 1; }
-    .chat-input-row button { width: auto; padding: 6px 12px; flex-shrink: 0; }
-    .chat-sound-toggle {
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
     .badge {
       display: inline-block;
-      padding: 1px 6px;
-      border-radius: 2px;
-      font-size: 0.65rem;
-      font-weight: 500;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-size: 0.6rem;
+      font-weight: 600;
       text-transform: uppercase;
     }
     .badge-unsent { background: rgba(234,67,53,0.2); color: #f28b82; }
     .badge-sent { background: rgba(52,168,83,0.2); color: #81c995; }
     .badge-pending { background: rgba(251,188,4,0.2); color: #fbbc04; }
+    .badge-admin { background: var(--accent); color: #041210; }
+
+    .flex { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    .mb-1 { margin-bottom: 8px; }
+    .mt-1 { margin-top: 8px; }
+    .empty { color: var(--muted); padding: 12px 0; text-align: center; font-size: 0.85rem; }
+    .alert {
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      background: rgba(0,184,169,0.1);
+      border: 1px solid rgba(0,184,169,0.2);
+      color: var(--accent-light);
+    }
+    .alert-error { background: rgba(234,67,53,0.1); border-color: rgba(234,67,53,0.2); color: #f28b82; }
+    .alert-success { background: rgba(52,168,83,0.1); border-color: rgba(52,168,83,0.2); color: #81c995; }
 
     .modal-overlay {
       position: fixed;
@@ -654,999 +209,482 @@ body{
     .modal {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 2px;
+      border-radius: var(--radius);
+      max-width: 500px;
       width: 100%;
-      max-width: 360px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 14px;
+      padding: 20px;
     }
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
-    .modal-header h3 { font-size: 0.95rem; font-weight: 500; }
-    .modal-close {
-      background: none;
+    .modal-header h3 { font-size: 1rem; color: #fff; }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-family: inherit;
+      margin-bottom: 8px;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--accent); }
+    label { display: block; font-size: 0.7rem; font-weight: 500; color: var(--muted); margin-bottom: 2px; }
+
+    .scroll-table { max-height: 320px; overflow-y: auto; }
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 4px;
+    }
+    .tab-btn {
+      background: transparent;
       border: none;
       color: var(--muted);
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-    .steps { display: flex; gap: 4px; margin-bottom: 12px; }
-    .step-dot { flex: 1; height: 3px; border-radius: 1px; background: var(--border); }
-    .step-dot.active { background: var(--accent); }
-    .step-dot.done { background: var(--success); }
-
-    .summary {
-      background: var(--bg);
-      border-radius: 2px;
-      padding: 10px;
-      font-size: 0.78rem;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-    }
-    .summary div { margin-bottom: 4px; }
-    .summary strong { color: var(--muted); font-weight: 500; }
-
-    .btn-row { display: flex; gap: 6px; }
-    .btn-row .btn { flex: 1; }
-
-    #gbtn { display: flex; justify-content: center; min-height: 36px; }
-
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 16px 10px;
+      padding: 6px 14px;
       font-size: 0.8rem;
-    }
-
-    /* Mobile bottom nav - hidden on desktop */
-    .bottom-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #12171c;
-      border-top: 1px solid var(--border);
-      justify-content: space-around;
-      align-items: center;
-      padding: 4px 2px 6px;
-      z-index: 100;
-    }
-    .bottom-nav .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1px;
-      padding: 4px 2px;
-      color: var(--muted);
-      font-size: 0.58rem;
       font-weight: 500;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: var(--radius);
     }
-    .bottom-nav .nav-item i { font-size: 1.05rem; }
-    .bottom-nav .nav-item.active {
+    .tab-btn.active {
+      background: var(--card-hover);
       color: var(--accent-light);
-      background: rgba(0,184,169,0.12);
     }
-    .bottom-nav .nav-item.active i { color: var(--accent); }
-
-    @media (max-width: 768px) {
-      .header-nav { display: none; }
-      .bottom-nav { display: flex; }
-      .user-meta .name { display: none; }
-    }
-
-    .iframe-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 150;
-      display: flex;
-      flex-direction: column;
-    }
-    .iframe-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-    }
-    .iframe-bar button {
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-    iframe { flex: 1; border: none; width: 100%; }
+    .tab-btn:hover { color: #fff; }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+<div id="admin-root"></div>
 
-  <script type="text/babel" data-presets="react">
-    const { useState, useEffect, useRef, useCallback } = React;
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useCallback } = React;
 
-    /* ====== CONFIG ====== */
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
-    const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
+// ==================== CONFIG ====================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
+const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
 
-    const memoryStore = {};
-    const storage = {
-      get(key) { try { return localStorage.getItem(key); } catch (e) { return memoryStore[key] || null; } },
-      set(key, val) { try { localStorage.setItem(key, val); } catch (e) { memoryStore[key] = val; } },
-      remove(key) { try { localStorage.removeItem(key); } catch (e) { delete memoryStore[key]; } }
-    };
+// same storage helpers
+const memoryStore = {};
+const storage = {
+  get(key) { try { return localStorage.getItem(key); } catch (e) { return memoryStore[key] || null; } },
+  set(key, val) { try { localStorage.setItem(key, val); } catch (e) { memoryStore[key] = val; } },
+  remove(key) { try { localStorage.removeItem(key); } catch (e) { delete memoryStore[key]; } }
+};
 
-    const REWARDS = [
-      {
-        id: "amazon_uk",
-        name: "Amazon.co.uk",
-        min: 1,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
-        detailsLabel: "Amazon.co.uk Gift Card Email",
-        detailsPlaceholder: "you@email.com"
-      }
-    ];
+const PTS_PER_USD = 1000;
+function toUSD(pts) { const n = Number(pts); if (!isFinite(n)) return "0.00"; return (n / PTS_PER_USD).toFixed(2); }
+function formatUSD(pts) { return "$" + toUSD(pts); }
+function toPts(usd) { return Math.round(Number(usd) * PTS_PER_USD); }
 
-    /* $1 USD = 1000 points. API balance / log / leader amounts are stored in points. */
-    const PTS_PER_USD = 1000;
-    function toUSD(pts) {
-      const n = Number(pts);
-      if (!isFinite(n)) return "0.00";
-      return (n / PTS_PER_USD).toFixed(2);
-    }
-    function toPts(usd) {
-      const n = Number(usd);
-      if (!isFinite(n)) return 0;
-      return Math.round(n * PTS_PER_USD);
-    }
-    function formatUSD(pts) {
-      return "$" + toUSD(pts);
-    }
+async function api(action, params = {}) {
+  try {
+    const qs = new URLSearchParams({ action, ...params }).toString();
+    const res = await fetch(SCRIPT_URL + "?" + qs);
+    return await res.json();
+  } catch (e) { return { error: "Network error" }; }
+}
+async function postApi(action, body = {}) {
+  try {
+    const params = new URLSearchParams();
+    params.append("action", action);
+    Object.keys(body).forEach(k => params.append(k, body[k]));
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body: params.toString()
+    });
+    return await res.json();
+  } catch (e) { return { error: "Network error" }; }
+}
 
-    let audioCtx = null;
-    function playDing() {
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === "suspended") audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.35);
-      } catch (e) {}
-    }
+// ---- Admin App ----
+function AdminApp() {
+  const [tab, setTab] = useState('dashboard');
+  const [users, setUsers] = useState([]);
+  const [cashouts, setCashouts] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [offerwalls, setOfferwalls] = useState([]);
+  const [crOrders, setCrOrders] = useState([]); // CryptoRefills orders
+  const [msg, setMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [modal, setModal] = useState(null); // { type, data }
 
-    async function api(action, params = {}) {
-      try {
-        const qs = new URLSearchParams(Object.assign({ action }, params)).toString();
-        const res = await fetch(SCRIPT_URL + "?" + qs);
-        return await res.json();
-      } catch (e) {
-        return { error: "Network error" };
-      }
-    }
+  // for manual CR fetch
+  const [crStatusFilter, setCrStatusFilter] = useState('all');
 
-    async function postApi(action, body = {}) {
-      try {
-        const params = new URLSearchParams();
-        params.append("action", action);
-        Object.keys(body).forEach(k => params.append(k, body[k]));
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
-          body: params.toString()
-        });
-        return await res.json();
-      } catch (e) {
-        return { error: "Network error" };
-      }
-    }
+  const showMsg = (text, type='info') => {
+    setMsg({ text, type });
+    setTimeout(() => setMsg(null), 4000);
+  };
 
-    function App() {
-      const [tab, setTab] = useState("home");
-      const [user, setUser] = useState(null);
-      const [logs, setLogs] = useState([]);
-      const [leaders, setLeaders] = useState([]);
-      const [iframeUrl, setIframeUrl] = useState(null);
-      const [msg, setMsg] = useState(null);
-      const [captcha, setCaptcha] = useState("");
-      const [form, setForm] = useState({ account: "", clientId: "", captcha: "", username: "", bonusCode: "" });
-      const [offerwalls, setOfferwalls] = useState([]);
-      const [owLoading, setOwLoading] = useState(true);
-      const [chatMessages, setChatMessages] = useState([]);
-      const [chatInput, setChatInput] = useState("");
-      const [soundOn, setSoundOn] = useState(true);
-      const lastMsgId = useRef(null);
-      const chatEndRef = useRef(null);
-      const pollRef = useRef(null);
-      const soundRef = useRef(true);
-      const userRef = useRef(null);
-      const gInited = useRef(false);
-      const [cashouts, setCashouts] = useState([]);
-      const [modal, setModal] = useState(null);
-      const [step, setStep] = useState(1);
-      const [amount, setAmount] = useState("");
-      const [details, setDetails] = useState("");
-      const [submitting, setSubmitting] = useState(false);
-      const [loggingIn, setLoggingIn] = useState(false);
-      const [chatOpen, setChatOpen] = useState(false);
+  const loadAll = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [uRes, cRes, lRes, owRes, crRes] = await Promise.all([
+        api('adminUsers'),
+        api('adminCashouts'),
+        api('adminLogs'),
+        api('getOfferwalls'),
+        api('adminCRCashouts')
+      ]);
+      if (uRes.users) setUsers(uRes.users);
+      if (cRes.cashouts) setCashouts(cRes.cashouts);
+      if (lRes.logs) setLogs(lRes.logs);
+      if (owRes.offerwalls) setOfferwalls(owRes.offerwalls);
+      if (crRes.orders) setCrOrders(crRes.orders);
+    } catch (e) { showMsg('Error loading data', 'error'); }
+    setLoading(false);
+  }, []);
 
-      useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
-      useEffect(() => { userRef.current = user; }, [user]);
+  useEffect(() => { loadAll(); }, [loadAll]);
 
-      function showMsg(text, type = "error") {
-        setMsg({ text, type });
-        setTimeout(() => setMsg(null), 4000);
-      }
-      function genCaptcha() { setCaptcha(String(Math.floor(10000 + Math.random() * 90000))); }
-      function saveUser(u) {
-        setUser(u);
-        userRef.current = u;
-        storage.set("buxiq_user", JSON.stringify(u));
-      }
-      function logout() {
-        setUser(null);
-        storage.remove("buxiq_user");
-        try { if (window.google) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
-        gInited.current = false;
-        setTab("home");
-        showMsg("Logged out", "success");
-      }
-      function toggleSound() {
-        const next = !soundOn;
-        setSoundOn(next);
-        storage.set("buxiq_sound", next ? "1" : "0");
-      }
+  // Admin actions
+  const updateBalance = async (account, newBalancePts) => {
+    if (!account || isNaN(newBalancePts)) return showMsg('Invalid data', 'error');
+    const res = await postApi('adminSetBalance', { account, balance: newBalancePts });
+    if (res.error) return showMsg(res.error, 'error');
+    showMsg(`Balance updated for ${account}`, 'success');
+    loadAll();
+  };
 
-      const loadLogs = useCallback(async () => {
-        const data = await api("logs");
-        if (data.logs) setLogs(data.logs);
-      }, []);
-      const loadLeaders = useCallback(async () => {
-        const data = await api("leaders");
-        if (data.leaders) setLeaders(data.leaders);
-      }, []);
-      const loadOfferwalls = useCallback(async () => {
-        setOwLoading(true);
-        const data = await api("getOfferwalls");
-        setOfferwalls(Array.isArray(data.offerwalls) ? data.offerwalls : []);
-        setOwLoading(false);
-      }, []);
-      const refreshBalance = useCallback(async () => {
-        const u = userRef.current;
-        if (!u) return;
-        const data = await api("balance", { account: u.account });
-        if (data.balance !== undefined) saveUser({ ...u, balance: data.balance, level: data.level || u.level });
-      }, []);
-      const loadCashouts = useCallback(async (account) => {
-        const data = await api("getCashouts", { account });
-        setCashouts(data.cashouts || []);
-      }, []);
-      const loadChat = useCallback(async (isInitial) => {
-        const data = await api("getChat", { limit: 50 });
-        if (!data.messages) return;
-        const msgs = data.messages;
-        const newestId = msgs.length ? msgs[msgs.length - 1].id : null;
-        if (!isInitial && newestId && lastMsgId.current && newestId !== lastMsgId.current && soundRef.current) playDing();
-        lastMsgId.current = newestId;
-        setChatMessages(msgs);
-      }, []);
+  const markCashoutSent = async (cashoutId) => {
+    const res = await postApi('adminMarkSent', { id: cashoutId });
+    if (res.error) return showMsg(res.error, 'error');
+    showMsg('Cashout marked as sent', 'success');
+    loadAll();
+  };
 
-      const creditEarnings = useCallback(async (userId, amt, txnId) => {
-        // Postback amount is in USD; convert to points for backend storage
-        const pts = toPts(amt);
-        const data = await postApi("creditEarnings", {
-          userId, amount: pts, transactionId: txnId || String(Date.now())
-        });
-        if (data.error) { showMsg("Credit failed: " + data.error); return; }
-        showMsg(formatUSD(pts) + " credited!", "success");
-        const u = userRef.current;
-        if (u && (String(u.account) === String(userId) || u.username === userId)) refreshBalance();
-        loadLogs(); loadLeaders();
-        if (soundRef.current) playDing();
-      }, [refreshBalance, loadLogs, loadLeaders]);
+  const deleteCashout = async (cashoutId) => {
+    if (!confirm('Delete this cashout?')) return;
+    const res = await postApi('adminDeleteCashout', { id: cashoutId });
+    if (res.error) return showMsg(res.error, 'error');
+    showMsg('Cashout deleted', 'success');
+    loadAll();
+  };
 
-      const handleGoogleCredential = useCallback((response) => {
-        if (!response || !response.credential) { showMsg("Google login failed"); return; }
-        let payload;
-        try {
-          payload = JSON.parse(decodeURIComponent(escape(atob(response.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))));
-        } catch (e) { showMsg("Could not read Google account"); return; }
-        setLoggingIn(true);
-        postApi("googleLogin", {
-          googleId: payload.sub,
-          email: payload.email,
-          name: payload.name || "",
-          picture: payload.picture || ""
-        }).then(data => {
-          setLoggingIn(false);
-          if (data.error) { showMsg(data.error); return; }
-          saveUser(data.user);
-          setTab("earn");
-          showMsg(data.isNew ? "Account created! Welcome!" : "Welcome back!", "success");
-        });
-      }, []);
+  const updateCRStatus = async (orderId, status) => {
+    const res = await postApi('adminUpdateCRStatus', { orderId, status });
+    if (res.error) return showMsg(res.error, 'error');
+    showMsg(`CR order ${orderId} → ${status}`, 'success');
+    loadAll();
+  };
 
-      useEffect(() => {
-        if (user) return;
-        let tries = 0;
-        const timer = setInterval(() => {
-          tries++;
-          const el = document.getElementById("gbtn");
-          const g = window.google && window.google.accounts && window.google.accounts.id;
-          if (g && el) {
-            clearInterval(timer);
-            try {
-              if (!gInited.current) {
-                g.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleGoogleCredential, cancel_on_tap_outside: true });
-                gInited.current = true;
-              }
-              el.innerHTML = "";
-              g.renderButton(el, { theme: "filled_blue", size: "large", width: 320, text: "continue_with", shape: "pill", logo_alignment: "left" });
-            } catch (e) {}
-          } else if (tries > 40) clearInterval(timer);
-        }, 250);
-        return () => clearInterval(timer);
-      }, [tab, user, handleGoogleCredential]);
+  const refreshCRStatuses = async () => {
+    setLoading(true);
+    const res = await api('adminRefreshCR');
+    setLoading(false);
+    if (res.error) return showMsg(res.error, 'error');
+    showMsg(`Refreshed ${res.updated || 0} orders`, 'success');
+    loadAll();
+  };
 
-      useEffect(() => {
-        const saved = storage.get("buxiq_user");
-        if (saved) { try { const u = JSON.parse(saved); setUser(u); userRef.current = u; } catch (e) {} }
-        const soundPref = storage.get("buxiq_sound");
-        if (soundPref !== null) { setSoundOn(soundPref === "1"); soundRef.current = soundPref === "1"; }
-        genCaptcha();
-        loadLeaders(); loadLogs(); loadOfferwalls();
-        const p = new URLSearchParams(window.location.search);
-        const uid = p.get("user_id") || p.get("userid");
-        const amt = p.get("amount") || p.get("reward");
-        const txn = p.get("transaction_id") || p.get("txn_id");
-        if (uid && amt && !isNaN(parseFloat(amt))) {
-          creditEarnings(uid, parseFloat(amt), txn);
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-      }, []);
+  // render helpers
+  const statusBadge = (s) => {
+    const st = String(s || 'unsent').toLowerCase();
+    if (st === 'sent') return <span className="badge badge-sent">Sent</span>;
+    if (st === 'pending') return <span className="badge badge-pending">Pending</span>;
+    return <span className="badge badge-unsent">Unsent</span>;
+  };
 
-      useEffect(() => {
-        if (chatOpen || tab === "chat") {
-          loadChat(true);
-          pollRef.current = setInterval(() => loadChat(false), 4000);
-        }
-        return () => clearInterval(pollRef.current);
-      }, [chatOpen, tab, loadChat]);
-      useEffect(() => { if (tab === "shop" && user) loadCashouts(user.account); }, [tab, user, loadCashouts]);
-      useEffect(() => { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
-      useEffect(() => { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
+  const totalBalance = users.reduce((acc, u) => acc + Number(u.balance || 0), 0);
 
-      async function handleLogin() {
-        if (!form.account || !form.clientId) { showMsg("Enter account and client ID"); return; }
-        if (form.captcha.trim() !== captcha) { showMsg("Invalid CAPTCHA"); genCaptcha(); setForm({...form, captcha: ""}); return; }
-        setLoggingIn(true);
-        const data = await api("login", { account: form.account, clientId: form.clientId });
-        setLoggingIn(false);
-        if (data.error) { showMsg(data.error); genCaptcha(); return; }
-        saveUser(data.user);
-        setTab("earn");
-        showMsg("Welcome back!", "success");
-      }
-
-      async function sendChat() {
-        const text = chatInput.trim();
-        if (!text) return;
-        if (!user) { showMsg("Please login to chat"); setTab("earn"); return; }
-        if (text.length > 300) { showMsg("Message too long (max 300)"); return; }
-        setChatInput("");
-        const data = await postApi("sendChat", {
-          account: user.account, username: user.username || user.account, message: text
-        });
-        if (data.error) { showMsg(data.error); return; }
-        loadChat(false);
-      }
-
-      function openModal(reward) {
-        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        setModal(reward); setStep(1); setAmount(""); setDetails("");
-      }
-      function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
-
-      function nextStep() {
-        const balPts = Number((user && user.balance) || 0);
-        const amtUsd = parseFloat(amount);
-        if (step === 1) {
-          if (!amount || isNaN(amtUsd) || amtUsd <= 0) { showMsg("Enter a valid amount"); return; }
-          if (amtUsd < modal.min) { showMsg("Minimum is $" + modal.min); return; }
-          const amtPts = toPts(amtUsd);
-          if (amtPts > balPts) { showMsg("Insufficient balance"); return; }
-          setStep(2);
-        } else if (step === 2) {
-          if (!details.trim()) { showMsg("Enter receiving details"); return; }
-          setStep(3);
-        }
-      }
-
-      async function submitCashout() {
-        setSubmitting(true);
-        const amtUsd = parseFloat(amount);
-        const amtPts = toPts(amtUsd);
-        // Send amount in points so backend stays consistent with stored balance
-        const data = await postApi("submitCashout", {
-          account: user.account,
-          username: user.username || user.account,
-          rewardType: modal.id,
-          rewardName: modal.name,
-          amount: amtPts,
-          amountUsd: amtUsd.toFixed(2),
-          details: details.trim()
-        });
-        setSubmitting(false);
-        if (data.error) { showMsg(data.error); return; }
-        showMsg("Cashout submitted!", "success");
-        const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
-        saveUser({ ...user, balance: newBal });
-        loadCashouts(user.account);
-        closeModal();
-      }
-
-      function statusBadge(status) {
-        const s = String(status || "unsent").toLowerCase();
-        if (s === "sent") return <span className="badge badge-sent">Sent</span>;
-        if (s === "pending") return <span className="badge badge-pending">Pending</span>;
-        return <span className="badge badge-unsent">Unsent</span>;
-      }
-
-      async function redeemBonus() {
-        if (!user) {
-          showMsg("Please login first", "error");
-          setTab("earn");
-          return;
-        }
-        const code = (form.bonusCode || "").trim();
-        if (!code) {
-          showMsg("Please enter a bonus code", "error");
-          return;
-        }
-        const data = await api("redeemBonus", {
-          account: user.account,
-          username: user.username || user.account,
-          bonusCode: code
-        });
-        if (data.error) {
-          showMsg(data.error, "error");
-          return;
-        }
-        showMsg("Successfully redeemed $" + data.amountUsd + "!", "success");
-        setForm(f => ({ ...f, bonusCode: "" }));
-        if (data.newBalance) {
-          saveUser({ ...user, balance: data.newBalance });
-        } else {
-          refreshBalance();
-        }
-      }
-
-      function openOffer(ow) {
-        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        const uid = String(user.account || user.username || "");
-        const uname = String(user.username || uid);
-        let url = String(ow.urlTemplate || "");
-        if (!url) { showMsg("Offerwall URL missing"); return; }
-        url = url
-          .replace(/\{user\}/gi, encodeURIComponent(uid))
-          .replace(/\{userid\}/gi, encodeURIComponent(uid))
-          .replace(/\{user_id\}/gi, encodeURIComponent(uid))
-          .replace(/\{account\}/gi, encodeURIComponent(uid))
-          .replace(/\{username\}/gi, encodeURIComponent(uname))
-          .replace(/\$\{userid\}/gi, encodeURIComponent(uid))
-          .replace(/\$\{account\}/gi, encodeURIComponent(uid))
-          .replace(/\$\{username\}/gi, encodeURIComponent(uname));
-        url += (url.indexOf("?") !== -1 ? "&" : "?") + "t=" + Date.now();
-        setIframeUrl(url);
-      }
-
-      function selectTab(id) {
-        if (id === "chat") {
-          setChatOpen(prev => !prev);
-          return;
-        }
-        setChatOpen(false);
-        setTab(id);
-      }
-
-      const tabs = [
-        { id: "home", icon: "fa-home", label: "Home" },
-        { id: "earn", icon: "fa-hand-holding-dollar", label: "Earn" },
-        { id: "shop", icon: "fa-shopping-cart", label: "Shop" },
-        { id: "leaders", icon: "fa-trophy", label: "Leaders" },
-        { id: "chat", icon: "fa-comments", label: "Chat" },
-        { id: "bonus", icon: "fa-gift", label: "Bonus" },
-        { id: "help", icon: "fa-circle-question", label: "Help" }
-      ];
-
-      return (
-        <div className="app">
-          {/* HEADER */}
-          <div className="top-header">
-            <div className="header-row">
-              <div className="logo">
-                <span className="dollar">$</span>Reward<span>Bux</span>
-              </div>
-
-              <div className="header-nav">
-                {tabs.map(t => (
-                  <div
-                    key={t.id}
-                    className={"nav-item" + ((t.id === "chat" ? chatOpen : tab === t.id) ? " active" : "")}
-                    onClick={() => selectTab(t.id)}
-                  >
-                    <i className={"fas " + t.icon} />
-                    <span>{t.label}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="header-user">
-                {user ? (
-                  <>
-                    <div className="avatar-wrap">
-                      <img
-                        src={user.avatar || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff")}
-                        alt=""
-                      />
-                      <div className="level-badge">{user.level || 1}</div>
-                    </div>
-                    <div className="user-meta">
-                      <div className="name">{user.username || user.account || "User"}</div>
-                      <div className="balance-row">
-                        <span className="diamond"><i className="fas fa-gem"></i></span>
-                        <span className="amount">{formatUSD(user.balance || 0)}</span>
-                      </div>
-                    </div>
-                    <button className="icon-btn logout" onClick={logout} title="Logout">
-                      <i className="fas fa-sign-out-alt"></i>
-                    </button>
-                  </>
-                ) : (
-                  <button className="btn btn-primary" style={{ width: "auto", padding: "6px 14px", fontSize: "0.78rem" }} onClick={() => setTab("earn")}>
-                    Signup / Login
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Static Logs Bar */}
-            {logs.length > 0 && (
-              <div className="logs-bar">
-                <div className="logs-row">
-                  {logs.slice(0, 15).map((l, i) => (
-                    <div key={i} className="log-card">
-                      <img 
-                        src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(l.username || "U") + "&background=0d9488&color=fff&size=64"} 
-                        alt="" 
-                      />
-                      <div className="info">
-                        <span className="uname">{l.username}</span>
-                        <span className="amount">{formatUSD(l.amount || 0)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <main>
-            {msg && <div className={"alert alert-" + msg.type}>{msg.text}</div>}
-
-            {tab === "home" && (
-              <>
-                <div className="hero">
-                  <h1>Earn free rewards — crypto, PayPal & gift cards</h1>
-                  <p>Thousands of members cash out every day. Start in minutes.</p>
-                </div>
-
-                <div className="feature-grid">
-                  <div className="feature-card">
-                    <h3>Take <span>Surveys</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-list-check"></i>
-                      <i className="fas fa-pen-to-square"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>Try <span>Apps</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-mobile-screen"></i>
-                      <i className="fas fa-download"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>Play <span>Games</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-gamepad"></i>
-                      <i className="fas fa-trophy"></i>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '0.78rem', margin: '12px 0 8px', letterSpacing: '0.5px' }}>
-                  — CASH OUT WITH —
-                </div>
-
-                <div className="feature-grid">
-                  <div className="feature-card">
-                    <h3>Crypto <span>Payouts</span></h3>
-                    <div className="icons">
-                      <i className="fab fa-bitcoin"></i>
-                      <i className="fab fa-ethereum"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>PayPal <span>Cash</span></h3>
-                    <div className="icons">
-                      <i className="fab fa-paypal"></i>
-                      <i className="fas fa-wallet"></i>
-                    </div>
-                  </div>
-                  <div className="feature-card">
-                    <h3>Gift <span>Cards</span></h3>
-                    <div className="icons">
-                      <i className="fas fa-gift"></i>
-                      <i className="fas fa-store"></i>
-                    </div>
-                  </div>
-                </div>
-
-                {!user && (
-                  <button className="btn btn-primary" style={{ marginTop: 14 }} onClick={() => setTab("earn")}>
-                    <i className="fas fa-right-to-bracket" /> Login to Start Earning
-                  </button>
-                )}
-              </>
-            )}
-
-            {tab === "earn" && (!user ? (
-              <div className="card">
-                <h2>Login</h2>
-                <div id="gbtn" />
-                <div className="divider"><span>OR</span></div>
-                <label>Account #</label>
-                <input value={form.account} onChange={e => setForm({...form, account: e.target.value})} placeholder="Account number" />
-                <label>Client ID</label>
-                <input value={form.clientId} onChange={e => setForm({...form, clientId: e.target.value})} placeholder="Client ID" />
-                <label>CAPTCHA</label>
-                <div className="captcha">{captcha}</div>
-                <input value={form.captcha} onChange={e => setForm({...form, captcha: e.target.value})}
-                  onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="Enter CAPTCHA" />
-                <button className="btn btn-primary" onClick={handleLogin} disabled={loggingIn}>
-                  {loggingIn ? "Signing in…" : "Login"}
-                </button>
-              </div>
-            ) : (
-              <div className="card">
-                <h2>Earning Portal</h2>
-                <p style={{ color: "var(--muted)", marginBottom: 16, fontSize: "0.9rem" }}>Complete offers to earn rewards</p>
-                {owLoading ? (
-                  <div className="empty">Loading offerwalls…</div>
-                ) : offerwalls.length === 0 ? (
-                  <div className="empty">No offerwalls available.</div>
-                ) : (
-                  <div className="offer-grid">
-                    {offerwalls.map(o => (
-                      <div key={o.id} className="offer">
-                        {o.logo ? <img src={o.logo} alt={o.name} onError={e => e.target.style.display="none"} /> : null}
-                        <div style={{ fontSize: "0.85rem", marginBottom: 10, fontWeight: 500 }}>{o.name}</div>
-                        <button className="btn btn-primary" style={{ padding: "8px" }} onClick={() => openOffer(o)}>Open</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {tab === "shop" && (
-              <>
-                <div className="card">
-                  <h2>Cashout</h2>
-                  <p style={{ color: "var(--muted)", marginBottom: 14, fontSize: "0.875rem" }}>
-                    Balance: <strong style={{color:'var(--accent-light)'}}>{formatUSD((user && user.balance) || 0)}</strong>
-                    <span style={{ marginLeft: 8, fontSize: "0.75rem" }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
-                  </p>
-                  {!user ? (
-                    <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
-                  ) : (
-                    <div className="reward-grid">
-                      {REWARDS.map(r => (
-                        <div key={r.id} className="reward-item" onClick={() => openModal(r)}>
-                          {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
-                          <div className="name">{r.name}</div>
-                          <div className="min">Min ${r.min}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {user && (
-                  <div className="card">
-                    <h2>Your Cashouts</h2>
-                    {cashouts.length === 0 ? (
-                      <div className="empty">No cashout requests yet</div>
-                    ) : cashouts.map((c, i) => (
-                      <div key={c.id || i} className="history-item">
-                        <div>
-                          <div style={{ fontWeight: 600 }}>{c.rewardName || c.rewardType}</div>
-                          <div style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
-                            {formatUSD(c.amount || 0)} · {c.time}
-                          </div>
-                        </div>
-                        {statusBadge(c.status)}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-
-            {tab === "chat" && (
-              <div className="card chat-box">
-                <h2>Community Chat</h2>
-                <div className="chat-sound-toggle" onClick={toggleSound}>
-                  <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
-                  {soundOn ? "Ding sound ON" : "Ding sound OFF"}
-                </div>
-                <div className="chat-messages">
-                  {chatMessages.length === 0 ? (
-                    <div className="empty">No messages yet. Say hi!</div>
-                  ) : chatMessages.map(m => (
-                    <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
-                      <div className="meta">
-                        <span>
-                          <span className="name">{m.username}</span>
-                          {m.isAdmin ? <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span> : null}
-                        </span>
-                        <span>{m.time}</span>
-                      </div>
-                      <div>{m.message}</div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-                <div className="chat-input-row">
-                  <input value={chatInput}
-                    onChange={e => setChatInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && sendChat()}
-                    placeholder={user ? "Type a message..." : "Login to chat"}
-                    maxLength={300} disabled={!user} />
-                  <button className="btn btn-primary" onClick={sendChat} disabled={!user}>
-                    <i className="fas fa-paper-plane" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {tab === "leaders" && (
-              <div className="card leaderboard">
-                <h2>Leaderboard</h2>
-                {leaders.length === 0 ? (
-                  <div className="empty">No data yet</div>
-                ) : (
-                  <table>
-                    <thead><tr><th>#</th><th>User</th><th>Earnings</th><th>Lvl</th></tr></thead>
-                    <tbody>
-                      {leaders.map((l, i) => (
-                        <tr key={i}>
-                          <td>{i + 1}</td>
-                          <td>{l.username}</td>
-                          <td>{formatUSD(l.balance || 0)}</td>
-                          <td>{l.level}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-
-            {tab === "bonus" && (
-              <div className="card">
-                <h2>Redeem Bonus Code</h2>
-                <div className="alert alert-warn">
-                  First come, first served. Each code can only be used once.
-                </div>
-
-                {!user ? (
-                  <button className="btn btn-primary" onClick={() => setTab("earn")}>
-                    Login to Redeem Bonus
-                  </button>
-                ) : (
-                  <>
-                    <label>Username</label>
-                    <input 
-                      value={user.username || user.account || ""} 
-                      disabled 
-                      style={{ opacity: 0.7 }}
-                    />
-                    <label>Bonus Code</label>
-                    <input 
-                      value={form.bonusCode} 
-                      onChange={e => setForm({...form, bonusCode: e.target.value.toUpperCase()})} 
-                      placeholder="Enter code"
-                      onKeyDown={e => e.key === "Enter" && redeemBonus()}
-                    />
-                    <button className="btn btn-primary" onClick={redeemBonus}>
-                      Redeem Code
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-
-            {tab === "help" && (
-              <div className="card">
-                <h2>Help & Support</h2>
-                <div style={{ marginBottom: 16 }}>
-                  <strong>How to earn?</strong>
-                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Login → Earn → open an offerwall.</p>
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <strong>How to cash out?</strong>
-                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Shop → pick a reward → amount → details → submit.</p>
-                </div>
-                <div style={{ marginBottom: 16 }}>
-                  <strong>Cashout status</strong>
-                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>
-                    <span className="badge badge-unsent">Unsent</span> waiting ·
-                    <span className="badge badge-sent" style={{ marginLeft: 6 }}>Sent</span> paid
-                  </p>
-                </div>
-                <button className="btn btn-primary" onClick={() => alert("Email support@rewardbux.com")}>
-                  Contact Support
-                </button>
-              </div>
-            )}
-          </main>
-
-          {/* MOBILE BOTTOM NAV */}
-          <div className="bottom-nav">
-            {tabs.map(t => (
-              <div
-                key={t.id}
-                className={"nav-item" + ((t.id === "chat" ? chatOpen : tab === t.id) ? " active" : "")}
-                onClick={() => selectTab(t.id)}
-              >
-                <i className={"fas " + t.icon} />
-                <span>{t.label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* DESKTOP CHAT SIDE PANEL */}
-          {chatOpen && (
-            <>
-              <div className="chat-backdrop" onClick={() => setChatOpen(false)} />
-              <div className="chat-panel open">
-                <div className="chat-panel-header">
-                  <span><i className="fas fa-comments" /> Community Chat</span>
-                  <button className="chat-panel-close" onClick={() => setChatOpen(false)} title="Close">
-                    <i className="fas fa-times" />
-                  </button>
-                </div>
-                <div className="chat-sound-toggle" onClick={toggleSound} style={{ padding: "0 10px", marginBottom: 6 }}>
-                  <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
-                  {soundOn ? "Ding sound ON" : "Ding sound OFF"}
-                </div>
-                <div className="chat-messages chat-panel-messages">
-                  {chatMessages.length === 0 ? (
-                    <div className="empty">No messages yet. Say hi!</div>
-                  ) : chatMessages.map(m => (
-                    <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
-                      <div className="meta">
-                        <span>
-                          <span className="name">{m.username}</span>
-                          {m.isAdmin ? <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span> : null}
-                        </span>
-                        <span>{m.time}</span>
-                      </div>
-                      <div>{m.message}</div>
-                    </div>
-                  ))}
-                  <div ref={chatEndRef} />
-                </div>
-                <div className="chat-input-row" style={{ padding: "0 10px 10px" }}>
-                  <input value={chatInput}
-                    onChange={e => setChatInput(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && sendChat()}
-                    placeholder={user ? "Type a message..." : "Login to chat"}
-                    maxLength={300} disabled={!user} />
-                  <button className="btn btn-primary" onClick={sendChat} disabled={!user}>
-                    <i className="fas fa-paper-plane" />
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-
-          {iframeUrl && (
-            <div className="iframe-overlay">
-              <div className="iframe-bar">
-                <span style={{ fontWeight: 600 }}>Offer Wall</span>
-                <button onClick={() => { setIframeUrl(null); refreshBalance(); }}><i className="fas fa-times" /></button>
-              </div>
-              <iframe src={iframeUrl} title="Offerwall" sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-top-navigation-by-user-activation" />
-            </div>
-          )}
-
-          {modal && (
-            <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
-              <div className="modal">
-                <div className="modal-header">
-                  <h3>{modal.name}</h3>
-                  <button className="modal-close" onClick={closeModal}><i className="fas fa-times" /></button>
-                </div>
-                <div className="steps">
-                  <div className={"step-dot" + (step > 1 ? " done" : step === 1 ? " active" : "")} />
-                  <div className={"step-dot" + (step > 2 ? " done" : step === 2 ? " active" : "")} />
-                  <div className={"step-dot" + (step === 3 ? " active" : "")} />
-                </div>
-                {step === 1 && (
-                  <>
-                    <label>Amount (USD)</label>
-                    <input type="number" step="0.01" min={modal.min}
-                      max={user ? toUSD(user.balance) : undefined}
-                      value={amount} onChange={e => setAmount(e.target.value)}
-                      placeholder={"Min $" + modal.min} autoFocus />
-                    <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 16 }}>
-                      Available: {formatUSD((user && user.balance) || 0)}
-                      <span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
-                    </p>
-                    <button className="btn btn-primary" onClick={nextStep}>Next</button>
-                  </>
-                )}
-                {step === 2 && (
-                  <>
-                    <label>{modal.detailsLabel}</label>
-                    <input value={details} onChange={e => setDetails(e.target.value)}
-                      placeholder={modal.detailsPlaceholder} autoFocus />
-                    <div className="btn-row">
-                      <button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button>
-                      <button className="btn btn-primary" onClick={nextStep}>Next</button>
-                    </div>
-                  </>
-                )}
-                {step === 3 && (
-                  <>
-                    <div className="summary">
-                      <div><strong>Reward:</strong> {modal.name}</div>
-                      <div><strong>Amount:</strong> ${parseFloat(amount || 0).toFixed(2)}</div>
-                      <div><strong>Details:</strong> {details}</div>
-                    </div>
-                    <div className="btn-row">
-                      <button className="btn btn-ghost" onClick={() => setStep(2)} disabled={submitting}>Back</button>
-                      <button className="btn btn-primary" onClick={submitCashout} disabled={submitting}>
-                        {submitting ? "Submitting..." : "Submit"}
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
+  return (
+    <div className="app">
+      {/* header */}
+      <div className="admin-header">
+        <h1><i className="fas fa-shield-alt" /> RewardBux Admin <span className="badge-admin">v2</span></h1>
+        <div className="user-badge">
+          <i className="fas fa-database" /> {users.length} users · {formatUSD(totalBalance)} total
+          <button className="btn btn-ghost btn-sm" onClick={loadAll}><i className="fas fa-sync" /></button>
+          <button className="btn btn-danger btn-sm" onClick={() => { storage.remove('buxiq_user'); window.location.reload(); }}>Logout</button>
         </div>
-      );
-    }
+      </div>
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
+      {msg && <div className={`alert ${msg.type === 'error' ? 'alert-error' : 'alert-success'}`}>{msg.text}</div>}
+
+      {/* tabs */}
+      <div className="tab-bar">
+        {['dashboard','users','cashouts','cryptorefills','offerwalls','logs'].map(t => (
+          <button key={t} className={`tab-btn ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
+            {t === 'dashboard' && <><i className="fas fa-chart-pie" /> Overview</>}
+            {t === 'users' && <><i className="fas fa-users" /> Users</>}
+            {t === 'cashouts' && <><i className="fas fa-hand-holding-usd" /> Cashouts</>}
+            {t === 'cryptorefills' && <><i className="fas fa-gift" /> CryptoRefills</>}
+            {t === 'offerwalls' && <><i className="fas fa-ad" /> Offerwalls</>}
+            {t === 'logs' && <><i className="fas fa-history" /> Logs</>}
+          </button>
+        ))}
+      </div>
+
+      {/* DASHBOARD */}
+      {tab === 'dashboard' && (
+        <div className="card">
+          <h3><i className="fas fa-chart-simple" /> Overview</h3>
+          <div className="stat-row">
+            <div className="stat-box"><div className="label">Users</div><div className="value">{users.length}</div></div>
+            <div className="stat-box"><div className="label">Total Balance (USD)</div><div className="value">{formatUSD(totalBalance)}</div></div>
+            <div className="stat-box"><div className="label">Cashouts</div><div className="value">{cashouts.length}</div></div>
+            <div className="stat-box"><div className="label">CR Orders</div><div className="value">{crOrders.length}</div></div>
+          </div>
+          <div className="flex mt-1">
+            <button className="btn btn-primary btn-sm" onClick={loadAll}><i className="fas fa-sync" /> Refresh all</button>
+            <button className="btn btn-ghost btn-sm" onClick={refreshCRStatuses}><i className="fas fa-sync" /> Refresh CR statuses</button>
+          </div>
+          <div style={{ marginTop: 12, fontSize: '0.8rem', color: 'var(--muted)' }}>
+            <i className="fas fa-circle-check" style={{color:'var(--success)'}} /> Last loaded: {new Date().toLocaleTimeString()}
+          </div>
+        </div>
+      )}
+
+      {/* USERS */}
+      {tab === 'users' && (
+        <div className="card">
+          <h3><i className="fas fa-users" /> Users ({users.length})</h3>
+          <div className="scroll-table">
+            <table>
+              <thead><tr><th>Account</th><th>Username</th><th>Balance (pts)</th><th>Level</th><th>Actions</th></tr></thead>
+              <tbody>
+                {users.map(u => (
+                  <tr key={u.account}>
+                    <td>{u.account}</td>
+                    <td>{u.username || '—'}</td>
+                    <td>{Number(u.balance || 0).toLocaleString()} ({formatUSD(u.balance)})</td>
+                    <td>{u.level || 1}</td>
+                    <td>
+                      <button className="btn btn-primary btn-sm" onClick={() => setModal({ type: 'editBalance', data: u })}>
+                        <i className="fas fa-pen" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* CASHOUTS */}
+      {tab === 'cashouts' && (
+        <div className="card">
+          <h3><i className="fas fa-hand-holding-usd" /> Cashouts ({cashouts.length})</h3>
+          <div className="scroll-table">
+            <table>
+              <thead><tr><th>User</th><th>Reward</th><th>Amount</th><th>Details</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                {cashouts.map(c => (
+                  <tr key={c.id}>
+                    <td>{c.username || c.account}</td>
+                    <td>{c.rewardName || c.rewardType}</td>
+                    <td>{formatUSD(c.amount)}</td>
+                    <td style={{maxWidth:120, wordBreak:'break-all'}}>{c.details || '—'}</td>
+                    <td>{statusBadge(c.status)}</td>
+                    <td>
+                      <div className="flex">
+                        {String(c.status).toLowerCase() !== 'sent' && (
+                          <button className="btn btn-success btn-sm" onClick={() => markCashoutSent(c.id)}>Sent</button>
+                        )}
+                        <button className="btn btn-danger btn-sm" onClick={() => deleteCashout(c.id)}><i className="fas fa-trash" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {cashouts.length === 0 && <tr><td colSpan="6" className="empty">No cashouts</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* CRYPTOREFILLS */}
+      {tab === 'cryptorefills' && (
+        <div className="card">
+          <h3><i className="fas fa-gift" /> CryptoRefills Orders ({crOrders.length})</h3>
+          <div className="flex mb-1">
+            <button className="btn btn-primary btn-sm" onClick={refreshCRStatuses}><i className="fas fa-sync" /> Refresh statuses</button>
+            <select value={crStatusFilter} onChange={e => setCrStatusFilter(e.target.value)} style={{ width: 'auto', marginBottom:0 }}>
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="sent">Sent</option>
+              <option value="unsent">Unsent</option>
+            </select>
+          </div>
+          <div className="scroll-table">
+            <table>
+              <thead><tr><th>Order ID</th><th>User</th><th>Brand</th><th>Amount</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                {crOrders.filter(o => crStatusFilter === 'all' || String(o.status).toLowerCase() === crStatusFilter).map(o => (
+                  <tr key={o.id}>
+                    <td style={{fontSize:'0.7rem'}}>{o.crOrderId || o.id}</td>
+                    <td>{o.username || o.account}</td>
+                    <td>{o.brand_name || '—'}</td>
+                    <td>{formatUSD(o.amount)}</td>
+                    <td style={{maxWidth:100, wordBreak:'break-all'}}>{o.email || o.details}</td>
+                    <td>{statusBadge(o.status)}</td>
+                    <td>
+                      <div className="flex">
+                        {String(o.status).toLowerCase() !== 'sent' && (
+                          <button className="btn btn-success btn-sm" onClick={() => updateCRStatus(o.id, 'sent')}>Sent</button>
+                        )}
+                        {String(o.status).toLowerCase() !== 'pending' && (
+                          <button className="btn btn-ghost btn-sm" onClick={() => updateCRStatus(o.id, 'pending')}>Pending</button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {crOrders.length === 0 && <tr><td colSpan="7" className="empty">No CR orders</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* OFFERWALLS */}
+      {tab === 'offerwalls' && (
+        <div className="card">
+          <h3><i className="fas fa-ad" /> Offerwalls</h3>
+          <button className="btn btn-primary btn-sm mb-1" onClick={() => setModal({ type: 'addOfferwall' })}>
+            <i className="fas fa-plus" /> Add offerwall
+          </button>
+          <div className="scroll-table">
+            <table>
+              <thead><tr><th>ID</th><th>Name</th><th>URL Template</th><th>Logo</th><th>Actions</th></tr></thead>
+              <tbody>
+                {offerwalls.map(o => (
+                  <tr key={o.id}>
+                    <td>{o.id}</td>
+                    <td>{o.name}</td>
+                    <td style={{maxWidth:150, wordBreak:'break-all', fontSize:'0.7rem'}}>{o.urlTemplate || '—'}</td>
+                    <td>{o.logo ? <img src={o.logo} style={{height:20, objectFit:'contain'}} /> : '—'}</td>
+                    <td>
+                      <button className="btn btn-danger btn-sm" onClick={async () => {
+                        if (!confirm('Delete offerwall?')) return;
+                        const res = await postApi('adminDeleteOfferwall', { id: o.id });
+                        if (res.error) showMsg(res.error, 'error'); else { showMsg('Deleted', 'success'); loadAll(); }
+                      }}><i className="fas fa-trash" /></button>
+                    </td>
+                  </tr>
+                ))}
+                {offerwalls.length === 0 && <tr><td colSpan="5" className="empty">No offerwalls</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* LOGS */}
+      {tab === 'logs' && (
+        <div className="card">
+          <h3><i className="fas fa-history" /> Recent Logs</h3>
+          <div className="scroll-table">
+            <table>
+              <thead><tr><th>User</th><th>Action</th><th>Amount</th><th>Time</th></tr></thead>
+              <tbody>
+                {logs.slice(0, 100).map((l, i) => (
+                  <tr key={i}>
+                    <td>{l.username || l.account}</td>
+                    <td>{l.action || '—'}</td>
+                    <td>{l.amount ? formatUSD(l.amount) : '—'}</td>
+                    <td style={{fontSize:'0.7rem'}}>{l.time || '—'}</td>
+                  </tr>
+                ))}
+                {logs.length === 0 && <tr><td colSpan="4" className="empty">No logs</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: edit balance */}
+      {modal && modal.type === 'editBalance' && (
+        <EditBalanceModal user={modal.data} onClose={() => setModal(null)} onSave={updateBalance} />
+      )}
+
+      {/* MODAL: add offerwall */}
+      {modal && modal.type === 'addOfferwall' && (
+        <AddOfferwallModal onClose={() => setModal(null)} onSaved={() => { loadAll(); setModal(null); }} />
+      )}
+    </div>
+  );
+}
+
+// ---- MODAL: Edit Balance ----
+function EditBalanceModal({ user, onClose, onSave }) {
+  const [pts, setPts] = useState(String(user.balance || 0));
+  const [loading, setLoading] = useState(false);
+  const handleSave = async () => {
+    const val = parseInt(pts);
+    if (isNaN(val) || val < 0) return alert('Enter a valid positive number');
+    setLoading(true);
+    await onSave(user.account, val);
+    setLoading(false);
+    onClose();
+  };
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <h3>Edit Balance: {user.username || user.account}</h3>
+          <button className="modal-close" onClick={onClose}><i className="fas fa-times" /></button>
+        </div>
+        <label>Points (1 USD = {PTS_PER_USD} pts)</label>
+        <input type="number" value={pts} onChange={e => setPts(e.target.value)} />
+        <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>≈ {formatUSD(pts)}</div>
+        <div className="flex" style={{ marginTop: 12 }}>
+          <button className="btn btn-primary" onClick={handleSave} disabled={loading}>Save</button>
+          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---- MODAL: Add Offerwall ----
+function AddOfferwallModal({ onClose, onSaved }) {
+  const [name, setName] = useState('');
+  const [urlTemplate, setUrlTemplate] = useState('');
+  const [logo, setLogo] = useState('');
+  const [loading, setLoading] = useState(false);
+  const handleSave = async () => {
+    if (!name.trim() || !urlTemplate.trim()) return alert('Name and URL required');
+    setLoading(true);
+    const res = await postApi('adminAddOfferwall', { name, urlTemplate, logo });
+    setLoading(false);
+    if (res.error) return alert(res.error);
+    onSaved();
+  };
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal">
+        <div className="modal-header">
+          <h3>Add Offerwall</h3>
+          <button className="modal-close" onClick={onClose}><i className="fas fa-times" /></button>
+        </div>
+        <label>Name</label>
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Offerwall X" />
+        <label>URL Template</label>
+        <input value={urlTemplate} onChange={e => setUrlTemplate(e.target.value)} placeholder="https://example.com?user={userid}" />
+        <label>Logo URL (optional)</label>
+        <input value={logo} onChange={e => setLogo(e.target.value)} placeholder="https://..." />
+        <div className="flex" style={{ marginTop: 12 }}>
+          <button className="btn btn-primary" onClick={handleSave} disabled={loading}>Add</button>
+          <button className="btn btn-ghost" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('admin-root')).render(<AdminApp />);
+</script>
 </body>
 </html>
