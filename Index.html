@@ -1,5 +1,7 @@
 
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -795,6 +797,22 @@ body{
       }
     ];
 
+    /* $1 USD = 1000 points. API balance / log / leader amounts are stored in points. */
+    const PTS_PER_USD = 1000;
+    function toUSD(pts) {
+      const n = Number(pts);
+      if (!isFinite(n)) return "0.00";
+      return (n / PTS_PER_USD).toFixed(2);
+    }
+    function toPts(usd) {
+      const n = Number(usd);
+      if (!isFinite(n)) return 0;
+      return Math.round(n * PTS_PER_USD);
+    }
+    function formatUSD(pts) {
+      return "$" + toUSD(pts);
+    }
+
     let audioCtx = null;
     function playDing() {
       try {
@@ -929,11 +947,13 @@ body{
       }, []);
 
       const creditEarnings = useCallback(async (userId, amt, txnId) => {
+        // Postback amount is in USD; convert to points for backend storage
+        const pts = toPts(amt);
         const data = await postApi("creditEarnings", {
-          userId, amount: amt, transactionId: txnId || String(Date.now())
+          userId, amount: pts, transactionId: txnId || String(Date.now())
         });
         if (data.error) { showMsg("Credit failed: " + data.error); return; }
-        showMsg("$" + Number(amt).toFixed(2) + " credited!", "success");
+        showMsg(formatUSD(pts) + " credited!", "success");
         const u = userRef.current;
         if (u && (String(u.account) === String(userId) || u.username === userId)) refreshBalance();
         loadLogs(); loadLeaders();
@@ -1043,12 +1063,13 @@ body{
       function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
 
       function nextStep() {
-        const bal = parseFloat((user && user.balance) || 0);
-        const amt = parseFloat(amount);
+        const balPts = Number((user && user.balance) || 0);
+        const amtUsd = parseFloat(amount);
         if (step === 1) {
-          if (!amount || isNaN(amt) || amt <= 0) { showMsg("Enter a valid amount"); return; }
-          if (amt < modal.min) { showMsg("Minimum is $" + modal.min); return; }
-          if (amt > bal) { showMsg("Insufficient balance"); return; }
+          if (!amount || isNaN(amtUsd) || amtUsd <= 0) { showMsg("Enter a valid amount"); return; }
+          if (amtUsd < modal.min) { showMsg("Minimum is $" + modal.min); return; }
+          const amtPts = toPts(amtUsd);
+          if (amtPts > balPts) { showMsg("Insufficient balance"); return; }
           setStep(2);
         } else if (step === 2) {
           if (!details.trim()) { showMsg("Enter receiving details"); return; }
@@ -1058,19 +1079,23 @@ body{
 
       async function submitCashout() {
         setSubmitting(true);
+        const amtUsd = parseFloat(amount);
+        const amtPts = toPts(amtUsd);
+        // Send amount in points so backend stays consistent with stored balance
         const data = await postApi("submitCashout", {
           account: user.account,
           username: user.username || user.account,
           rewardType: modal.id,
           rewardName: modal.name,
-          amount,
+          amount: amtPts,
+          amountUsd: amtUsd.toFixed(2),
           details: details.trim()
         });
         setSubmitting(false);
         if (data.error) { showMsg(data.error); return; }
         showMsg("Cashout submitted!", "success");
-        const newBal = data.newBalance !== undefined ? data.newBalance : (parseFloat(user.balance) - parseFloat(amount));
-        saveUser({ ...user, balance: parseFloat(newBal).toFixed(2) });
+        const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
+        saveUser({ ...user, balance: newBal });
         loadCashouts(user.account);
         closeModal();
       }
@@ -1185,7 +1210,7 @@ body{
                       <div className="name">{user.username || user.account || "User"}</div>
                       <div className="balance-row">
                         <span className="diamond"><i className="fas fa-gem"></i></span>
-                        <span className="amount">${parseFloat(user.balance || 0).toFixed(2)}</span>
+                        <span className="amount">{formatUSD(user.balance || 0)}</span>
                       </div>
                     </div>
                     <button className="icon-btn logout" onClick={logout} title="Logout">
@@ -1212,7 +1237,7 @@ body{
                       />
                       <div className="info">
                         <span className="uname">{l.username}</span>
-                        <span className="amount">{parseFloat(l.amount || 0).toFixed(2)}</span>
+                        <span className="amount">{formatUSD(l.amount || 0)}</span>
                       </div>
                     </div>
                   ))}
@@ -1335,7 +1360,8 @@ body{
                 <div className="card">
                   <h2>Cashout</h2>
                   <p style={{ color: "var(--muted)", marginBottom: 14, fontSize: "0.875rem" }}>
-                    Balance: <strong style={{color:'var(--accent-light)'}}>${parseFloat((user && user.balance) || 0).toFixed(2)}</strong>
+                    Balance: <strong style={{color:'var(--accent-light)'}}>{formatUSD((user && user.balance) || 0)}</strong>
+                    <span style={{ marginLeft: 8, fontSize: "0.75rem" }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
                   </p>
                   {!user ? (
                     <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
@@ -1361,7 +1387,7 @@ body{
                         <div>
                           <div style={{ fontWeight: 600 }}>{c.rewardName || c.rewardType}</div>
                           <div style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
-                            ${parseFloat(c.amount || 0).toFixed(2)} · {c.time}
+                            {formatUSD(c.amount || 0)} · {c.time}
                           </div>
                         </div>
                         {statusBadge(c.status)}
@@ -1422,7 +1448,7 @@ body{
                         <tr key={i}>
                           <td>{i + 1}</td>
                           <td>{l.username}</td>
-                          <td>${parseFloat(l.balance || 0).toFixed(2)}</td>
+                          <td>{formatUSD(l.balance || 0)}</td>
                           <td>{l.level}</td>
                         </tr>
                       ))}
@@ -1576,11 +1602,13 @@ body{
                 {step === 1 && (
                   <>
                     <label>Amount (USD)</label>
-                    <input type="number" step="0.01" min={modal.min} max={user && user.balance}
+                    <input type="number" step="0.01" min={modal.min}
+                      max={user ? toUSD(user.balance) : undefined}
                       value={amount} onChange={e => setAmount(e.target.value)}
                       placeholder={"Min $" + modal.min} autoFocus />
                     <p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 16 }}>
-                      Available: ${parseFloat((user && user.balance) || 0).toFixed(2)}
+                      Available: {formatUSD((user && user.balance) || 0)}
+                      <span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
                     </p>
                     <button className="btn btn-primary" onClick={nextStep}>Next</button>
                   </>
