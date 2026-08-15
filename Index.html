@@ -168,8 +168,9 @@ body{
       gap: 10px;
       flex-shrink: 0;
       margin-left: auto;
+      position: relative;
     }
-    .avatar-wrap { position: relative; width: 34px; height: 34px; flex-shrink: 0; }
+    .avatar-wrap { position: relative; width: 34px; height: 34px; flex-shrink: 0; cursor: pointer; }
     .avatar-wrap img {
       width: 34px; height: 34px;
       border-radius: 4px;
@@ -215,6 +216,51 @@ body{
       background: rgba(234, 67, 53, 0.15);
       border-color: var(--danger);
       color: var(--danger);
+    }
+
+    /* ====== DROPDOWN MENU (avatar) ====== */
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      min-width: 200px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 50;
+      overflow: hidden;
+      padding: 4px 0;
+    }
+    .dropdown-menu .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.1s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-family: inherit;
+    }
+    .dropdown-menu .menu-item:hover {
+      background: var(--card-hover);
+      color: #fff;
+    }
+    .dropdown-menu .menu-item i {
+      width: 18px;
+      color: var(--muted);
+    }
+    .dropdown-menu .menu-item:hover i {
+      color: var(--accent-light);
+    }
+    .dropdown-menu .menu-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 4px 0;
     }
 
     /* Static Logs Bar - denser */
@@ -1043,6 +1089,10 @@ function App() {
   const [crCustomAmount, setCrCustomAmount] = useState("");
   const CR_PAGE_SIZE = 48;
 
+  // dropdown state
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
   useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
   useEffect(() => { userRef.current = user; }, [user]);
 
@@ -1056,6 +1106,7 @@ function App() {
     setUser(null); storage.remove("buxiq_user");
     try { if (window.google) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
     gInited.current = false; setTab("home");
+    setDropdownOpen(false);
     showMsg("Logged out", "success");
   }
   function toggleSound() {
@@ -1207,12 +1258,25 @@ function App() {
     }
     return () => clearInterval(pollRef.current);
   }, [chatOpen, tab, loadChat]);
-  useEffect(() => { if (tab === "shop" && user) loadCashouts(user.account); }, [tab, user, loadCashouts]);
+  useEffect(() => {
+    if (tab === "shop" && user) loadCashouts(user.account);
+  }, [tab, user, loadCashouts]);
   useEffect(() => {
     if (tab === "shop" && user) loadCRBrands(crCountry);
   }, [tab, user, crCountry]);
   useEffect(() => { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
   useEffect(() => { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
+
+  // close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   async function handleLogin() {
     if (!form.account || !form.clientId) { showMsg("Enter account and client ID"); return; }
@@ -1348,6 +1412,14 @@ function App() {
     setTab(id);
   }
 
+  function toggleDropdown() {
+    if (!user) {
+      setTab("earn");
+      return;
+    }
+    setDropdownOpen(prev => !prev);
+  }
+
   const tabs = [
     { id: "home", icon: "fa-home", label: "Home" },
     { id: "earn", icon: "fa-hand-holding-dollar", label: "Earn" },
@@ -1371,10 +1443,10 @@ function App() {
               </div>
             ))}
           </div>
-          <div className="header-user">
+          <div className="header-user" ref={dropdownRef}>
             {user ? (
               <>
-                <div className="avatar-wrap">
+                <div className="avatar-wrap" onClick={toggleDropdown}>
                   <img src={user.avatar || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff")} alt="" />
                   <div className="level-badge">{user.level || 1}</div>
                 </div>
@@ -1383,6 +1455,16 @@ function App() {
                   <div className="balance-row"><span className="diamond"><i className="fas fa-gem"></i></span><span className="amount">{formatUSD(user.balance || 0)}</span></div>
                 </div>
                 <button className="icon-btn logout" onClick={logout} title="Logout"><i className="fas fa-sign-out-alt"></i></button>
+                {/* Dropdown menu */}
+                {dropdownOpen && (
+                  <div className="dropdown-menu">
+                    <button className="menu-item" onClick={() => { setDropdownOpen(false); setTab("shop"); }}><i className="fas fa-clock-rotate-left"></i> Cashout History</button>
+                    <button className="menu-item" onClick={() => { setDropdownOpen(false); setTab("leaders"); }}><i className="fas fa-trophy"></i> Leaderboard</button>
+                    <button className="menu-item" onClick={() => { setDropdownOpen(false); setTab("bonus"); }}><i className="fas fa-gift"></i> Bonus Codes</button>
+                    <div className="menu-divider"></div>
+                    <button className="menu-item" onClick={() => { setDropdownOpen(false); logout(); }}><i className="fas fa-sign-out-alt"></i> Logout</button>
+                  </div>
+                )}
               </>
             ) : (
               <button className="btn btn-primary" style={{ width: "auto", padding: "6px 14px", fontSize: "0.78rem" }} onClick={() => setTab("earn")}>Signup / Login</button>
