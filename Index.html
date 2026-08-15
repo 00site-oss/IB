@@ -1458,7 +1458,7 @@ function App() {
                 {/* Dropdown menu */}
                 {dropdownOpen && (
                   <div className="dropdown-menu">
-                    <button className="menu-item" onClick={() => { setDropdownOpen(false); setTab("shop"); }}><i className="fas fa-clock-rotate-left"></i> Cashout History</button>
+                    <button className="menu-item" onClick={() => { setDropdownOpen(false); setTab("history"); }}><i className="fas fa-clock-rotate-left"></i> Cashout History</button>
                     <button className="menu-item" onClick={() => { setDropdownOpen(false); setTab("leaders"); }}><i className="fas fa-trophy"></i> Leaderboard</button>
                     <button className="menu-item" onClick={() => { setDropdownOpen(false); setTab("bonus"); }}><i className="fas fa-gift"></i> Bonus Codes</button>
                     <div className="menu-divider"></div>
@@ -1704,6 +1704,46 @@ function App() {
             <div style={{ marginBottom: 16 }}><strong>How to cash out?</strong><p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Shop → pick a gift card → amount → delivery email → submit.</p></div>
             <div style={{ marginBottom: 16 }}><strong>Cashout status</strong><p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}><span className="badge badge-unsent">Unsent</span> waiting · <span className="badge badge-pending" style={{ marginLeft: 6 }}>Pending</span> processing · <span className="badge badge-sent" style={{ marginLeft: 6 }}>Sent</span> paid</p></div>
             <button className="btn btn-primary" onClick={() => alert("support@rewardbux.com")}>Contact Support</button>
+          </div>
+        )}
+
+        {/* NEW: CASHOUT HISTORY TAB */}
+        {tab === "history" && (
+          <div className="card">
+            <h2>Your Cashout History</h2>
+            {!user ? (
+              <div className="empty">Please login to view your history.</div>
+            ) : cashouts.length === 0 ? (
+              <div className="empty">No cashouts found.</div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: 'left', padding: '6px 4px', borderBottom: '1px solid var(--border)', color: 'var(--muted)' }}>Reward</th>
+                      <th style={{ textAlign: 'left', padding: '6px 4px', borderBottom: '1px solid var(--border)', color: 'var(--muted)' }}>Amount (USD)</th>
+                      <th style={{ textAlign: 'left', padding: '6px 4px', borderBottom: '1px solid var(--border)', color: 'var(--muted)' }}>Status</th>
+                      <th style={{ textAlign: 'left', padding: '6px 4px', borderBottom: '1px solid var(--border)', color: 'var(--muted)' }}>Gift Code</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cashouts.map((c, i) => (
+                      <tr key={i}>
+                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>{c.rewardName || c.brand_name || c.rewardType || '—'}</td>
+                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>${c.amountUsd || c.amount || '0.00'}</td>
+                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>{statusBadge(c.status)}</td>
+                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)', wordBreak: 'break-all' }}>{c.giftCode || '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {user && (
+              <div style={{ marginTop: 12 }}>
+                <button className="btn btn-ghost" style={{ width: 'auto', padding: '6px 16px' }} onClick={() => { loadCashouts(user.account); showMsg('Refreshed', 'success'); }}><i className="fas fa-sync" /> Refresh</button>
+              </div>
+            )}
           </div>
         )}
       </main>
