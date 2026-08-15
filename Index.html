@@ -401,6 +401,14 @@ body{
       border-color: var(--accent);
       background: var(--card-hover);
     }
+    .reward-item.custom-item {
+      border-color: var(--accent-2);
+      background: rgba(232, 168, 56, 0.08);
+    }
+    .reward-item.custom-item:hover {
+      border-color: var(--accent);
+      background: var(--card-hover);
+    }
     .offer img, .reward-item img {
       height: 28px;
       max-width: 100%;
@@ -415,6 +423,10 @@ body{
       display: inline-block; margin-top: 4px; font-size: 0.58rem; font-weight: 600;
       text-transform: uppercase; padding: 1px 5px; border-radius: 2px;
       background: rgba(0,184,169,0.15); color: var(--accent-light);
+    }
+    .reward-item .tag.custom-tag {
+      background: rgba(232, 168, 56, 0.2);
+      color: var(--accent-2);
     }
     .section-label {
       font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px; margin: 12px 0 8px;
@@ -482,6 +494,7 @@ body{
     .alert-error { background: rgba(234,67,53,0.12); color: #f28b82; border: 1px solid rgba(234,67,53,0.25); }
     .alert-success { background: rgba(52,168,83,0.12); color: #81c995; border: 1px solid rgba(52,168,83,0.25); }
     .alert-info { background: rgba(0,184,169,0.12); color: #5eead4; border: 1px solid rgba(0,184,169,0.25); }
+    .alert-custom { background: rgba(232,168,56,0.12); color: var(--accent-2); border: 1px solid rgba(232,168,56,0.25); }
 
     .divider {
       text-align: center;
@@ -648,6 +661,7 @@ body{
     .badge-unsent { background: rgba(234,67,53,0.2); color: #f28b82; }
     .badge-sent { background: rgba(52,168,83,0.2); color: #81c995; }
     .badge-pending { background: rgba(251,188,4,0.2); color: #fbbc04; }
+    .badge-custom { background: rgba(232,168,56,0.2); color: var(--accent-2); }
 
     .modal-overlay {
       position: fixed;
@@ -806,7 +820,7 @@ body{
       }
     ];
 
-    /* CryptoRefills-powered gift cards */
+    /* CryptoRefills-powered gift cards - ADDED American Express with $2 custom option */
     const CR_REWARDS = [
       {
         id: "cr_amazon_us",
@@ -818,6 +832,20 @@ body{
         detailsLabel: "Delivery email",
         detailsPlaceholder: "you@email.com",
         provider: "cryptorefills"
+      },
+      {
+        id: "cr_american_express",
+        name: "American Express",
+        brand_name: "American Express",
+        country_code: "US",
+        min: 2,  // Allow $2 minimum
+        logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills",
+        isCustom: true,
+        customDenominations: [2, 5, 10, 25, 50, 100],
+        customMessage: "⚠️ $2 is a custom amount and will be converted to nearest available denomination"
       },
       {
         id: "cr_google_play",
@@ -986,6 +1014,8 @@ body{
       const [loggingIn, setLoggingIn] = useState(false);
       const [chatOpen, setChatOpen] = useState(false);
       const [refreshingCR, setRefreshingCR] = useState(false);
+      const [availableDenoms, setAvailableDenoms] = useState([]);
+      const [loadingDenoms, setLoadingDenoms] = useState(false);
 
       useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
       useEffect(() => { userRef.current = user; }, [user]);
@@ -1133,6 +1163,31 @@ body{
       useEffect(() => { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
       useEffect(() => { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
 
+      // Load available denominations when modal opens for custom rewards
+      useEffect(() => {
+        if (modal && modal.isCustom) {
+          loadAvailableDenominations(modal);
+        }
+      }, [modal]);
+
+      async function loadAvailableDenominations(reward) {
+        setLoadingDenoms(true);
+        try {
+          const data = await api("getAvailableDenominations", {
+            brand_name: reward.brand_name,
+            country: reward.country_code || "US"
+          });
+          if (data.success && data.denominations) {
+            setAvailableDenoms(data.denominations);
+          } else {
+            setAvailableDenoms([]);
+          }
+        } catch (e) {
+          setAvailableDenoms([]);
+        }
+        setLoadingDenoms(false);
+      }
+
       async function handleLogin() {
         if (!form.account || !form.clientId) { showMsg("Enter account and client ID"); return; }
         if (form.captcha.trim() !== captcha) { showMsg("Invalid CAPTCHA"); genCaptcha(); setForm({...form, captcha: ""}); return; }
@@ -1160,10 +1215,13 @@ body{
 
       function openModal(reward) {
         if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        setModal(reward); setStep(1); setAmount("");
+        setModal(reward); 
+        setStep(1); 
+        setAmount("");
         setDetails((user.email || "").trim());
+        setAvailableDenoms([]);
       }
-      function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
+      function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); setAvailableDenoms([]); }
 
       function nextStep() {
         const balPts = Number((user && user.balance) || 0);
@@ -1173,6 +1231,18 @@ body{
           if (amtUsd < modal.min) { showMsg("Minimum is $" + modal.min); return; }
           const amtPts = toPts(amtUsd);
           if (amtPts > balPts) { showMsg("Insufficient balance"); return; }
+          
+          // For custom amounts like $2, check availability
+          if (modal.isCustom) {
+            const available = availableDenoms.some(d => d.amount === amtUsd && d.available === true);
+            if (!available) {
+              const suggestions = availableDenoms.filter(d => d.available === true).slice(0, 3);
+              const suggestText = suggestions.map(s => '$' + s.amount.toFixed(2)).join(', ');
+              showMsg('$' + amtUsd.toFixed(2) + ' is not directly available. Available: ' + suggestText, 'custom');
+              return;
+            }
+          }
+          
           setStep(2);
         } else if (step === 2) {
           if (!details.trim()) { showMsg("Enter receiving details"); return; }
@@ -1218,7 +1288,13 @@ body{
           showMsg(data.error + (data.refunded ? " (balance refunded)" : ""));
           return;
         }
-        showMsg(isCR ? ("Gift card order submitted! Email: " + details.trim()) : "Cashout submitted!", "success");
+        
+        let successMsg = isCR ? ("Gift card order submitted! Email: " + details.trim()) : "Cashout submitted!";
+        if (data.isCustomAmount) {
+          successMsg += " (Custom $" + data.requestedAmountUsd + " → $" + data.actualAmountUsd + ")";
+        }
+        showMsg(successMsg, "success");
+        
         const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
         saveUser({ ...user, balance: newBal });
         loadCashouts(user.account);
@@ -1505,11 +1581,24 @@ body{
                       <div className="section-label">Gift cards via CryptoRefills</div>
                       <div className="reward-grid">
                         {CR_REWARDS.map(r => (
-                          <div key={r.id} className="reward-item" onClick={() => openModal(r)}>
+                          <div 
+                            key={r.id} 
+                            className={"reward-item" + (r.isCustom ? " custom-item" : "")} 
+                            onClick={() => openModal(r)}
+                          >
                             {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
                             <div className="name">{r.name}</div>
                             <div className="min">Min ${r.min}</div>
-                            <div className="tag">Instant</div>
+                            {r.isCustom ? (
+                              <>
+                                <div className="tag custom-tag">Custom Amounts</div>
+                                <div style={{ fontSize: '0.6rem', color: 'var(--accent-2)', marginTop: 2 }}>
+                                  {r.customDenominations ? r.customDenominations.map(d => '$' + d).join(' • ') : ''}
+                                </div>
+                              </>
+                            ) : (
+                              <div className="tag">Instant</div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -1654,8 +1743,7 @@ body{
                       onKeyDown={e => e.key === "Enter" && redeemBonus()}
                     />
                     <button className="btn btn-primary" onClick={redeemBonus}>
-                      Redeem Code
-                    </button>
+                      Redeem Code                    </button>
                   </>
                 )}
               </div>
@@ -1783,6 +1871,21 @@ body{
                       Available: {formatUSD((user && user.balance) || 0)}
                       <span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
                     </p>
+                    
+                    {/* Custom amount info for American Express */}
+                    {modal.isCustom && (
+                      <div className="alert alert-custom" style={{ marginBottom: 12 }}>
+                        <i className="fas fa-info-circle" /> {modal.customMessage || "Custom amounts available"}
+                        {loadingDenoms ? (
+                          <div style={{ fontSize: '0.7rem', marginTop: 4 }}>Loading available denominations...</div>
+                        ) : availableDenoms.length > 0 ? (
+                          <div style={{ fontSize: '0.7rem', marginTop: 4 }}>
+                            Available: {availableDenoms.filter(d => d.available).map(d => '$' + d.amount.toFixed(2)).join(', ')}
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+                    
                     {modal.provider === "cryptorefills" && (
                       <div className="alert alert-info" style={{ marginBottom: 12 }}>
                         Delivered by CryptoRefills to your email after processing.
@@ -1810,6 +1913,11 @@ body{
                       <div><strong>Details:</strong> {details}</div>
                       {modal.provider === "cryptorefills" && (
                         <div><strong>Provider:</strong> CryptoRefills (USDC)</div>
+                      )}
+                      {modal.isCustom && (
+                        <div style={{ color: 'var(--accent-2)', fontSize: '0.75rem', marginTop: 4 }}>
+                          <i className="fas fa-info-circle" /> Custom amount may be converted to nearest available denomination
+                        </div>
                       )}
                     </div>
                     <div className="btn-row">
