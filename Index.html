@@ -1018,6 +1018,25 @@ function toPts(usd) {
 function formatUSD(pts) { 
   return "$" + toUSD(pts); 
 }
+// Helper to format USD from amount (could be in points or USD)
+function formatAmountUSD(amount, isPoints = true) {
+  if (!amount) return "0.00";
+  const num = parseFloat(amount);
+  if (isNaN(num)) return "0.00";
+  // If the amount is in points (large number like 1000), convert to USD
+  if (isPoints && num >= 100) {
+    return (num / PTS_PER_USD).toFixed(2);
+  }
+  // If it's already in USD (small number like 1.00), return as is
+  if (!isPoints && num < 100) {
+    return num.toFixed(2);
+  }
+  // Default: if it's a large number, treat as points
+  if (num >= 100) {
+    return (num / PTS_PER_USD).toFixed(2);
+  }
+  return num.toFixed(2);
+}
 
 let audioCtx = null;
 function playDing() {
@@ -1140,7 +1159,17 @@ function App() {
   }, []);
   const loadCashouts = useCallback(async (account) => {
     const data = await api("getCashouts", { account });
-    setCashouts(data.cashouts || []);
+    // Ensure amounts are properly converted to USD if they're in points
+    const processedCashouts = (data.cashouts || []).map(c => {
+      // If amount is large (>=100), it's likely in points, convert to USD
+      let amountUsd = c.amountUsd || c.amount || '0';
+      const numAmount = parseFloat(amountUsd);
+      if (!isNaN(numAmount) && numAmount >= 100) {
+        amountUsd = (numAmount / PTS_PER_USD).toFixed(2);
+      }
+      return { ...c, amountUsd: amountUsd };
+    });
+    setCashouts(processedCashouts);
   }, []);
 
   const loadCRBrands = useCallback(async (country) => {
@@ -1717,7 +1746,7 @@ function App() {
           </div>
         )}
 
-        {/* NEW: CASHOUT HISTORY TAB */}
+        {/* NEW: CASHOUT HISTORY TAB - FIXED AMOUNT DISPLAY */}
         {tab === "history" && (
           <div className="card">
             <h2>Your Cashout History</h2>
@@ -1737,14 +1766,26 @@ function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {cashouts.map((c, i) => (
-                      <tr key={i}>
-                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>{c.rewardName || c.brand_name || c.rewardType || '—'}</td>
-                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>${c.amountUsd || c.amount || '0.00'}</td>
-                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>{statusBadge(c.status)}</td>
-                        <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)', wordBreak: 'break-all' }}>{c.giftCode || '—'}</td>
-                      </tr>
-                    ))}
+                    {cashouts.map((c, i) => {
+                      // Ensure amount is displayed correctly in USD
+                      let displayAmount = c.amountUsd || c.amount || '0.00';
+                      const numAmount = parseFloat(displayAmount);
+                      // If the amount is large (>=100), it's likely in points, convert to USD
+                      if (!isNaN(numAmount) && numAmount >= 100) {
+                        displayAmount = (numAmount / PTS_PER_USD).toFixed(2);
+                      } else if (!isNaN(numAmount) && numAmount < 100) {
+                        // Already in USD, just format
+                        displayAmount = numAmount.toFixed(2);
+                      }
+                      return (
+                        <tr key={i}>
+                          <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>{c.rewardName || c.brand_name || c.rewardType || '—'}</td>
+                          <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>${displayAmount}</td>
+                          <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)' }}>{statusBadge(c.status)}</td>
+                          <td style={{ padding: '6px 4px', borderBottom: '1px solid var(--border)', wordBreak: 'break-all' }}>{c.giftCode || '—'}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
