@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -401,14 +402,6 @@ body{
       border-color: var(--accent);
       background: var(--card-hover);
     }
-    .reward-item.custom-item {
-      border-color: var(--accent-2);
-      background: rgba(232, 168, 56, 0.08);
-    }
-    .reward-item.custom-item:hover {
-      border-color: var(--accent);
-      background: var(--card-hover);
-    }
     .offer img, .reward-item img {
       height: 28px;
       max-width: 100%;
@@ -424,10 +417,34 @@ body{
       text-transform: uppercase; padding: 1px 5px; border-radius: 2px;
       background: rgba(0,184,169,0.15); color: var(--accent-light);
     }
-    .reward-item .tag.custom-tag {
-      background: rgba(232, 168, 56, 0.2);
-      color: var(--accent-2);
+
+    .cr-toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: flex-end;
     }
+    .cr-toolbar .field { flex: 1; min-width: 120px; }
+    .cr-toolbar .field label { margin-bottom: 3px; }
+    .cr-toolbar .field input, .cr-toolbar .field select { margin-bottom: 0; }
+    .cr-toolbar .field-btn { flex: 0 0 auto; }
+    .denom-grid {
+      display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px;
+    }
+    .denom-chip {
+      padding: 6px 10px; border-radius: 2px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-size: 0.78rem; cursor: pointer;
+      font-family: inherit;
+    }
+    .denom-chip:hover { border-color: var(--accent); }
+    .denom-chip.active {
+      border-color: var(--accent); background: rgba(0,184,169,0.14); color: var(--accent-light);
+    }
+    .brand-back {
+      display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px;
+      color: var(--muted); font-size: 0.78rem; cursor: pointer; background: none; border: none;
+      font-family: inherit; padding: 0;
+    }
+    .brand-back:hover { color: var(--accent-light); }
+    .cr-count { font-size: 0.72rem; color: var(--muted); margin: 4px 0 8px; }
+
     .section-label {
       font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px; margin: 12px 0 8px;
       text-transform: uppercase;
@@ -494,7 +511,6 @@ body{
     .alert-error { background: rgba(234,67,53,0.12); color: #f28b82; border: 1px solid rgba(234,67,53,0.25); }
     .alert-success { background: rgba(52,168,83,0.12); color: #81c995; border: 1px solid rgba(52,168,83,0.25); }
     .alert-info { background: rgba(0,184,169,0.12); color: #5eead4; border: 1px solid rgba(0,184,169,0.25); }
-    .alert-custom { background: rgba(232,168,56,0.12); color: var(--accent-2); border: 1px solid rgba(232,168,56,0.25); }
 
     .divider {
       text-align: center;
@@ -661,7 +677,6 @@ body{
     .badge-unsent { background: rgba(234,67,53,0.2); color: #f28b82; }
     .badge-sent { background: rgba(52,168,83,0.2); color: #81c995; }
     .badge-pending { background: rgba(251,188,4,0.2); color: #fbbc04; }
-    .badge-custom { background: rgba(232,168,56,0.2); color: var(--accent-2); }
 
     .modal-overlay {
       position: fixed;
@@ -808,125 +823,202 @@ body{
       remove(key) { try { localStorage.removeItem(key); } catch (e) { delete memoryStore[key]; } }
     };
 
-    const REWARDS = [
-      {
-        id: "amazon_uk",
-        name: "Amazon.co.uk",
-        min: 1,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
-        detailsLabel: "Amazon.co.uk Gift Card Email",
-        detailsPlaceholder: "you@email.com",
-        provider: "manual"
-      }
+
+    /* Popular countries for gift-card catalog (ISO codes used by CryptoRefills) */
+    const CR_COUNTRIES = [
+      { code: "US", name: "United States" },
+      { code: "GB", name: "United Kingdom" },
+      { code: "CA", name: "Canada" },
+      { code: "AU", name: "Australia" },
+      { code: "DE", name: "Germany" },
+      { code: "FR", name: "France" },
+      { code: "IT", name: "Italy" },
+      { code: "ES", name: "Spain" },
+      { code: "NL", name: "Netherlands" },
+      { code: "BE", name: "Belgium" },
+      { code: "AT", name: "Austria" },
+      { code: "CH", name: "Switzerland" },
+      { code: "SE", name: "Sweden" },
+      { code: "NO", name: "Norway" },
+      { code: "DK", name: "Denmark" },
+      { code: "FI", name: "Finland" },
+      { code: "IE", name: "Ireland" },
+      { code: "PT", name: "Portugal" },
+      { code: "PL", name: "Poland" },
+      { code: "CZ", name: "Czechia" },
+      { code: "RO", name: "Romania" },
+      { code: "HU", name: "Hungary" },
+      { code: "GR", name: "Greece" },
+      { code: "TR", name: "Türkiye" },
+      { code: "UA", name: "Ukraine" },
+      { code: "RU", name: "Russia" },
+      { code: "BR", name: "Brazil" },
+      { code: "MX", name: "Mexico" },
+      { code: "AR", name: "Argentina" },
+      { code: "CL", name: "Chile" },
+      { code: "CO", name: "Colombia" },
+      { code: "PE", name: "Peru" },
+      { code: "JP", name: "Japan" },
+      { code: "KR", name: "South Korea" },
+      { code: "CN", name: "China" },
+      { code: "HK", name: "Hong Kong" },
+      { code: "TW", name: "Taiwan" },
+      { code: "SG", name: "Singapore" },
+      { code: "MY", name: "Malaysia" },
+      { code: "TH", name: "Thailand" },
+      { code: "VN", name: "Vietnam" },
+      { code: "PH", name: "Philippines" },
+      { code: "ID", name: "Indonesia" },
+      { code: "IN", name: "India" },
+      { code: "AE", name: "United Arab Emirates" },
+      { code: "SA", name: "Saudi Arabia" },
+      { code: "IL", name: "Israel" },
+      { code: "EG", name: "Egypt" },
+      { code: "ZA", name: "South Africa" },
+      { code: "NG", name: "Nigeria" },
+      { code: "NZ", name: "New Zealand" }
     ];
 
-    /* CryptoRefills-powered gift cards - ADDED American Express with $2 custom option */
-    const CR_REWARDS = [
-      {
-        id: "cr_amazon_us",
-        name: "Amazon US",
-        brand_name: "Amazon",
-        country_code: "US",
-        min: 5,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
-      },
-      {
-        id: "cr_american_express",
-        name: "American Express",
-        brand_name: "American Express",
-        country_code: "US",
-        min: 2,  // Allow $2 minimum
-        logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills",
-        isCustom: true,
-        customDenominations: [2, 5, 10, 25, 50, 100],
-        customMessage: "⚠️ $2 is a custom amount and will be converted to nearest available denomination"
-      },
-      {
-        id: "cr_google_play",
-        name: "Google Play",
-        brand_name: "Google Play",
-        country_code: "US",
-        min: 5,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
-      },
-      {
-        id: "cr_steam",
-        name: "Steam",
-        brand_name: "Steam",
-        country_code: "US",
-        min: 5,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
-      },
-      {
-        id: "cr_netflix",
-        name: "Netflix",
-        brand_name: "Netflix",
-        country_code: "US",
-        min: 15,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
-      },
-      {
-        id: "cr_spotify",
-        name: "Spotify",
-        brand_name: "Spotify",
-        country_code: "US",
-        min: 10,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
-      },
-      {
-        id: "cr_xbox",
-        name: "Xbox",
-        brand_name: "Xbox",
-        country_code: "US",
-        min: 10,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
-      },
-      {
-        id: "cr_playstation",
-        name: "PlayStation",
-        brand_name: "PlayStation Store",
-        country_code: "US",
-        min: 10,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/0/00/PlayStation_logo.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
-      },
-      {
-        id: "cr_apple",
-        name: "Apple / iTunes",
-        brand_name: "Everything Apple",
-        country_code: "US",
-        min: 10,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
-        detailsLabel: "Delivery email",
-        detailsPlaceholder: "you@email.com",
-        provider: "cryptorefills"
+    /** Normalize CryptoRefills brand payloads into a flat list. */
+    function normalizeCRBrands(raw) {
+      if (!raw) return [];
+      let list = raw;
+      if (Array.isArray(raw)) list = raw;
+      else if (raw && typeof raw === "object") {
+        if (Array.isArray(raw.brands)) list = raw.brands;
+        else if (Array.isArray(raw.data)) list = raw.data;
+        else if (Array.isArray(raw.items)) list = raw.items;
+        else if (Array.isArray(raw.results)) list = raw.results;
+        else if (Array.isArray(raw.families)) list = raw.families;
+        else {
+          // Flatten category maps, but only keep objects that look like brands
+          const out = [];
+          Object.keys(raw).forEach(k => {
+            const v = raw[k];
+            if (Array.isArray(v)) {
+              v.forEach(x => out.push(x));
+            } else if (v && typeof v === "object") {
+              // skip nested meta/pagination objects
+              if (v.name || v.brand_name || v.family_name || v.title || v.logo_url || v.logo_base_url) {
+                out.push(v);
+              } else {
+                Object.keys(v).forEach(k2 => {
+                  const v2 = v[k2];
+                  if (Array.isArray(v2)) v2.forEach(x => out.push(x));
+                  else if (v2 && typeof v2 === "object" && (v2.name || v2.brand_name || v2.family_name || v2.title)) {
+                    out.push(v2);
+                  }
+                });
+              }
+            }
+          });
+          list = out;
+        }
       }
-    ];
+      if (!Array.isArray(list)) return [];
 
-    /* $1 USD = 1000 points. API balance / log / leader amounts are stored in points. */
+      const seen = {};
+      const result = [];
+      list.forEach((b, i) => {
+        if (!b || typeof b !== "object") return;
+        const name = String(b.name || b.brand_name || b.family_name || b.title || b.brand || b.label || "").trim();
+        // Drop empty / placeholder names like "Brand 0"
+        if (!name || /^brand\s*\d+$/i.test(name)) return;
+        const family = String(b.family_name || b.brand_name || b.name || name).trim();
+        const key = family.toLowerCase();
+        if (seen[key]) return;
+        seen[key] = true;
+        let logo = b.logo_url || b.logo || b.image || b.image_url || "";
+        if (!logo && b.logo_base_url) logo = String(b.logo_base_url) + ".webp";
+        result.push({
+          id: String(b.id || b.slug || family) + "_" + i,
+          name: name,
+          family_name: family,
+          brand_name: String(b.brand_name || family || name).trim(),
+          logo: logo,
+          country_code: b.country_code || "",
+          raw: b
+        });
+      });
+      result.sort((a, b) => a.name.localeCompare(b.name));
+      return result;
+    }
+
+    /** Extract denomination options from products response. */
+    function normalizeCRProducts(raw, brandName) {
+      if (!raw) return { fixed: [], ranges: [] };
+      let list = raw;
+      if (raw.products) list = raw.products;
+      if (raw.data) list = raw.data;
+      if (raw.items) list = raw.items;
+      if (!Array.isArray(list) && typeof list === "object") {
+        // single product object
+        if (raw.denominations || raw.denomination || raw.face_values) list = [raw];
+        else list = Object.values(list).filter(x => x && typeof x === "object");
+      }
+      if (!Array.isArray(list)) list = [];
+
+      const fixed = [];
+      const ranges = [];
+      const seen = {};
+
+      function addFixed(label, value, currency) {
+        const v = Number(value);
+        if (!isFinite(v) || v <= 0) return;
+        const key = v.toFixed(2) + "|" + (currency || "");
+        if (seen[key]) return;
+        seen[key] = true;
+        fixed.push({
+          label: label || (currency ? (currency + " " + v) : ("$" + v)),
+          value: v,
+          denomination: label || (v + " " + (currency || "USD")),
+          currency: currency || "USD"
+        });
+      }
+
+      list.forEach(p => {
+        const pBrand = p.brand_name || p.family_name || p.name || "";
+        // if brand filter was used, still accept all returned
+        const dens = p.denominations || p.denomination_list || p.face_values || p.values || p.amounts || [];
+        if (Array.isArray(dens)) {
+          dens.forEach(d => {
+            if (d == null) return;
+            if (typeof d === "number" || typeof d === "string") {
+              const num = parseFloat(String(d).replace(/[^0-9.]/g, ""));
+              addFixed(String(d), num, p.currency || "USD");
+            } else if (typeof d === "object") {
+              const num = parseFloat(d.value || d.face_value || d.amount || d.denomination || 0);
+              const lab = d.label || d.denomination || d.localized || (d.currency ? (d.currency + " " + num) : null);
+              addFixed(lab, num, d.currency || p.currency || "USD");
+            }
+          });
+        }
+        // single denomination fields
+        if (p.denomination && typeof p.denomination === "string" && p.denomination.toLowerCase() !== "range") {
+          const num = parseFloat(String(p.denomination).replace(/[^0-9.]/g, ""));
+          addFixed(p.denomination, num, p.currency || "USD");
+        }
+        if (p.face_value || p.value || p.amount) {
+          const num = parseFloat(p.face_value || p.value || p.amount);
+          addFixed(null, num, p.currency || "USD");
+        }
+        // range products
+        const isRange = String(p.denomination || p.type || p.kind || "").toLowerCase().indexOf("range") >= 0
+          || p.min_value != null || p.max_value != null || p.min != null || p.max != null;
+        if (isRange) {
+          ranges.push({
+            min: Number(p.min_value || p.min || 1) || 1,
+            max: Number(p.max_value || p.max || 500) || 500,
+            currency: p.currency || "USD",
+            brand_name: pBrand || brandName
+          });
+        }
+      });
+
+      fixed.sort((a, b) => a.value - b.value);
+      return { fixed, ranges };
+    }
+
     const PTS_PER_USD = 1000;
     function toUSD(pts) {
       const n = Number(pts);
@@ -1014,8 +1106,18 @@ body{
       const [loggingIn, setLoggingIn] = useState(false);
       const [chatOpen, setChatOpen] = useState(false);
       const [refreshingCR, setRefreshingCR] = useState(false);
-      const [availableDenoms, setAvailableDenoms] = useState([]);
-      const [loadingDenoms, setLoadingDenoms] = useState(false);
+      const [crCountry, setCrCountry] = useState("US");
+      const [crSearch, setCrSearch] = useState("");
+      const [crBrands, setCrBrands] = useState([]);
+      const [crBrandsLoading, setCrBrandsLoading] = useState(false);
+      const [crBrandsError, setCrBrandsError] = useState("");
+      const [crBrandPage, setCrBrandPage] = useState(1);
+      const [crSelectedBrand, setCrSelectedBrand] = useState(null);
+      const [crDenoms, setCrDenoms] = useState({ fixed: [], ranges: [] });
+      const [crDenomsLoading, setCrDenomsLoading] = useState(false);
+      const [crSelectedDenom, setCrSelectedDenom] = useState(null);
+      const [crCustomAmount, setCrCustomAmount] = useState("");
+      const CR_PAGE_SIZE = 48;
 
       useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
       useEffect(() => { userRef.current = user; }, [user]);
@@ -1068,6 +1170,56 @@ body{
         const data = await api("getCashouts", { account });
         setCashouts(data.cashouts || []);
       }, []);
+
+      const loadCRBrands = useCallback(async (country) => {
+        const c = country || crCountry || "US";
+        setCrBrandsLoading(true);
+        setCrBrandsError("");
+        setCrSelectedBrand(null);
+        setCrDenoms({ fixed: [], ranges: [] });
+        setCrSelectedDenom(null);
+        setCrBrandPage(1);
+        const data = await api("getCRBrands", { country: c, country_code: c });
+        setCrBrandsLoading(false);
+        if (data.error) {
+          setCrBrands([]);
+          setCrBrandsError(data.error);
+          return;
+        }
+        const list = normalizeCRBrands(data.brands);
+        setCrBrands(list);
+        if (!list.length) setCrBrandsError("No brands returned for this country.");
+      }, [crCountry]);
+
+      const openCRBrand = useCallback(async (brand) => {
+        if (!user) { showMsg("Please login first"); setTab("earn"); return; }
+        setCrSelectedBrand(brand);
+        setCrDenoms({ fixed: [], ranges: [] });
+        setCrSelectedDenom(null);
+        setCrCustomAmount("");
+        if (user.email) setDetails(String(user.email));
+        setCrDenomsLoading(true);
+        const data = await api("getCRProducts", {
+          country: crCountry,
+          country_code: crCountry,
+          family_name: brand.family_name || brand.brand_name || brand.name,
+          brand_name: brand.brand_name || brand.family_name || brand.name,
+          coin: "USDC",
+          lang: "en"
+        });
+        setCrDenomsLoading(false);
+        if (data.error) {
+          showMsg(data.error);
+          setCrDenoms({ fixed: [], ranges: [] });
+          return;
+        }
+        const norm = normalizeCRProducts(data.products, brand.brand_name || brand.name);
+        setCrDenoms(norm);
+        if (!norm.fixed.length && !norm.ranges.length) {
+          // still allow custom amount attempt
+          setCrDenoms({ fixed: [], ranges: [{ min: 1, max: 500, currency: "USD", brand_name: brand.name }] });
+        }
+      }, [user, crCountry]);
       const loadChat = useCallback(async (isInitial) => {
         const data = await api("getChat", { limit: 50 });
         if (!data.messages) return;
@@ -1160,33 +1312,11 @@ body{
         return () => clearInterval(pollRef.current);
       }, [chatOpen, tab, loadChat]);
       useEffect(() => { if (tab === "shop" && user) loadCashouts(user.account); }, [tab, user, loadCashouts]);
+      useEffect(() => {
+        if (tab === "shop" && user) loadCRBrands(crCountry);
+      }, [tab, user, crCountry]); // eslint-disable-line react-hooks/exhaustive-deps
       useEffect(() => { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
       useEffect(() => { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
-
-      // Load available denominations when modal opens for custom rewards
-      useEffect(() => {
-        if (modal && modal.isCustom) {
-          loadAvailableDenominations(modal);
-        }
-      }, [modal]);
-
-      async function loadAvailableDenominations(reward) {
-        setLoadingDenoms(true);
-        try {
-          const data = await api("getAvailableDenominations", {
-            brand_name: reward.brand_name,
-            country: reward.country_code || "US"
-          });
-          if (data.success && data.denominations) {
-            setAvailableDenoms(data.denominations);
-          } else {
-            setAvailableDenoms([]);
-          }
-        } catch (e) {
-          setAvailableDenoms([]);
-        }
-        setLoadingDenoms(false);
-      }
 
       async function handleLogin() {
         if (!form.account || !form.clientId) { showMsg("Enter account and client ID"); return; }
@@ -1215,13 +1345,10 @@ body{
 
       function openModal(reward) {
         if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        setModal(reward); 
-        setStep(1); 
-        setAmount("");
+        setModal(reward); setStep(1); setAmount("");
         setDetails((user.email || "").trim());
-        setAvailableDenoms([]);
       }
-      function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); setAvailableDenoms([]); }
+      function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
 
       function nextStep() {
         const balPts = Number((user && user.balance) || 0);
@@ -1231,18 +1358,6 @@ body{
           if (amtUsd < modal.min) { showMsg("Minimum is $" + modal.min); return; }
           const amtPts = toPts(amtUsd);
           if (amtPts > balPts) { showMsg("Insufficient balance"); return; }
-          
-          // For custom amounts like $2, check availability
-          if (modal.isCustom) {
-            const available = availableDenoms.some(d => d.amount === amtUsd && d.available === true);
-            if (!available) {
-              const suggestions = availableDenoms.filter(d => d.available === true).slice(0, 3);
-              const suggestText = suggestions.map(s => '$' + s.amount.toFixed(2)).join(', ');
-              showMsg('$' + amtUsd.toFixed(2) + ' is not directly available. Available: ' + suggestText, 'custom');
-              return;
-            }
-          }
-          
           setStep(2);
         } else if (step === 2) {
           if (!details.trim()) { showMsg("Enter receiving details"); return; }
@@ -1260,6 +1375,13 @@ body{
         const isCR = modal.provider === "cryptorefills";
         let data;
         if (isCR) {
+          // Best-effort public IP for CryptoRefills X-Forwarded-For (optional)
+          let clientIp = "";
+          try {
+            const ipRes = await fetch("https://api.ipify.org?format=json");
+            const ipJson = await ipRes.json();
+            if (ipJson && ipJson.ip) clientIp = String(ipJson.ip);
+          } catch (e) {}
           data = await postApi("submitCRCashout", {
             account: user.account,
             username: user.username || user.account,
@@ -1270,7 +1392,9 @@ body{
             details: details.trim(),
             email: details.trim(),
             coin: "USDC",
-            network: "Solana"
+            network: "Solana",
+            ip: clientIp,
+            userAgent: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "RewardBux"
           });
         } else {
           data = await postApi("submitCashout", {
@@ -1288,13 +1412,7 @@ body{
           showMsg(data.error + (data.refunded ? " (balance refunded)" : ""));
           return;
         }
-        
-        let successMsg = isCR ? ("Gift card order submitted! Email: " + details.trim()) : "Cashout submitted!";
-        if (data.isCustomAmount) {
-          successMsg += " (Custom $" + data.requestedAmountUsd + " → $" + data.actualAmountUsd + ")";
-        }
-        showMsg(successMsg, "success");
-        
+        showMsg(isCR ? ("Gift card order submitted! Email: " + details.trim()) : "Cashout submitted!", "success");
         const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
         saveUser({ ...user, balance: newBal });
         loadCashouts(user.account);
@@ -1578,40 +1696,234 @@ body{
                     <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
                   ) : (
                     <>
-                      <div className="section-label">Gift cards via CryptoRefills</div>
-                      <div className="reward-grid">
-                        {CR_REWARDS.map(r => (
-                          <div 
-                            key={r.id} 
-                            className={"reward-item" + (r.isCustom ? " custom-item" : "")} 
-                            onClick={() => openModal(r)}
-                          >
-                            {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
-                            <div className="name">{r.name}</div>
-                            <div className="min">Min ${r.min}</div>
-                            {r.isCustom ? (
+                      <div className="section-label">Gift cards (CryptoRefills catalog)</div>
+
+                      {!crSelectedBrand ? (
+                        <>
+                          <div className="cr-toolbar">
+                            <div className="field">
+                              <label>Country</label>
+                              <select
+                                value={crCountry}
+                                onChange={e => { setCrCountry(e.target.value); setCrSearch(""); }}
+                              >
+                                {CR_COUNTRIES.map(c => (
+                                  <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="field">
+                              <label>Search brands</label>
+                              <input
+                                value={crSearch}
+                                onChange={e => { setCrSearch(e.target.value); setCrBrandPage(1); }}
+                                placeholder="e.g. Amazon, Steam, Amex…"
+                              />
+                            </div>
+                            <div className="field-btn">
+                              <button
+                                className="btn btn-ghost"
+                                style={{ width: "auto", padding: "7px 12px" }}
+                                onClick={() => loadCRBrands(crCountry)}
+                                disabled={crBrandsLoading}
+                              >
+                                <i className={"fas " + (crBrandsLoading ? "fa-spinner fa-spin" : "fa-sync")} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {crBrandsError && (
+                            <div className="alert alert-error">{crBrandsError}</div>
+                          )}
+
+                          {crBrandsLoading ? (
+                            <div className="empty">Loading brands for {crCountry}…</div>
+                          ) : (() => {
+                            const q = crSearch.trim().toLowerCase();
+                            const filtered = !q ? crBrands : crBrands.filter(b =>
+                              (b.name + " " + b.family_name + " " + b.brand_name).toLowerCase().indexOf(q) >= 0
+                            );
+                            const pageItems = filtered.slice(0, crBrandPage * CR_PAGE_SIZE);
+                            return (
                               <>
-                                <div className="tag custom-tag">Custom Amounts</div>
-                                <div style={{ fontSize: '0.6rem', color: 'var(--accent-2)', marginTop: 2 }}>
-                                  {r.customDenominations ? r.customDenominations.map(d => '$' + d).join(' • ') : ''}
+                                <div className="cr-count">
+                                  {filtered.length} brand{filtered.length === 1 ? "" : "s"}
+                                  {q ? " matching \"" + crSearch.trim() + "\"" : ""} in {crCountry}
                                 </div>
+                                {filtered.length === 0 ? (
+                                  <div className="empty">No brands found. Try another country or search.</div>
+                                ) : (
+                                  <div className="reward-grid">
+                                    {pageItems.map(b => (
+                                      <div key={b.id} className="reward-item" onClick={() => openCRBrand(b)}>
+                                        {b.logo ? (
+                                          <img src={b.logo} alt={b.name} onError={e => { e.target.style.display = "none"; }} />
+                                        ) : (
+                                          <div style={{ height: 28, marginBottom: 6, fontSize: "1.2rem", color: "var(--accent)" }}>
+                                            <i className="fas fa-gift" />
+                                          </div>
+                                        )}
+                                        <div className="name">{b.name}</div>
+                                        <div className="tag">Select</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                {pageItems.length < filtered.length && (
+                                  <button
+                                    className="btn btn-ghost"
+                                    style={{ marginTop: 10 }}
+                                    onClick={() => setCrBrandPage(p => p + 1)}
+                                  >
+                                    Show more ({filtered.length - pageItems.length} left)
+                                  </button>
+                                )}
                               </>
-                            ) : (
-                              <div className="tag">Instant</div>
-                            )}
+                            );
+                          })()}
+                        </>
+                      ) : (
+                        <>
+                          <button className="brand-back" onClick={() => {
+                            setCrSelectedBrand(null);
+                            setCrDenoms({ fixed: [], ranges: [] });
+                            setCrSelectedDenom(null);
+                            setCrCustomAmount("");
+                          }}>
+                            <i className="fas fa-arrow-left" /> Back to brands
+                          </button>
+
+                          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                            {crSelectedBrand.logo ? (
+                              <img src={crSelectedBrand.logo} alt="" style={{ height: 32, maxWidth: 80, objectFit: "contain" }}
+                                onError={e => { e.target.style.display = "none"; }} />
+                            ) : null}
+                            <div>
+                              <div style={{ fontWeight: 600, color: "#fff" }}>{crSelectedBrand.name}</div>
+                              <div style={{ fontSize: "0.72rem", color: "var(--muted)" }}>Country: {crCountry}</div>
+                            </div>
                           </div>
-                        ))}
-                      </div>
-                      <div className="section-label">Manual rewards</div>
-                      <div className="reward-grid">
-                        {REWARDS.map(r => (
-                          <div key={r.id} className="reward-item" onClick={() => openModal(r)}>
-                            {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
-                            <div className="name">{r.name}</div>
-                            <div className="min">Min ${r.min}</div>
-                          </div>
-                        ))}
-                      </div>
+
+                          {crDenomsLoading ? (
+                            <div className="empty">Loading denominations…</div>
+                          ) : (
+                            <>
+                              {crDenoms.fixed.length > 0 && (
+                                <>
+                                  <label>Choose amount</label>
+                                  <div className="denom-grid">
+                                    {crDenoms.fixed.map((d, i) => (
+                                      <button
+                                        key={i}
+                                        type="button"
+                                        className={"denom-chip" + (crSelectedDenom && crSelectedDenom.value === d.value && !crCustomAmount ? " active" : "")}
+                                        onClick={() => { setCrSelectedDenom(d); setCrCustomAmount(""); }}
+                                      >
+                                        {d.label}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+
+                              {(crDenoms.ranges.length > 0 || crDenoms.fixed.length === 0) && (
+                                <>
+                                  <label>{crDenoms.fixed.length ? "Or custom amount (USD)" : "Amount (USD)"}</label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    min={crDenoms.ranges[0] ? crDenoms.ranges[0].min : 1}
+                                    max={crDenoms.ranges[0] ? crDenoms.ranges[0].max : undefined}
+                                    value={crCustomAmount}
+                                    onChange={e => {
+                                      setCrCustomAmount(e.target.value);
+                                      setCrSelectedDenom(null);
+                                    }}
+                                    placeholder={crDenoms.ranges[0]
+                                      ? ("Min " + crDenoms.ranges[0].min + (crDenoms.ranges[0].max ? " – max " + crDenoms.ranges[0].max : ""))
+                                      : "e.g. 25"}
+                                  />
+                                </>
+                              )}
+
+                              <label>Delivery email</label>
+                              <input
+                                value={details}
+                                onChange={e => setDetails(e.target.value)}
+                                placeholder="you@email.com"
+                              />
+
+                              <button
+                                className="btn btn-primary"
+                                disabled={submitting}
+                                onClick={async () => {
+                                  const email = (details || user.email || "").trim();
+                                  if (!email || email.indexOf("@") < 0) {
+                                    showMsg("Enter a valid delivery email");
+                                    return;
+                                  }
+                                  let amtUsd = 0;
+                                  let denomination = "";
+                                  if (crCustomAmount && parseFloat(crCustomAmount) > 0) {
+                                    amtUsd = parseFloat(crCustomAmount);
+                                    denomination = "range";
+                                  } else if (crSelectedDenom) {
+                                    amtUsd = crSelectedDenom.value;
+                                    denomination = crSelectedDenom.denomination || (amtUsd + " USD");
+                                  } else {
+                                    showMsg("Select or enter an amount");
+                                    return;
+                                  }
+                                  if (amtUsd <= 0) { showMsg("Invalid amount"); return; }
+                                  const amtPts = toPts(amtUsd);
+                                  if (amtPts > Number(user.balance || 0)) {
+                                    showMsg("Insufficient balance");
+                                    return;
+                                  }
+                                  setSubmitting(true);
+                                  let clientIp = "";
+                                  try {
+                                    const ipRes = await fetch("https://api.ipify.org?format=json");
+                                    const ipJson = await ipRes.json();
+                                    if (ipJson && ipJson.ip) clientIp = String(ipJson.ip);
+                                  } catch (e) {}
+                                  const data = await postApi("submitCRCashout", {
+                                    account: user.account,
+                                    username: user.username || user.account,
+                                    brand_name: crSelectedBrand.brand_name || crSelectedBrand.family_name || crSelectedBrand.name,
+                                    country_code: crCountry,
+                                    amountUsd: amtUsd.toFixed(2),
+                                    amount: amtPts,
+                                    denomination: denomination,
+                                    details: email,
+                                    email: email,
+                                    coin: "USDC",
+                                    network: "Solana",
+                                    ip: clientIp,
+                                    userAgent: (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "RewardBux"
+                                  });
+                                  setSubmitting(false);
+                                  if (data.error) {
+                                    showMsg(data.error + (data.refunded ? " (balance refunded)" : ""));
+                                    return;
+                                  }
+                                  showMsg("Gift card order submitted! Email: " + email, "success");
+                                  const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
+                                  saveUser({ ...user, balance: newBal });
+                                  loadCashouts(user.account);
+                                  setCrSelectedBrand(null);
+                                  setCrSelectedDenom(null);
+                                  setCrCustomAmount("");
+                                }}
+                              >
+                                {submitting ? "Submitting…" : "Redeem gift card"}
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )}
+
+
                     </>
                   )}
                 </div>
@@ -1743,7 +2055,8 @@ body{
                       onKeyDown={e => e.key === "Enter" && redeemBonus()}
                     />
                     <button className="btn btn-primary" onClick={redeemBonus}>
-                      Redeem Code                    </button>
+                      Redeem Code
+                    </button>
                   </>
                 )}
               </div>
@@ -1871,21 +2184,6 @@ body{
                       Available: {formatUSD((user && user.balance) || 0)}
                       <span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
                     </p>
-                    
-                    {/* Custom amount info for American Express */}
-                    {modal.isCustom && (
-                      <div className="alert alert-custom" style={{ marginBottom: 12 }}>
-                        <i className="fas fa-info-circle" /> {modal.customMessage || "Custom amounts available"}
-                        {loadingDenoms ? (
-                          <div style={{ fontSize: '0.7rem', marginTop: 4 }}>Loading available denominations...</div>
-                        ) : availableDenoms.length > 0 ? (
-                          <div style={{ fontSize: '0.7rem', marginTop: 4 }}>
-                            Available: {availableDenoms.filter(d => d.available).map(d => '$' + d.amount.toFixed(2)).join(', ')}
-                          </div>
-                        ) : null}
-                      </div>
-                    )}
-                    
                     {modal.provider === "cryptorefills" && (
                       <div className="alert alert-info" style={{ marginBottom: 12 }}>
                         Delivered by CryptoRefills to your email after processing.
@@ -1913,11 +2211,6 @@ body{
                       <div><strong>Details:</strong> {details}</div>
                       {modal.provider === "cryptorefills" && (
                         <div><strong>Provider:</strong> CryptoRefills (USDC)</div>
-                      )}
-                      {modal.isCustom && (
-                        <div style={{ color: 'var(--accent-2)', fontSize: '0.75rem', marginTop: 4 }}>
-                          <i className="fas fa-info-circle" /> Custom amount may be converted to nearest available denomination
-                        </div>
                       )}
                     </div>
                     <div className="btn-row">
