@@ -14,792 +14,209 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     :root {
-  /* Background - deep charcoal terminal feel */
-  --bg: #0c0f12;
-  --bg-secondary: #151a1f;
+      --bg: #0c0f12;
+      --bg-secondary: #151a1f;
+      --card: #171c22;
+      --card-hover: #1e252d;
+      --border: #2c353f;
+      --text: #d8dde3;
+      --muted: #8b949e;
+      --accent: #00b8a9;
+      --accent-2: #e8a838;
+      --accent-light: #5eead4;
+      --success: #3dd68c;
+      --danger: #f07178;
+      --warning: #e8a838;
+      --radius: 3px;
+      --shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: var(--text);
+      background: #0c0f12;
+      min-height:100vh;
+      line-height:1.35;
+      font-size:13px;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    .app { position:relative; width:100%; min-height:100vh; display:flex; flex-direction:column; background:#0c0f12; }
+    @media (max-width:768px) { .app { padding-bottom:56px; } }
 
-  /* Cards */
-  --card: #171c22;
-  --card-hover: #1e252d;
-  --border: #2c353f;
+    .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); }
+    .card:hover { background:var(--card-hover); border-color:#3b4a63; }
 
-  /* Text */
-  --text: #d8dde3;
-  --muted: #8b949e;
-
-  /* Accent - teal + warm amber (not Material blue) */
-  --accent: #00b8a9;
-  --accent-2: #e8a838;
-  --accent-light: #5eead4;
-
-  /* Status */
-  --success: #3dd68c;
-  --danger: #f07178;
-  --warning: #e8a838;
-
-  /* Effects - dense old desktop */
-  --radius: 3px;
-  --shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 1px 2px rgba(0,0,0,0.4);
-  --blur: none;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  font-family: 'Roboto', 'Noto Sans', 'Droid Sans', sans-serif;
-  color:var(--text);
-  background: #0c0f12;
-  min-height:100vh;
-  line-height:1.35;
-  font-size:13px;
-  letter-spacing:0;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-  overflow-x:hidden;
-}
-
-.app{
-  position:relative;
-  width:100%;
-  max-width:100%;
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  padding:0 0 0;
-  background: #0c0f12;
-}
-@media (max-width: 768px) {
-  .app { padding-bottom: 56px; }
-}
-
-/* Optional reusable card style */
-
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  transition:none;
-}
-
-.card:hover{
-  background:var(--card-hover);
-  border-color:#3b4a63;
-}
-
-    /* Header - desktop top bar with logo + nav + user */
     .top-header {
-      background: #12171c;
-      padding: 0 14px;
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      border-bottom: 1px solid var(--border);
+      background:#12171c; padding:0 14px; position:sticky; top:0; z-index:40;
+      border-bottom:1px solid var(--border);
     }
-    .header-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 48px;
-    }
-    .logo {
-      font-weight: 700;
-      font-size: 1.2rem;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .logo .dollar {
-      color: var(--accent);
-      font-size: 1.2rem;
-    }
-    .logo span { color: var(--accent-light); }
+    .header-row { display:flex; align-items:center; gap:12px; min-height:48px; }
+    .logo { font-weight:700; font-size:1.2rem; letter-spacing:-0.3px; display:flex; align-items:center; gap:2px; color:#fff; flex-shrink:0; }
+    .logo .dollar { color:var(--accent); font-size:1.2rem; }
+    .logo span { color:var(--accent-light); }
 
-    /* Desktop horizontal nav inside header */
-    .header-nav {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      flex: 1;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .header-nav::-webkit-scrollbar { display: none; }
+    .header-nav { display:flex; align-items:center; gap:2px; flex:1; overflow-x:auto; scrollbar-width:none; }
+    .header-nav::-webkit-scrollbar { display:none; }
     .header-nav .nav-item {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 12px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 500;
-      cursor: pointer;
-      border-radius: 4px;
-      white-space: nowrap;
+      display:flex; flex-direction:row; align-items:center; gap:6px; padding:7px 12px;
+      color:var(--muted); font-size:0.78rem; font-weight:500; cursor:pointer; border-radius:4px; white-space:nowrap;
     }
-    .header-nav .nav-item i { font-size: 0.9rem; }
-    .header-nav .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-    .header-nav .nav-item.active {
-      color: var(--accent-light);
-      background: rgba(0,184,169,0.14);
-    }
-    .header-nav .nav-item.active i { color: var(--accent); }
+    .header-nav .nav-item i { font-size:0.9rem; }
+    .header-nav .nav-item:hover { color:var(--text); background:rgba(255,255,255,0.04); }
+    .header-nav .nav-item.active { color:var(--accent-light); background:rgba(0,184,169,0.14); }
+    .header-nav .nav-item.active i { color:var(--accent); }
 
-    /* User block in header (right) */
-    .header-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-      margin-left: auto;
+    .header-user { display:flex; align-items:center; gap:10px; flex-shrink:0; margin-left:auto; }
+    .avatar-wrap {
+      position:relative; width:34px; height:34px; flex-shrink:0; cursor:pointer;
+      border-radius:4px; border:1px solid var(--border); overflow:hidden;
+      transition:border-color 0.1s;
     }
-    .avatar-wrap { position: relative; width: 34px; height: 34px; flex-shrink: 0; }
-    .avatar-wrap img {
-      width: 34px; height: 34px;
-      border-radius: 4px;
-      object-fit: cover;
-      border: 1px solid var(--border);
-    }
+    .avatar-wrap:hover { border-color:var(--accent); }
+    .avatar-wrap img { width:34px; height:34px; object-fit:cover; display:block; }
     .level-badge {
-      position: absolute;
-      bottom: -3px; right: -4px;
-      background: var(--accent);
-      color: #041210;
-      font-size: 0.6rem;
-      font-weight: 700;
-      width: 16px; height: 16px;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--bg);
+      position:absolute; bottom:-3px; right:-4px; background:var(--accent);
+      color:#041210; font-size:0.6rem; font-weight:700; width:16px; height:16px;
+      border-radius:3px; display:flex; align-items:center; justify-content:center;
+      border:1px solid var(--bg);
     }
-    .user-meta { display: flex; flex-direction: column; gap: 0; }
-    .user-meta .name { font-weight: 500; font-size: 0.8rem; color: #fff; line-height: 1.2; }
-    .user-meta .balance-row {
-      display: flex; align-items: center; gap: 4px; font-size: 0.75rem;
-    }
-    .user-meta .balance-row .diamond { color: var(--accent-2); }
-    .user-meta .balance-row .amount { color: var(--accent-light); font-weight: 600; }
+    .user-meta { display:flex; flex-direction:column; gap:0; }
+    .user-meta .name { font-weight:500; font-size:0.8rem; color:#fff; line-height:1.2; }
+    .user-meta .balance-row { display:flex; align-items:center; gap:4px; font-size:0.75rem; }
+    .user-meta .balance-row .diamond { color:var(--accent-2); }
+    .user-meta .balance-row .amount { color:var(--accent-light); font-weight:600; }
 
     .icon-btn {
-      width: 30px; height: 30px;
-      border-radius: 4px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      cursor: pointer;
+      width:30px; height:30px; border-radius:4px; background:var(--card);
+      border:1px solid var(--border); color:var(--muted);
+      display:flex; align-items:center; justify-content:center; font-size:0.85rem; cursor:pointer;
     }
-    .icon-btn:hover { background: var(--card-hover); color: var(--text); }
-    .icon-btn.logout:hover {
-      background: rgba(234, 67, 53, 0.15);
-      border-color: var(--danger);
-      color: var(--danger);
-    }
+    .icon-btn:hover { background:var(--card-hover); color:var(--text); }
+    .icon-btn.logout:hover { background:rgba(234,67,53,0.15); border-color:var(--danger); color:var(--danger); }
 
-    /* Static Logs Bar - denser */
-    .logs-bar {
-      background: #0e1216;
-      border-top: 1px solid var(--border);
-      padding: 5px 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .logs-bar::-webkit-scrollbar { display: none; }
-    .logs-row { display: flex; gap: 6px; width: max-content; }
+    /* logs bar */
+    .logs-bar { background:#0e1216; border-top:1px solid var(--border); padding:5px 8px; overflow-x:auto; scrollbar-width:none; }
+    .logs-bar::-webkit-scrollbar { display:none; }
+    .logs-row { display:flex; gap:6px; width:max-content; }
     .log-card {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 4px 8px 4px 4px;
-      min-width: 130px;
-      flex-shrink: 0;
+      display:flex; align-items:center; gap:6px; background:var(--card);
+      border:1px solid var(--border); border-radius:2px; padding:4px 8px 4px 4px; min-width:130px; flex-shrink:0;
     }
-    .log-card img {
-      width: 24px; height: 24px;
-      border-radius: 2px;
-      object-fit: cover;
-    }
-    .log-card .info { display: flex; flex-direction: column; line-height: 1.2; overflow: hidden; }
-    .log-card .uname {
-      font-size: 0.68rem;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 80px;
-    }
-    .log-card .amount {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--accent-light);
-    }
+    .log-card img { width:24px; height:24px; border-radius:2px; object-fit:cover; }
+    .log-card .info { display:flex; flex-direction:column; line-height:1.2; overflow:hidden; }
+    .log-card .uname { font-size:0.68rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:80px; }
+    .log-card .amount { font-size:0.78rem; font-weight:700; color:var(--accent-light); }
 
-    main {
-      flex: 1;
-      padding: 10px 16px;
-      overflow-y: auto;
-      max-width: 900px;
-      width: 100%;
-      margin: 0 auto;
-    }
+    main { flex:1; padding:10px 16px; overflow-y:auto; max-width:900px; width:100%; margin:0 auto; }
+    .card { padding:12px; margin-bottom:8px; }
+    .card h2 { font-size:0.95rem; font-weight:500; margin-bottom:8px; color:#fff; border-bottom:1px solid var(--border); padding-bottom:6px; }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 12px;
-      margin-bottom: 8px;
-    }
-    .card h2 {
-      font-size: 0.95rem;
-      font-weight: 500;
-      margin-bottom: 8px;
-      color: #fff;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
-    }
+    .hero { text-align:center; padding:10px 8px 6px; }
+    .hero h1 { font-size:1.25rem; font-weight:500; color:var(--accent-light); line-height:1.25; margin-bottom:6px; }
+    .hero p { color:var(--muted); font-size:0.82rem; }
 
-    .hero { text-align: center; padding: 10px 8px 6px; }
-    .hero h1 {
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: var(--accent-light);
-      line-height: 1.25;
-      margin-bottom: 6px;
-    }
-    .hero p { color: var(--muted); font-size: 0.82rem; }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 10px 0;
-    }
-    @media (max-width: 600px) {
-      .feature-grid { grid-template-columns: 1fr; }
-    }
-    .feature-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 14px 10px;
-      text-align: center;
-    }
-    .feature-card h3 { font-size: 0.88rem; font-weight: 500; margin-bottom: 8px; }
-    .feature-card h3 span { color: var(--accent-light); }
-    .feature-card .icons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      font-size: 1.25rem;
-      color: #e8eaed;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .stat-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 8px 6px;
-      text-align: center;
-    }
-    .stat-box .value { font-size: 1rem; font-weight: 700; color: var(--accent-light); }
-    .stat-box .label { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+    .feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:10px 0; }
+    @media (max-width:600px) { .feature-grid { grid-template-columns:1fr; } }
+    .feature-card { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:14px 10px; text-align:center; }
+    .feature-card h3 { font-size:0.88rem; font-weight:500; margin-bottom:8px; }
+    .feature-card h3 span { color:var(--accent-light); }
+    .feature-card .icons { display:flex; justify-content:center; gap:12px; font-size:1.25rem; color:#e8eaed; }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      width: 100%;
-      padding: 7px 12px;
-      border: none;
-      border-radius: 2px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      font-family: inherit;
-      cursor: pointer;
+      display:inline-flex; align-items:center; justify-content:center; gap:6px;
+      width:100%; padding:7px 12px; border:none; border-radius:2px;
+      font-size:0.82rem; font-weight:500; font-family:inherit; cursor:pointer;
     }
-    .btn-primary { background: var(--accent); color: #041210; }
-    .btn-primary:hover { background: #00a396; color: #041210; }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover { background: var(--card-hover); color: var(--text); }
+    .btn-primary { background:var(--accent); color:#041210; }
+    .btn-primary:hover { background:#00a396; color:#041210; }
+    .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+    .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+    .btn-ghost:hover { background:var(--card-hover); color:var(--text); }
 
-    input, select, textarea {
-      width: 100%;
-      padding: 7px 9px;
-      border-radius: 2px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      font-size: 0.82rem;
-      font-family: inherit;
-      margin-bottom: 8px;
-    }
-    input:focus, select:focus { outline: none; border-color: var(--accent); }
-    label {
-      display: block;
-      font-size: 0.72rem;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 3px;
-    }
+    input, select { width:100%; padding:7px 9px; border-radius:2px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:0.82rem; font-family:inherit; margin-bottom:8px; }
+    input:focus, select:focus { outline:none; border-color:var(--accent); }
+    label { display:block; font-size:0.72rem; font-weight:500; color:var(--muted); margin-bottom:3px; }
 
-    .offer-grid, .reward-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 8px;
-    }
-    .offer, .reward-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      padding: 10px 8px;
-      text-align: center;
-    }
-    .reward-item { cursor: pointer; }
-    .reward-item:hover {
-      border-color: var(--accent);
-      background: var(--card-hover);
-    }
-    .offer img, .reward-item img {
-      height: 28px;
-      max-width: 100%;
-      object-fit: contain;
-      margin-bottom: 6px;
-    }
-    .reward-item .name { font-weight: 500; font-size: 0.8rem; }
-    .reward-item .min { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+    .offer-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; }
+    .offer { background:var(--bg); border:1px solid var(--border); border-radius:2px; padding:10px 8px; text-align:center; }
+    .offer img { height:28px; max-width:100%; object-fit:contain; margin-bottom:6px; }
 
+    .reward-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; }
+    .reward-item { background:var(--bg); border:1px solid var(--border); border-radius:2px; padding:10px 8px; text-align:center; cursor:pointer; }
+    .reward-item:hover { border-color:var(--accent); background:var(--card-hover); }
+    .reward-item img { height:28px; max-width:100%; object-fit:contain; margin-bottom:6px; }
+    .reward-item .name { font-weight:500; font-size:0.8rem; }
+    .reward-item .tag { display:inline-block; margin-top:4px; font-size:0.58rem; font-weight:600; text-transform:uppercase; padding:1px 5px; border-radius:2px; background:rgba(0,184,169,0.15); color:var(--accent-light); }
 
-    .reward-item .tag {
-      display: inline-block; margin-top: 4px; font-size: 0.58rem; font-weight: 600;
-      text-transform: uppercase; padding: 1px 5px; border-radius: 2px;
-      background: rgba(0,184,169,0.15); color: var(--accent-light);
-    }
+    .denom-grid { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 12px; }
+    .denom-chip { padding:6px 10px; border-radius:2px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:0.78rem; cursor:pointer; font-family:inherit; }
+    .denom-chip:hover { border-color:var(--accent); }
+    .denom-chip.active { border-color:var(--accent); background:rgba(0,184,169,0.14); color:var(--accent-light); }
 
-    .cr-toolbar {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: flex-end;
-    }
-    .cr-toolbar .field { flex: 1; min-width: 120px; }
-    .cr-toolbar .field label { margin-bottom: 3px; }
-    .cr-toolbar .field input, .cr-toolbar .field select { margin-bottom: 0; }
-    .cr-toolbar .field-btn { flex: 0 0 auto; }
-    .denom-grid {
-      display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px;
-    }
-    .denom-chip {
-      padding: 6px 10px; border-radius: 2px; border: 1px solid var(--border);
-      background: var(--bg); color: var(--text); font-size: 0.78rem; cursor: pointer;
-      font-family: inherit;
-    }
-    .denom-chip:hover { border-color: var(--accent); }
-    .denom-chip.active {
-      border-color: var(--accent); background: rgba(0,184,169,0.14); color: var(--accent-light);
-    }
-    .brand-back {
-      display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px;
-      color: var(--muted); font-size: 0.78rem; cursor: pointer; background: none; border: none;
-      font-family: inherit; padding: 0;
-    }
-    .brand-back:hover { color: var(--accent-light); }
-    .cr-count { font-size: 0.72rem; color: var(--muted); margin: 4px 0 8px; }
+    .brand-back { display:inline-flex; align-items:center; gap:6px; margin-bottom:10px; color:var(--muted); font-size:0.78rem; cursor:pointer; background:none; border:none; font-family:inherit; padding:0; }
+    .brand-back:hover { color:var(--accent-light); }
+    .cr-count { font-size:0.72rem; color:var(--muted); margin:4px 0 8px; }
 
-    .section-label {
-      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px; margin: 12px 0 8px;
-      text-transform: uppercase;
-    }
-    .history-item .meta-line { font-size: 0.72rem; color: var(--muted); margin-top: 2px; word-break: break-all; }
+    .section-label { font-size:0.72rem; color:var(--muted); letter-spacing:0.5px; margin:12px 0 8px; text-transform:uppercase; }
 
-    .log-item, .history-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.78rem;
-    }
-    .log-item:last-child, .history-item:last-child { border-bottom: none; }
-    .log-icon {
-      width: 24px; height: 24px;
-      border-radius: 2px;
-      background: rgba(0,184,169,0.15);
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      flex-shrink: 0;
-    }
-    .history-item { justify-content: space-between; }
-
-    .leaderboard table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
-    .leaderboard th {
-      text-align: left;
-      padding: 5px 4px;
-      color: var(--muted);
-      font-weight: 500;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.72rem;
-    }
-    .leaderboard td {
-      padding: 6px 4px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .captcha {
-      background: var(--bg);
-      border: 1px dashed var(--border);
-      border-radius: 2px;
-      padding: 8px;
-      text-align: center;
-      font-family: 'Roboto Mono', 'Courier New', monospace;
-      font-size: 1.15rem;
-      letter-spacing: 4px;
-      margin-bottom: 8px;
-      user-select: none;
-      color: var(--accent-light);
-    }
-
-    .alert {
-      padding: 7px 10px;
-      border-radius: 2px;
-      font-size: 0.78rem;
-      margin-bottom: 8px;
-    }
-    .alert-warn { background: rgba(251,188,4,0.12); color: #fbbc04; border: 1px solid rgba(251,188,4,0.25); }
-    .alert-error { background: rgba(234,67,53,0.12); color: #f28b82; border: 1px solid rgba(234,67,53,0.25); }
-    .alert-success { background: rgba(52,168,83,0.12); color: #81c995; border: 1px solid rgba(52,168,83,0.25); }
-    .alert-info { background: rgba(0,184,169,0.12); color: #5eead4; border: 1px solid rgba(0,184,169,0.25); }
-
-    .divider {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.72rem;
-      margin: 10px 0;
-      position: relative;
-    }
-    .divider::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 0; right: 0;
-      height: 1px;
-      background: var(--border);
-      z-index: 0;
-    }
-    .divider span {
-      background: var(--card);
-      padding: 0 10px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .chat-box { display: flex; flex-direction: column; height: calc(100vh - 120px); min-height: 280px; }
-
-    /* Desktop chat side panel */
-    .chat-panel {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 360px;
-      max-width: 92vw;
-      height: 100vh;
-      background: #12171c;
-      border-left: 1px solid var(--border);
-      z-index: 160;
-      display: flex;
-      flex-direction: column;
-      box-shadow: -8px 0 28px rgba(0,0,0,0.45);
-      animation: chatSlideIn 0.22s ease forwards;
-    }
-    .chat-panel:hover {
-      box-shadow: -12px 0 36px rgba(0,0,0,0.55);
-      border-left-color: rgba(0,184,169,0.35);
-    }
-    @keyframes chatSlideIn {
-      from { transform: translateX(100%); }
-      to { transform: translateX(0); }
-    }
-    .chat-panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 12px 10px;
-      border-bottom: 1px solid var(--border);
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .chat-panel-header i { color: var(--accent); margin-right: 6px; }
-    .chat-panel-close {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 28px;
-      height: 28px;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chat-panel-close:hover {
-      color: var(--text);
-      background: var(--card-hover);
-      border-color: var(--accent);
-    }
-    .chat-panel-messages {
-      flex: 1;
-      overflow-y: auto;
-      margin: 0 10px 8px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg);
-    }
-    .chat-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
-      z-index: 150;
-    }
-    @media (max-width: 768px) {
-      .chat-panel {
-        width: 100%;
-        max-width: 100%;
-      }
-    }
+    .chat-box { display:flex; flex-direction:column; height:calc(100vh - 120px); min-height:280px; }
     .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 4px 0;
-      margin-bottom: 8px;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      background: var(--bg);
+      flex:1; overflow-y:auto; padding:4px 0; margin-bottom:8px;
+      border:1px solid var(--border); border-radius:2px; background:var(--bg);
     }
-    .chat-msg {
-      padding: 5px 10px;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.78rem;
-      word-break: break-word;
-    }
-    .chat-msg:last-child { border-bottom: none; }
-    .chat-msg.admin-msg {
-      background: rgba(251,188,4,0.1);
-      border-radius: 2px;
-      border-bottom: none;
-      margin: 2px 6px;
-    }
-    .chat-msg .meta {
-      font-size: 0.65rem;
-      color: var(--muted);
-      margin-bottom: 1px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .chat-msg .meta .name { color: var(--accent-light); font-weight: 500; }
-    .badge-owner {
-      display: inline-flex;
-      align-items: center;
-      gap: 2px;
-      background: #fbbc04;
-      color: #000;
-      padding: 0 5px;
-      border-radius: 2px;
-      font-size: 0.58rem;
-      font-weight: 700;
-      margin-left: 4px;
-    }
-    .chat-input-row { display: flex; gap: 6px; }
-    .chat-input-row input { margin-bottom: 0; flex: 1; }
-    .chat-input-row button { width: auto; padding: 6px 12px; flex-shrink: 0; }
-    .chat-sound-toggle {
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      font-weight: 500;
-    }
+    .chat-msg { padding:5px 10px; border-bottom:1px solid var(--border); font-size:0.78rem; word-break:break-word; }
+    .chat-msg:last-child { border-bottom:none; }
+    .chat-msg.admin-msg { background:rgba(251,188,4,0.1); border-radius:2px; border-bottom:none; margin:2px 6px; }
+    .chat-msg .meta { font-size:0.65rem; color:var(--muted); margin-bottom:1px; display:flex; justify-content:space-between; }
+    .chat-msg .meta .name { color:var(--accent-light); font-weight:500; }
+    .badge-owner { display:inline-flex; align-items:center; gap:2px; background:#fbbc04; color:#000; padding:0 5px; border-radius:2px; font-size:0.58rem; font-weight:700; margin-left:4px; }
+    .chat-input-row { display:flex; gap:6px; }
+    .chat-input-row input { margin-bottom:0; flex:1; }
+    .chat-input-row button { width:auto; padding:6px 12px; flex-shrink:0; background:var(--accent); border:none; border-radius:2px; color:#041210; font-weight:600; cursor:pointer; }
+    .chat-input-row button:disabled { opacity:0.4; cursor:not-allowed; }
+    .chat-sound-toggle { font-size:0.72rem; color:var(--muted); margin-bottom:6px; display:flex; align-items:center; gap:4px; cursor:pointer; font-weight:500; }
 
-    .badge {
-      display: inline-block;
-      padding: 1px 6px;
-      border-radius: 2px;
-      font-size: 0.65rem;
-      font-weight: 500;
-      text-transform: uppercase;
-    }
-    .badge-unsent { background: rgba(234,67,53,0.2); color: #f28b82; }
-    .badge-sent { background: rgba(52,168,83,0.2); color: #81c995; }
-    .badge-pending { background: rgba(251,188,4,0.2); color: #fbbc04; }
+    .badge { display:inline-block; padding:1px 6px; border-radius:2px; font-size:0.65rem; font-weight:500; text-transform:uppercase; }
+    .badge-unsent { background:rgba(234,67,53,0.2); color:#f28b82; }
+    .badge-sent { background:rgba(52,168,83,0.2); color:#81c995; }
+    .badge-pending { background:rgba(251,188,4,0.2); color:#fbbc04; }
 
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 12px;
-    }
-    .modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      width: 100%;
-      max-width: 360px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 14px;
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .modal-header h3 { font-size: 0.95rem; font-weight: 500; }
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-    .steps { display: flex; gap: 4px; margin-bottom: 12px; }
-    .step-dot { flex: 1; height: 3px; border-radius: 1px; background: var(--border); }
-    .step-dot.active { background: var(--accent); }
-    .step-dot.done { background: var(--success); }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:200; padding:12px; }
+    .modal { background:var(--card); border:1px solid var(--border); border-radius:2px; width:100%; max-width:360px; max-height:90vh; overflow-y:auto; padding:14px; }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .modal-header h3 { font-size:0.95rem; font-weight:500; }
+    .modal-close { background:none; border:none; color:var(--muted); font-size:1.1rem; cursor:pointer; }
 
-    .summary {
-      background: var(--bg);
-      border-radius: 2px;
-      padding: 10px;
-      font-size: 0.78rem;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-    }
-    .summary div { margin-bottom: 4px; }
-    .summary strong { color: var(--muted); font-weight: 500; }
+    .bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:#12171c; border-top:1px solid var(--border); justify-content:space-around; align-items:center; padding:4px 2px 6px; z-index:100; }
+    .bottom-nav .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:1px; padding:4px 2px; color:var(--muted); font-size:0.58rem; font-weight:500; cursor:pointer; border-radius:4px; }
+    .bottom-nav .nav-item i { font-size:1.05rem; }
+    .bottom-nav .nav-item.active { color:var(--accent-light); background:rgba(0,184,169,0.12); }
+    .bottom-nav .nav-item.active i { color:var(--accent); }
+    @media (max-width:768px) { .header-nav { display:none; } .bottom-nav { display:flex; } .user-meta .name { display:none; } }
 
-    .btn-row { display: flex; gap: 6px; }
-    .btn-row .btn { flex: 1; }
+    .iframe-overlay { position:fixed; inset:0; background:var(--bg); z-index:150; display:flex; flex-direction:column; }
+    .iframe-bar { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--card); border-bottom:1px solid var(--border); }
+    .iframe-bar button { background:none; border:none; color:var(--text); font-size:1.1rem; cursor:pointer; }
+    iframe { flex:1; border:none; width:100%; }
 
-    #gbtn { display: flex; justify-content: center; min-height: 36px; }
+    .empty { text-align:center; color:var(--muted); padding:16px 10px; font-size:0.8rem; }
+    .divider { text-align:center; color:var(--muted); font-size:0.72rem; margin:10px 0; position:relative; }
+    .divider::before { content:""; position:absolute; top:50%; left:0; right:0; height:1px; background:var(--border); z-index:0; }
+    .divider span { background:var(--card); padding:0 10px; position:relative; z-index:1; }
+    .alert { padding:7px 10px; border-radius:2px; font-size:0.78rem; margin-bottom:8px; }
+    .alert-error { background:rgba(234,67,53,0.12); color:#f28b82; border:1px solid rgba(234,67,53,0.25); }
+    .alert-success { background:rgba(52,168,83,0.12); color:#81c995; border:1px solid rgba(52,168,83,0.25); }
+    .alert-info { background:rgba(0,184,169,0.12); color:#5eead4; border:1px solid rgba(0,184,169,0.25); }
+    .alert-warn { background:rgba(251,188,4,0.12); color:#fbbc04; border:1px solid rgba(251,188,4,0.25); }
 
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 16px 10px;
-      font-size: 0.8rem;
-    }
-
-    /* Mobile bottom nav - hidden on desktop */
-    .bottom-nav {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #12171c;
-      border-top: 1px solid var(--border);
-      justify-content: space-around;
-      align-items: center;
-      padding: 4px 2px 6px;
-      z-index: 100;
-    }
-    .bottom-nav .nav-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1px;
-      padding: 4px 2px;
-      color: var(--muted);
-      font-size: 0.58rem;
-      font-weight: 500;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    .bottom-nav .nav-item i { font-size: 1.05rem; }
-    .bottom-nav .nav-item.active {
-      color: var(--accent-light);
-      background: rgba(0,184,169,0.12);
-    }
-    .bottom-nav .nav-item.active i { color: var(--accent); }
-
-    @media (max-width: 768px) {
-      .header-nav { display: none; }
-      .bottom-nav { display: flex; }
-      .user-meta .name { display: none; }
-    }
-
-    .iframe-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 150;
-      display: flex;
-      flex-direction: column;
-    }
-    .iframe-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-    }
-    .iframe-bar button {
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-    iframe { flex: 1; border: none; width: 100%; }
+    /* history modal / panel */
+    .history-list { max-height:300px; overflow-y:auto; }
+    .history-item { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); font-size:0.78rem; }
+    .history-item:last-child { border-bottom:none; }
+    .history-item .meta-line { font-size:0.7rem; color:var(--muted); }
   </style>
 </head>
 <body>
@@ -807,7 +224,6 @@ body{
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useRef, useCallback } = React;
 
-/* ====== CONFIG ====== */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
 const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
 const memoryStore = {};
@@ -818,32 +234,19 @@ const storage = {
 };
 
 const CR_COUNTRIES = [
-  { code: "US", name: "United States" }, { code: "GB", name: "United Kingdom" },
-  { code: "CA", name: "Canada" }, { code: "AU", name: "Australia" },
-  { code: "DE", name: "Germany" }, { code: "FR", name: "France" },
-  { code: "IT", name: "Italy" }, { code: "ES", name: "Spain" },
-  { code: "NL", name: "Netherlands" }, { code: "BE", name: "Belgium" },
-  { code: "AT", name: "Austria" }, { code: "CH", name: "Switzerland" },
-  { code: "SE", name: "Sweden" }, { code: "NO", name: "Norway" },
-  { code: "DK", name: "Denmark" }, { code: "FI", name: "Finland" },
-  { code: "IE", name: "Ireland" }, { code: "PT", name: "Portugal" },
-  { code: "PL", name: "Poland" }, { code: "CZ", name: "Czechia" },
-  { code: "RO", name: "Romania" }, { code: "HU", name: "Hungary" },
-  { code: "GR", name: "Greece" }, { code: "TR", name: "Türkiye" },
-  { code: "UA", name: "Ukraine" }, { code: "RU", name: "Russia" },
-  { code: "BR", name: "Brazil" }, { code: "MX", name: "Mexico" },
-  { code: "AR", name: "Argentina" }, { code: "CL", name: "Chile" },
-  { code: "CO", name: "Colombia" }, { code: "PE", name: "Peru" },
-  { code: "JP", name: "Japan" }, { code: "KR", name: "South Korea" },
-  { code: "CN", name: "China" }, { code: "HK", name: "Hong Kong" },
-  { code: "TW", name: "Taiwan" }, { code: "SG", name: "Singapore" },
-  { code: "MY", name: "Malaysia" }, { code: "TH", name: "Thailand" },
-  { code: "VN", name: "Vietnam" }, { code: "PH", name: "Philippines" },
-  { code: "ID", name: "Indonesia" }, { code: "IN", name: "India" },
-  { code: "AE", name: "United Arab Emirates" }, { code: "SA", name: "Saudi Arabia" },
-  { code: "IL", name: "Israel" }, { code: "EG", name: "Egypt" },
-  { code: "ZA", name: "South Africa" }, { code: "NG", name: "Nigeria" },
-  { code: "NZ", name: "New Zealand" }
+  { code:"US", name:"United States" }, { code:"GB", name:"United Kingdom" }, { code:"CA", name:"Canada" }, { code:"AU", name:"Australia" },
+  { code:"DE", name:"Germany" }, { code:"FR", name:"France" }, { code:"IT", name:"Italy" }, { code:"ES", name:"Spain" },
+  { code:"NL", name:"Netherlands" }, { code:"BE", name:"Belgium" }, { code:"AT", name:"Austria" }, { code:"CH", name:"Switzerland" },
+  { code:"SE", name:"Sweden" }, { code:"NO", name:"Norway" }, { code:"DK", name:"Denmark" }, { code:"FI", name:"Finland" },
+  { code:"IE", name:"Ireland" }, { code:"PT", name:"Portugal" }, { code:"PL", name:"Poland" }, { code:"CZ", name:"Czechia" },
+  { code:"RO", name:"Romania" }, { code:"HU", name:"Hungary" }, { code:"GR", name:"Greece" }, { code:"TR", name:"Türkiye" },
+  { code:"UA", name:"Ukraine" }, { code:"RU", name:"Russia" }, { code:"BR", name:"Brazil" }, { code:"MX", name:"Mexico" },
+  { code:"AR", name:"Argentina" }, { code:"CL", name:"Chile" }, { code:"CO", name:"Colombia" }, { code:"PE", name:"Peru" },
+  { code:"JP", name:"Japan" }, { code:"KR", name:"South Korea" }, { code:"CN", name:"China" }, { code:"HK", name:"Hong Kong" },
+  { code:"TW", name:"Taiwan" }, { code:"SG", name:"Singapore" }, { code:"MY", name:"Malaysia" }, { code:"TH", name:"Thailand" },
+  { code:"VN", name:"Vietnam" }, { code:"PH", name:"Philippines" }, { code:"ID", name:"Indonesia" }, { code:"IN", name:"India" },
+  { code:"AE", name:"United Arab Emirates" }, { code:"SA", name:"Saudi Arabia" }, { code:"IL", name:"Israel" }, { code:"EG", name:"Egypt" },
+  { code:"ZA", name:"South Africa" }, { code:"NG", name:"Nigeria" }, { code:"NZ", name:"New Zealand" }
 ];
 
 function normalizeCRBrands(raw) {
@@ -1041,6 +444,7 @@ function App() {
   const [crDenomsLoading, setCrDenomsLoading] = useState(false);
   const [crSelectedDenom, setCrSelectedDenom] = useState(null);
   const [crCustomAmount, setCrCustomAmount] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
   const CR_PAGE_SIZE = 48;
 
   useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
@@ -1057,40 +461,27 @@ function App() {
     try { if (window.google) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
     gInited.current = false; setTab("home");
     showMsg("Logged out", "success");
+    setShowHistory(false);
   }
-  function toggleSound() {
-    const next = !soundOn;
-    setSoundOn(next);
-    storage.set("buxiq_sound", next ? "1" : "0");
-  }
+  function toggleSound() { const next = !soundOn; setSoundOn(next); storage.set("buxiq_sound", next ? "1" : "0"); }
 
   const loadLogs = useCallback(async () => { const data = await api("logs"); if (data.logs) setLogs(data.logs); }, []);
   const loadLeaders = useCallback(async () => { const data = await api("leaders"); if (data.leaders) setLeaders(data.leaders); }, []);
-  const loadOfferwalls = useCallback(async () => {
-    setOwLoading(true);
-    const data = await api("getOfferwalls");
-    setOfferwalls(Array.isArray(data.offerwalls) ? data.offerwalls : []);
-    setOwLoading(false);
-  }, []);
+  const loadOfferwalls = useCallback(async () => { setOwLoading(true); const data = await api("getOfferwalls"); setOfferwalls(Array.isArray(data.offerwalls) ? data.offerwalls : []); setOwLoading(false); }, []);
   const refreshBalance = useCallback(async () => {
-    const u = userRef.current;
-    if (!u) return;
+    const u = userRef.current; if (!u) return;
     const data = await api("balance", { account: u.account });
     if (data.balance !== undefined) saveUser({ ...u, balance: data.balance, level: data.level || u.level });
   }, []);
   const loadCashouts = useCallback(async (account) => {
+    if (!account) return;
     const data = await api("getCashouts", { account });
     setCashouts(data.cashouts || []);
   }, []);
 
   const loadCRBrands = useCallback(async (country) => {
     const c = country || crCountry || "US";
-    setCrBrandsLoading(true);
-    setCrBrandsError("");
-    setCrSelectedBrand(null);
-    setCrDenoms({ fixed: [], ranges: [] });
-    setCrSelectedDenom(null);
-    setCrBrandPage(1);
+    setCrBrandsLoading(true); setCrBrandsError(""); setCrSelectedBrand(null); setCrDenoms({ fixed: [], ranges: [] }); setCrSelectedDenom(null); setCrBrandPage(1);
     const data = await api("getCRBrands", { country: c, country_code: c });
     setCrBrandsLoading(false);
     if (data.error) { setCrBrands([]); setCrBrandsError(data.error); return; }
@@ -1102,9 +493,7 @@ function App() {
   const openCRBrand = useCallback(async (brand) => {
     if (!user) { showMsg("Please login first"); setTab("earn"); return; }
     setCrSelectedBrand(brand);
-    setCrDenoms({ fixed: [], ranges: [] });
-    setCrSelectedDenom(null);
-    setCrCustomAmount("");
+    setCrDenoms({ fixed: [], ranges: [] }); setCrSelectedDenom(null); setCrCustomAmount("");
     if (user.email) setDetails(String(user.email));
     setCrDenomsLoading(true);
     const data = await api("getCRProducts", {
@@ -1208,9 +597,7 @@ function App() {
     return () => clearInterval(pollRef.current);
   }, [chatOpen, tab, loadChat]);
   useEffect(() => { if (tab === "shop" && user) loadCashouts(user.account); }, [tab, user, loadCashouts]);
-  useEffect(() => {
-    if (tab === "shop" && user) loadCRBrands(crCountry);
-  }, [tab, user, crCountry]);
+  useEffect(() => { if (tab === "shop" && user) loadCRBrands(crCountry); }, [tab, user, crCountry]);
   useEffect(() => { if (tab === "earn") loadOfferwalls(); }, [tab, loadOfferwalls]);
   useEffect(() => { if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" }); }, [chatMessages]);
 
@@ -1270,11 +657,7 @@ function App() {
     let data;
     if (isCR) {
       let clientIp = "";
-      try {
-        const ipRes = await fetch("https://api.ipify.org?format=json");
-        const ipJson = await ipRes.json();
-        if (ipJson && ipJson.ip) clientIp = String(ipJson.ip);
-      } catch (e) {}
+      try { const ipRes = await fetch("https://api.ipify.org?format=json"); const ipJson = await ipRes.json(); if (ipJson && ipJson.ip) clientIp = String(ipJson.ip); } catch (e) {}
       data = await postApi("submitCRCashout", {
         account: user.account, username: user.username || user.account,
         brand_name: modal.brand_name || modal.name,
@@ -1346,6 +729,13 @@ function App() {
     if (id === "chat") { setChatOpen(prev => !prev); return; }
     setChatOpen(false);
     setTab(id);
+    if (id === "shop" && user) loadCashouts(user.account);
+  }
+
+  function toggleHistory() {
+    if (!user) { showMsg("Login to view history", "info"); return; }
+    setShowHistory(!showHistory);
+    if (!showHistory) loadCashouts(user.account);
   }
 
   const tabs = [
@@ -1360,7 +750,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* HEADER */}
       <div className="top-header">
         <div className="header-row">
           <div className="logo"><span className="dollar">$</span>Reward<span>Bux</span></div>
@@ -1374,8 +763,8 @@ function App() {
           <div className="header-user">
             {user ? (
               <>
-                <div className="avatar-wrap">
-                  <img src={user.avatar || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff")} alt="" />
+                <div className="avatar-wrap" onClick={toggleHistory} title="Click for cashout history">
+                  <img src={user.avatar || ("https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff&size=64")} alt="" />
                   <div className="level-badge">{user.level || 1}</div>
                 </div>
                 <div className="user-meta">
@@ -1429,7 +818,7 @@ function App() {
             <div className="divider"><span>OR</span></div>
             <label>Account #</label><input value={form.account} onChange={e => setForm({...form, account: e.target.value})} placeholder="Account number" />
             <label>Client ID</label><input value={form.clientId} onChange={e => setForm({...form, clientId: e.target.value})} placeholder="Client ID" />
-            <label>CAPTCHA</label><div className="captcha">{captcha}</div>
+            <label>CAPTCHA</label><div className="captcha" style={{background:'var(--bg)', border:'1px dashed var(--border)', borderRadius:'2px', padding:'8px', textAlign:'center', fontFamily:'monospace', fontSize:'1.15rem', letterSpacing:'4px', marginBottom:'8px', userSelect:'none', color:'var(--accent-light)'}}>{captcha}</div>
             <input value={form.captcha} onChange={e => setForm({...form, captcha: e.target.value})} onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="Enter CAPTCHA" />
             <button className="btn btn-primary" onClick={handleLogin} disabled={loggingIn}>{loggingIn ? "Signing in…" : "Login"}</button>
           </div>
@@ -1457,6 +846,7 @@ function App() {
             <p style={{ color: "var(--muted)", marginBottom: 14, fontSize: "0.875rem" }}>
               Balance: <strong style={{color:'var(--accent-light)'}}>{formatUSD((user && user.balance) || 0)}</strong>
               <span style={{ marginLeft: 8, fontSize: "0.75rem" }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
+              <button className="btn btn-ghost" style={{ width: "auto", padding: "2px 10px", marginLeft: 12, fontSize: "0.7rem" }} onClick={refreshBalance}><i className="fas fa-sync" /></button>
             </p>
             {!user ? (
               <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
@@ -1465,16 +855,16 @@ function App() {
                 <div className="section-label">Gift cards (CryptoRefills catalog)</div>
                 {!crSelectedBrand ? (
                   <>
-                    <div className="cr-toolbar">
-                      <div className="field"><label>Country</label>
+                    <div className="cr-toolbar" style={{display:'flex', flexWrap:'wrap', gap:'8px', marginBottom:'10px', alignItems:'flex-end'}}>
+                      <div style={{flex:1, minWidth:'120px'}}><label>Country</label>
                         <select value={crCountry} onChange={e => { setCrCountry(e.target.value); setCrSearch(""); }}>
                           {CR_COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
                         </select>
                       </div>
-                      <div className="field"><label>Search brands</label>
+                      <div style={{flex:1, minWidth:'120px'}}><label>Search brands</label>
                         <input value={crSearch} onChange={e => { setCrSearch(e.target.value); setCrBrandPage(1); }} placeholder="e.g. Amazon, Steam…" />
                       </div>
-                      <div className="field-btn">
+                      <div style={{flex:'0 0 auto'}}>
                         <button className="btn btn-ghost" style={{ width: "auto", padding: "7px 12px" }} onClick={() => loadCRBrands(crCountry)} disabled={crBrandsLoading}>
                           <i className={"fas " + (crBrandsLoading ? "fa-spinner fa-spin" : "fa-sync")} />
                         </button>
@@ -1564,9 +954,8 @@ function App() {
           </div>
         )}
 
-        {/* CHAT TAB — fully functional on mobile */}
         {tab === "chat" && (
-          <div className="card chat-box">
+          <div className="card chat-box" style={{ height: 'calc(100vh - 120px)', minHeight: '280px' }}>
             <h2>Community Chat</h2>
             <div className="chat-sound-toggle" onClick={toggleSound}>
               <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
@@ -1594,8 +983,8 @@ function App() {
           <div className="card leaderboard">
             <h2>Leaderboard</h2>
             {leaders.length === 0 ? <div className="empty">No data yet</div> : (
-              <table><thead><tr><th>#</th><th>User</th><th>Earnings</th><th>Lvl</th></tr></thead><tbody>
-                {leaders.map((l, i) => <tr key={i}><td>{i+1}</td><td>{l.username}</td><td>{formatUSD(l.balance || 0)}</td><td>{l.level}</td></tr>)}
+              <table style={{width:'100%', borderCollapse:'collapse', fontSize:'0.78rem'}}><thead><tr style={{textAlign:'left', padding:'5px 4px', color:'var(--muted)', fontWeight:500, borderBottom:'1px solid var(--border)', fontSize:'0.72rem'}}><th>#</th><th>User</th><th>Earnings</th><th>Lvl</th></tr></thead><tbody>
+                {leaders.map((l, i) => <tr key={i} style={{padding:'6px 4px', borderBottom:'1px solid var(--border)'}}><td>{i+1}</td><td>{l.username}</td><td>{formatUSD(l.balance || 0)}</td><td>{l.level}</td></tr>)}
               </tbody></table>
             )}
           </div>
@@ -1635,19 +1024,20 @@ function App() {
         ))}
       </div>
 
-      {/* CHAT SIDE PANEL (desktop) */}
-      {chatOpen && (
+      {/* CHAT SIDE PANEL (desktop) - mobile uses tab */}
+      {chatOpen && window.innerWidth > 768 && (
         <>
-          <div className="chat-backdrop" onClick={() => setChatOpen(false)} />
-          <div className="chat-panel open">
-            <div className="chat-panel-header"><span><i className="fas fa-comments" /> Community Chat</span>
-              <button className="chat-panel-close" onClick={() => setChatOpen(false)}><i className="fas fa-times" /></button>
+          <div className="chat-backdrop" style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.35)', zIndex:150}} onClick={() => setChatOpen(false)} />
+          <div className="chat-panel" style={{position:'fixed', top:0, right:0, width:'360px', maxWidth:'92vw', height:'100vh', background:'#12171c', borderLeft:'1px solid var(--border)', zIndex:160, display:'flex', flexDirection:'column', boxShadow:'-8px 0 28px rgba(0,0,0,0.45)', animation:'chatSlideIn 0.22s ease forwards'}}>
+            <div className="chat-panel-header" style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 12px 10px', borderBottom:'1px solid var(--border)', fontWeight:600, fontSize:'0.9rem', color:'#fff', flexShrink:0}}>
+              <span><i className="fas fa-comments" style={{color:'var(--accent)', marginRight:'6px'}} /> Community Chat</span>
+              <button className="chat-panel-close" style={{background:'var(--card)', border:'1px solid var(--border)', color:'var(--muted)', width:'28px', height:'28px', borderRadius:'4px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center'}} onClick={() => setChatOpen(false)}><i className="fas fa-times" /></button>
             </div>
-            <div className="chat-sound-toggle" onClick={toggleSound} style={{ padding: "0 10px", marginBottom: 6 }}>
+            <div className="chat-sound-toggle" onClick={toggleSound} style={{padding:'0 10px', marginBottom:6, fontSize:'0.72rem', color:'var(--muted)', display:'flex', alignItems:'center', gap:'4px', cursor:'pointer', fontWeight:500}}>
               <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
               {soundOn ? "Ding sound ON" : "Ding sound OFF"}
             </div>
-            <div className="chat-messages chat-panel-messages">
+            <div className="chat-messages chat-panel-messages" style={{flex:1, overflowY:'auto', margin:'0 10px 8px', border:'1px solid var(--border)', borderRadius:'4px', background:'var(--bg)'}}>
               {chatMessages.length === 0 ? <div className="empty">No messages yet.</div> :
                 chatMessages.map(m => (
                   <div key={m.id} className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")}>
@@ -1658,12 +1048,32 @@ function App() {
               }
               <div ref={chatEndRef} />
             </div>
-            <div className="chat-input-row">
-              <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat()} placeholder={user ? "Type a message..." : "Login to chat"} maxLength={300} disabled={!user} />
-              <button onClick={sendChat} disabled={!user}><i className="fas fa-paper-plane" /></button>
+            <div className="chat-input-row" style={{display:'flex', gap:'6px', padding:'0 10px 12px'}}>
+              <input value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendChat()} placeholder={user ? "Type a message..." : "Login to chat"} maxLength={300} disabled={!user} style={{flex:1, marginBottom:0}} />
+              <button onClick={sendChat} disabled={!user} style={{width:'auto', padding:'6px 12px', flexShrink:0, background:'var(--accent)', border:'none', borderRadius:'2px', color:'#041210', fontWeight:600, cursor:'pointer'}}><i className="fas fa-paper-plane" /></button>
             </div>
           </div>
         </>
+      )}
+
+      {/* HISTORY MODAL - triggered by avatar click */}
+      {showHistory && (
+        <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) setShowHistory(false); }}>
+          <div className="modal">
+            <div className="modal-header"><h3><i className="fas fa-clock-rotate-left" style={{marginRight:8, color:'var(--accent)'}} />Cashout History</h3><button className="modal-close" onClick={() => setShowHistory(false)}><i className="fas fa-times" /></button></div>
+            {cashouts.length === 0 ? <div className="empty">No cashouts yet.</div> : (
+              <div className="history-list">
+                {cashouts.slice().reverse().map((c, i) => (
+                  <div key={i} className="history-item">
+                    <div><div>{c.reward_name || c.brand_name || "Gift Card"}</div><div className="meta-line">{c.created_at || ""}</div></div>
+                    <div style={{textAlign:'right'}}><div>{formatUSD(c.amount || 0)}</div><div>{statusBadge(c.status)}</div></div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button className="btn btn-ghost" style={{marginTop:12}} onClick={refreshPendingCR} disabled={refreshingCR}>{refreshingCR ? "Refreshing…" : "Refresh Status"}</button>
+          </div>
+        </div>
       )}
 
       {iframeUrl && (
@@ -1677,10 +1087,10 @@ function App() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && closeModal()}>
           <div className="modal">
             <div className="modal-header"><h3>{modal.name}</h3><button className="modal-close" onClick={closeModal}><i className="fas fa-times" /></button></div>
-            <div className="steps"><div className={"step-dot" + (step > 1 ? " done" : step === 1 ? " active" : "")} /><div className={"step-dot" + (step > 2 ? " done" : step === 2 ? " active" : "")} /><div className={"step-dot" + (step === 3 ? " active" : "")} /></div>
+            <div className="steps" style={{display:'flex', gap:'4px', marginBottom:'12px'}}><div className={"step-dot" + (step > 1 ? " done" : step === 1 ? " active" : "")} style={{flex:1, height:'3px', borderRadius:'1px', background: step > 1 ? 'var(--success)' : step === 1 ? 'var(--accent)' : 'var(--border)'}} /><div className={"step-dot" + (step > 2 ? " done" : step === 2 ? " active" : "")} style={{flex:1, height:'3px', borderRadius:'1px', background: step > 2 ? 'var(--success)' : step === 2 ? 'var(--accent)' : 'var(--border)'}} /><div className={"step-dot" + (step === 3 ? " active" : "")} style={{flex:1, height:'3px', borderRadius:'1px', background: step === 3 ? 'var(--accent)' : 'var(--border)'}} /></div>
             {step === 1 && (<><label>Amount (USD)</label><input type="number" step="0.01" min={modal.min} max={user ? toUSD(user.balance) : undefined} value={amount} onChange={e => setAmount(e.target.value)} placeholder={"Min $" + modal.min} autoFocus /><p style={{ fontSize: "0.8rem", color: "var(--muted)", marginBottom: 16 }}>Available: {formatUSD((user && user.balance) || 0)}<span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span></p><button className="btn btn-primary" onClick={nextStep}>Next</button></>)}
-            {step === 2 && (<><label>{modal.detailsLabel}</label><input value={details} onChange={e => setDetails(e.target.value)} placeholder={modal.detailsPlaceholder} autoFocus /><div className="btn-row"><button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button><button className="btn btn-primary" onClick={nextStep}>Next</button></div></>)}
-            {step === 3 && (<><div className="summary"><div><strong>Reward:</strong> {modal.name}</div><div><strong>Amount:</strong> ${parseFloat(amount || 0).toFixed(2)}</div><div><strong>Details:</strong> {details}</div></div><div className="btn-row"><button className="btn btn-ghost" onClick={() => setStep(2)} disabled={submitting}>Back</button><button className="btn btn-primary" onClick={submitCashout} disabled={submitting}>{submitting ? "Submitting..." : "Submit"}</button></div></>)}
+            {step === 2 && (<><label>{modal.detailsLabel || "Delivery details"}</label><input value={details} onChange={e => setDetails(e.target.value)} placeholder={modal.detailsPlaceholder || "Email or address"} autoFocus /><div className="btn-row" style={{display:'flex', gap:'6px'}}><button className="btn btn-ghost" style={{flex:1}} onClick={() => setStep(1)}>Back</button><button className="btn btn-primary" style={{flex:1}} onClick={nextStep}>Next</button></div></>)}
+            {step === 3 && (<><div className="summary" style={{background:'var(--bg)', borderRadius:'2px', padding:'10px', fontSize:'0.78rem', marginBottom:'10px', border:'1px solid var(--border)'}}><div><strong>Reward:</strong> {modal.name}</div><div><strong>Amount:</strong> ${parseFloat(amount || 0).toFixed(2)}</div><div><strong>Details:</strong> {details}</div></div><div className="btn-row" style={{display:'flex', gap:'6px'}}><button className="btn btn-ghost" style={{flex:1}} onClick={() => setStep(2)} disabled={submitting}>Back</button><button className="btn btn-primary" style={{flex:1}} onClick={submitCashout} disabled={submitting}>{submitting ? "Submitting..." : "Submit"}</button></div></>)}
           </div>
         </div>
       )}
