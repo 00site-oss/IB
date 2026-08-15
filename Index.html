@@ -1,7 +1,3 @@
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -414,6 +410,18 @@ body{
     .reward-item .name { font-weight: 500; font-size: 0.8rem; }
     .reward-item .min { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
 
+
+    .reward-item .tag {
+      display: inline-block; margin-top: 4px; font-size: 0.58rem; font-weight: 600;
+      text-transform: uppercase; padding: 1px 5px; border-radius: 2px;
+      background: rgba(0,184,169,0.15); color: var(--accent-light);
+    }
+    .section-label {
+      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px; margin: 12px 0 8px;
+      text-transform: uppercase;
+    }
+    .history-item .meta-line { font-size: 0.72rem; color: var(--muted); margin-top: 2px; word-break: break-all; }
+
     .log-item, .history-item {
       display: flex;
       align-items: center;
@@ -793,7 +801,100 @@ body{
         min: 1,
         logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
         detailsLabel: "Amazon.co.uk Gift Card Email",
-        detailsPlaceholder: "you@email.com"
+        detailsPlaceholder: "you@email.com",
+        provider: "manual"
+      }
+    ];
+
+    /* CryptoRefills-powered gift cards */
+    const CR_REWARDS = [
+      {
+        id: "cr_amazon_us",
+        name: "Amazon US",
+        brand_name: "Amazon",
+        country_code: "US",
+        min: 5,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
+      },
+      {
+        id: "cr_google_play",
+        name: "Google Play",
+        brand_name: "Google Play",
+        country_code: "US",
+        min: 5,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
+      },
+      {
+        id: "cr_steam",
+        name: "Steam",
+        brand_name: "Steam",
+        country_code: "US",
+        min: 5,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
+      },
+      {
+        id: "cr_netflix",
+        name: "Netflix",
+        brand_name: "Netflix",
+        country_code: "US",
+        min: 15,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
+      },
+      {
+        id: "cr_spotify",
+        name: "Spotify",
+        brand_name: "Spotify",
+        country_code: "US",
+        min: 10,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
+      },
+      {
+        id: "cr_xbox",
+        name: "Xbox",
+        brand_name: "Xbox",
+        country_code: "US",
+        min: 10,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
+      },
+      {
+        id: "cr_playstation",
+        name: "PlayStation",
+        brand_name: "PlayStation Store",
+        country_code: "US",
+        min: 10,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/0/00/PlayStation_logo.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
+      },
+      {
+        id: "cr_apple",
+        name: "Apple / iTunes",
+        brand_name: "Everything Apple",
+        country_code: "US",
+        min: 10,
+        logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
+        detailsLabel: "Delivery email",
+        detailsPlaceholder: "you@email.com",
+        provider: "cryptorefills"
       }
     ];
 
@@ -884,6 +985,7 @@ body{
       const [submitting, setSubmitting] = useState(false);
       const [loggingIn, setLoggingIn] = useState(false);
       const [chatOpen, setChatOpen] = useState(false);
+      const [refreshingCR, setRefreshingCR] = useState(false);
 
       useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
       useEffect(() => { userRef.current = user; }, [user]);
@@ -1058,7 +1160,8 @@ body{
 
       function openModal(reward) {
         if (!user) { showMsg("Please login first"); setTab("earn"); return; }
-        setModal(reward); setStep(1); setAmount(""); setDetails("");
+        setModal(reward); setStep(1); setAmount("");
+        setDetails((user.email || "").trim());
       }
       function closeModal() { setModal(null); setStep(1); setAmount(""); setDetails(""); }
 
@@ -1073,6 +1176,9 @@ body{
           setStep(2);
         } else if (step === 2) {
           if (!details.trim()) { showMsg("Enter receiving details"); return; }
+          if (modal.provider === "cryptorefills" && details.indexOf("@") < 0) {
+            showMsg("Enter a valid delivery email"); return;
+          }
           setStep(3);
         }
       }
@@ -1081,23 +1187,52 @@ body{
         setSubmitting(true);
         const amtUsd = parseFloat(amount);
         const amtPts = toPts(amtUsd);
-        // Send amount in points so backend stays consistent with stored balance
-        const data = await postApi("submitCashout", {
-          account: user.account,
-          username: user.username || user.account,
-          rewardType: modal.id,
-          rewardName: modal.name,
-          amount: amtPts,
-          amountUsd: amtUsd.toFixed(2),
-          details: details.trim()
-        });
+        const isCR = modal.provider === "cryptorefills";
+        let data;
+        if (isCR) {
+          data = await postApi("submitCRCashout", {
+            account: user.account,
+            username: user.username || user.account,
+            brand_name: modal.brand_name || modal.name,
+            country_code: modal.country_code || "US",
+            amountUsd: amtUsd.toFixed(2),
+            amount: amtPts,
+            details: details.trim(),
+            email: details.trim(),
+            coin: "USDC",
+            network: "Solana"
+          });
+        } else {
+          data = await postApi("submitCashout", {
+            account: user.account,
+            username: user.username || user.account,
+            rewardType: modal.id,
+            rewardName: modal.name,
+            amount: amtPts,
+            amountUsd: amtUsd.toFixed(2),
+            details: details.trim()
+          });
+        }
         setSubmitting(false);
-        if (data.error) { showMsg(data.error); return; }
-        showMsg("Cashout submitted!", "success");
+        if (data.error) {
+          showMsg(data.error + (data.refunded ? " (balance refunded)" : ""));
+          return;
+        }
+        showMsg(isCR ? ("Gift card order submitted! Email: " + details.trim()) : "Cashout submitted!", "success");
         const newBal = data.newBalance !== undefined ? data.newBalance : (Number(user.balance) - amtPts);
         saveUser({ ...user, balance: newBal });
         loadCashouts(user.account);
         closeModal();
+      }
+
+      async function refreshPendingCR() {
+        if (!user) return;
+        setRefreshingCR(true);
+        const data = await api("refreshCRCashouts", { account: user.account });
+        setRefreshingCR(false);
+        if (data.error) { showMsg(data.error); return; }
+        showMsg("Updated " + (data.updated || 0) + " order(s)", "success");
+        loadCashouts(user.account);
       }
 
       function statusBadge(status) {
@@ -1366,29 +1501,63 @@ body{
                   {!user ? (
                     <button className="btn btn-primary" onClick={() => setTab("earn")}>Login to Cashout</button>
                   ) : (
-                    <div className="reward-grid">
-                      {REWARDS.map(r => (
-                        <div key={r.id} className="reward-item" onClick={() => openModal(r)}>
-                          {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
-                          <div className="name">{r.name}</div>
-                          <div className="min">Min ${r.min}</div>
-                        </div>
-                      ))}
-                    </div>
+                    <>
+                      <div className="section-label">Gift cards via CryptoRefills</div>
+                      <div className="reward-grid">
+                        {CR_REWARDS.map(r => (
+                          <div key={r.id} className="reward-item" onClick={() => openModal(r)}>
+                            {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
+                            <div className="name">{r.name}</div>
+                            <div className="min">Min ${r.min}</div>
+                            <div className="tag">Instant</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="section-label">Manual rewards</div>
+                      <div className="reward-grid">
+                        {REWARDS.map(r => (
+                          <div key={r.id} className="reward-item" onClick={() => openModal(r)}>
+                            {r.logo ? <img src={r.logo} alt={r.name} onError={e => e.target.style.display="none"} /> : null}
+                            <div className="name">{r.name}</div>
+                            <div className="min">Min ${r.min}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
                   )}
                 </div>
                 {user && (
                   <div className="card">
-                    <h2>Your Cashouts</h2>
+                    <h2 style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                      <span>Your Cashouts</span>
+                      {cashouts.some(c => String(c.status||"").toLowerCase()==="pending" && c.crOrderId) && (
+                        <button
+                          className="btn btn-ghost"
+                          style={{ width: "auto", padding: "4px 10px", fontSize: "0.72rem" }}
+                          onClick={refreshPendingCR}
+                          disabled={refreshingCR}
+                        >
+                          <i className={"fas " + (refreshingCR ? "fa-spinner fa-spin" : "fa-sync")} />{" "}
+                          {refreshingCR ? "Checking…" : "Refresh status"}
+                        </button>
+                      )}
+                    </h2>
                     {cashouts.length === 0 ? (
                       <div className="empty">No cashout requests yet</div>
                     ) : cashouts.map((c, i) => (
                       <div key={c.id || i} className="history-item">
-                        <div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontWeight: 600 }}>{c.rewardName || c.rewardType}</div>
-                          <div style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
+                          <div className="meta-line">
                             {formatUSD(c.amount || 0)} · {c.time}
+                            {c.crOrderId ? " · CR " + String(c.crOrderId).slice(0, 10) : ""}
                           </div>
+                          {c.giftCode ? (
+                            <div className="meta-line" style={{ color: "var(--accent-light)" }}>Code: {c.giftCode}</div>
+                          ) : null}
+                          {c.crStatus && String(c.status).toLowerCase() !== "sent" ? (
+                            <div className="meta-line">Provider: {c.crStatus}</div>
+                          ) : null}
                         </div>
                         {statusBadge(c.status)}
                       </div>
@@ -1501,12 +1670,16 @@ body{
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <strong>How to cash out?</strong>
-                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>Shop → pick a reward → amount → details → submit.</p>
+                  <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>
+                    Shop → pick a gift card → amount → delivery email → submit.
+                    CryptoRefills orders are fulfilled after processing; use Refresh status if pending.
+                  </p>
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <strong>Cashout status</strong>
                   <p style={{ color: "var(--muted)", fontSize: "0.9rem", marginTop: 4 }}>
                     <span className="badge badge-unsent">Unsent</span> waiting ·
+                    <span className="badge badge-pending" style={{ marginLeft: 6 }}>Pending</span> processing ·
                     <span className="badge badge-sent" style={{ marginLeft: 6 }}>Sent</span> paid
                   </p>
                 </div>
@@ -1610,6 +1783,11 @@ body{
                       Available: {formatUSD((user && user.balance) || 0)}
                       <span style={{ marginLeft: 6 }}>({Number((user && user.balance) || 0).toLocaleString()} pts)</span>
                     </p>
+                    {modal.provider === "cryptorefills" && (
+                      <div className="alert alert-info" style={{ marginBottom: 12 }}>
+                        Delivered by CryptoRefills to your email after processing.
+                      </div>
+                    )}
                     <button className="btn btn-primary" onClick={nextStep}>Next</button>
                   </>
                 )}
@@ -1630,6 +1808,9 @@ body{
                       <div><strong>Reward:</strong> {modal.name}</div>
                       <div><strong>Amount:</strong> ${parseFloat(amount || 0).toFixed(2)}</div>
                       <div><strong>Details:</strong> {details}</div>
+                      {modal.provider === "cryptorefills" && (
+                        <div><strong>Provider:</strong> CryptoRefills (USDC)</div>
+                      )}
                     </div>
                     <div className="btn-row">
                       <button className="btn btn-ghost" onClick={() => setStep(2)} disabled={submitting}>Back</button>
