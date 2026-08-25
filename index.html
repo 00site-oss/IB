@@ -386,7 +386,19 @@
       const n = Number(usd);
       return isFinite(n) ? Math.round(n * POINTS_PER_DOLLAR) : 0;
     }
-    function money(pts) { return "$" + ptsToUsd(pts); }
+    /**
+     * Normalize postback / log amounts to POINTS.
+     * Backend sometimes sends points (50) and sometimes a decimal form (0.5).
+     * Rule: if 0 < value < 1 → treat as "points / 100" so 0.5 === 50 pts.
+     * Otherwise treat the number as points already.
+     */
+    function toPoints(amount) {
+      const n = Number(amount);
+      if (!isFinite(n) || n <= 0) return 0;
+      if (n > 0 && n < 1) return Math.round(n * 100); // 0.5 → 50 pts
+      return Math.round(n); // 50 → 50 pts
+    }
+    function money(pts) { return "$" + ptsToUsd(toPoints(pts)); }
 
     async function apiGet(action, params = {}) {
       try {
@@ -900,13 +912,14 @@
         const amount = params.get("amount") || params.get("reward");
         const txn = params.get("transaction_id") || params.get("txn_id");
         if (uid && amount && !isNaN(parseFloat(amount))) {
+          const pts = toPoints(amount); // 50 → 50 pts, 0.5 → 50 pts
           apiPost("creditEarnings", {
             userId: uid,
-            amount: usdToPts(parseFloat(amount)),
+            amount: pts,
             transactionId: txn || String(Date.now())
           }).then(res => {
             if (!res.error) {
-              showAlert(money(usdToPts(parseFloat(amount))) + " credited!", "success");
+              showAlert(money(pts) + " credited!", "success");
               if (soundRef.current) playDing();
               loadLogs();
               loadLeaders();
