@@ -3,54 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RewardBux – Earn Free Rewards</title>
+  <title>RewardBux – Get Paid for Games & Surveys | Earn Real Cash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --border: #334155;
-      --text: #e2e8f0;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --accent: #14b8a6;
-      --accent-hover: #0d9488;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --success: #22c55e;
-      --radius: 12px;
-      --radius-sm: 8px;
+      --bg: #0b0d14;
+      --bg2: #10131c;
+      --card: #161a24;
+      --card-hover: #1c2130;
+      --border: #252a38;
+      --text: #ffffff;
+      --text-secondary: #a0a8b8;
+      --text-muted: #6b7280;
+      --accent: #01d676;
+      --accent-hover: #00c068;
+      --accent-dim: rgba(1, 214, 118, 0.12);
+      --danger: #ff4d6a;
+      --warning: #ffb020;
+      --success: #01d676;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 4px 24px rgba(0,0,0,.35);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
-    .app { min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 70px; }
+    .app { min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 72px; }
     .top-header {
-      background: var(--card);
+      background: rgba(11, 13, 20, 0.92);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 50;
     }
     .header-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 16px; gap: 12px; max-width: 1100px; margin: 0 auto;
+      padding: 12px 20px; gap: 14px; max-width: 1200px; margin: 0 auto;
     }
-    .logo { font-size: 1.25rem; font-weight: 800; color: #fff; }
-    .logo .dollar { color: var(--accent); margin-right: 2px; }
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.35rem; font-weight: 900; color: #fff; letter-spacing: -0.4px;
+      text-decoration: none; cursor: pointer;
+    }
+    .logo-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: linear-gradient(135deg, #01d676 0%, #00b861 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: #0b0d14; font-weight: 900;
+      box-shadow: 0 2px 12px rgba(1, 214, 118, 0.35);
+    }
+    .logo span.brand-cash { color: var(--accent); }
     .header-nav { display: none; gap: 4px; }
     @media (min-width: 900px) { .header-nav { display: flex; } }
     .nav-item {
       display: flex; flex-direction: column; align-items: center;
-      padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer;
-      color: var(--text-secondary); font-size: 0.7rem; gap: 2px; transition: .15s;
+      padding: 8px 14px; border-radius: 12px; cursor: pointer;
+      color: var(--text-secondary); font-size: 0.7rem; font-weight: 600; gap: 3px; transition: .15s;
     }
-    .nav-item i { font-size: 1.1rem; }
-    .nav-item:hover, .nav-item.active { color: var(--accent); background: rgba(20,184,166,.1); }
+    .nav-item i { font-size: 1.15rem; }
+    .nav-item:hover, .nav-item.active { color: var(--accent); background: var(--accent-dim); }
     .header-user { display: flex; align-items: center; gap: 10px; position: relative; }
     .avatar-wrap { position: relative; cursor: pointer; }
     .avatar-wrap img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
@@ -91,22 +110,27 @@
     main { flex: 1; max-width: 900px; width: 100%; margin: 0 auto; padding: 20px 16px; }
     .card {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+      border-radius: var(--radius); padding: 24px; margin-bottom: 16px;
+      box-shadow: var(--shadow);
     }
-    .card h2 { font-size: 1.25rem; margin-bottom: 12px; color: #fff; }
+    .card h2 { font-size: 1.35rem; font-weight: 800; margin-bottom: 14px; color: #fff; letter-spacing: -0.3px; }
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      width: 100%; padding: 11px 16px; border: none; border-radius: var(--radius-sm);
-      font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: .15s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 13px 18px; border: none; border-radius: 999px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: .18s;
+      font-family: inherit;
     }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--accent); color: #0b0d14;
+      box-shadow: 0 4px 20px rgba(1, 214, 118, 0.25);
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
     .btn-ghost {
       background: transparent; color: var(--text-secondary);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
     }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
     .btn-sm {
       padding: 5px 10px; font-size: 0.75rem; border-radius: 6px;
       border: 1px solid var(--border); background: transparent; color: var(--text);
@@ -123,10 +147,11 @@
     }
     input:focus, select:focus { border-color: var(--accent); }
     .captcha {
-      display: inline-block; background: #0f766e; color: #fff;
-      font-weight: 700; letter-spacing: 3px; padding: 8px 16px;
-      border-radius: 6px; margin-bottom: 8px; user-select: none;
+      display: inline-block; background: var(--accent); color: #0b0d14;
+      font-weight: 800; letter-spacing: 4px; padding: 10px 18px;
+      border-radius: 10px; margin-bottom: 8px; user-select: none;
     }
+    main { flex: 1; max-width: 960px; width: 100%; margin: 0 auto; padding: 20px 16px; }
     .alert {
       padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px;
       font-size: 0.875rem;
@@ -134,25 +159,84 @@
     .alert-error { background: rgba(239,68,68,.15); color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }
     .alert-success { background: rgba(34,197,94,.15); color: #86efac; border: 1px solid rgba(34,197,94,.3); }
     .alert-warn { background: rgba(245,158,11,.15); color: #fcd34d; border: 1px solid rgba(245,158,11,.3); }
-    .hero { text-align: center; padding: 30px 10px 20px; }
-    .hero h1 { font-size: 1.6rem; margin-bottom: 8px; color: #fff; }
-    .hero h1 span { color: var(--accent); }
-    .hero p { color: var(--text-secondary); font-size: 0.95rem; }
+    .hero {
+      text-align: center; padding: 48px 16px 28px;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(1,214,118,.15), transparent);
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 5vw, 2.75rem); font-weight: 900;
+      margin-bottom: 12px; color: #fff; letter-spacing: -0.8px; line-height: 1.15;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero p { color: var(--text-secondary); font-size: 1.05rem; max-width: 520px; margin: 0 auto 20px; }
+    .hero-cta { max-width: 280px; margin: 0 auto; }
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      max-width: 720px; margin: 32px auto 0; text-align: center;
+    }
+    .stat-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 10px;
+    }
+    .stat-box .val { font-size: 1.25rem; font-weight: 800; color: var(--accent); }
+    .stat-box .lbl { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+    .how-section { margin: 40px 0 24px; }
+    .how-section h2 {
+      text-align: center; font-size: 1.5rem; font-weight: 800;
+      margin-bottom: 8px; letter-spacing: -0.4px;
+    }
+    .how-section .sub {
+      text-align: center; color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px;
+    }
+    .how-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+    }
+    .how-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px 18px; position: relative;
+    }
+    .how-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); color: #0b0d14; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; margin-bottom: 12px;
+    }
+    .how-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .how-card p { font-size: 0.85rem; color: var(--text-secondary); }
     .feature-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px; margin: 20px 0;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px; margin: 20px 0;
     }
     .feature-card {
       background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 18px 12px; text-align: center;
+      border-radius: var(--radius); padding: 22px 16px; text-align: center;
+      transition: .2s; cursor: default;
     }
-    .feature-card h3 { font-size: 0.9rem; margin-bottom: 10px; }
+    .feature-card:hover { border-color: rgba(1,214,118,.4); background: var(--card-hover); }
+    .feature-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
     .feature-card h3 span { color: var(--accent); }
-    .feature-card .icons { display: flex; justify-content: center; gap: 12px; font-size: 1.4rem; color: var(--accent); }
+    .feature-card .icons { display: flex; justify-content: center; gap: 14px; font-size: 1.5rem; color: var(--accent); }
     .section-divider {
-      text-align: center; color: var(--text-muted); font-size: 0.8rem;
-      margin: 24px 0 12px; text-transform: uppercase; letter-spacing: 1px;
+      text-align: center; color: var(--text-muted); font-size: 0.75rem;
+      margin: 28px 0 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
     }
+    .why-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px; margin: 16px 0 28px;
+    }
+    .why-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px;
+    }
+    .why-card .icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: var(--accent-dim); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; margin-bottom: 12px;
+    }
+    .why-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .why-card p { font-size: 0.85rem; color: var(--text-secondary); }
     .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
     .offer {
       background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -162,8 +246,27 @@
     .empty { text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 0.9rem; }
     .balance-pill {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(20,184,166,.15); color: var(--accent);
-      padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;
+      background: var(--accent-dim); color: var(--accent);
+      padding: 6px 12px; border-radius: 999px; font-weight: 700; font-size: 0.9rem;
+    }
+    .offer {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px; text-align: center; transition: .2s;
+    }
+    .offer:hover { border-color: rgba(1,214,118,.45); background: var(--card-hover); }
+    .offer img { max-height: 44px; max-width: 100%; margin-bottom: 10px; object-fit: contain; }
+    .reward-item {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 14px 10px; text-align: center; cursor: pointer; transition: .18s;
+    }
+    .reward-item:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.3); }
+    .denom-chip {
+      padding: 9px 16px; border: 1.5px solid var(--border); border-radius: 999px;
+      background: var(--bg2); color: var(--text); cursor: pointer; font-size: 0.85rem; font-weight: 600;
+      transition: .15s;
+    }
+    .denom-chip.active, .denom-chip:hover {
+      border-color: var(--accent); background: var(--accent-dim); color: var(--accent);
     }
     .section-label { font-size: 0.8rem; color: var(--text-muted); margin: 16px 0 10px; text-transform: uppercase; letter-spacing: .5px; }
     .cr-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
@@ -1036,7 +1139,10 @@
           {/* Header */}
           <div className="top-header">
             <div className="header-row">
-              <div className="logo"><span className="dollar">$</span>Reward<span>Bux</span></div>
+              <div className="logo" onClick={() => go("home")}>
+                <div className="logo-icon">$</div>
+                Reward<span className="brand-cash">Bux</span>
+              </div>
               <div className="header-nav">
                 {NAV.map(n => (
                   <div key={n.id} className={"nav-item" + ((n.id === "chat" ? chatOpen : page === n.id) ? " active" : "")}
@@ -1096,29 +1202,105 @@
           <main>
             {alert && <div className={"alert alert-" + alert.type}>{alert.text}</div>}
 
-            {/* HOME */}
+            {/* HOME – FreeCash-style landing */}
             {page === "home" && (
               <>
                 <div className="hero">
-                  <h1>Earn free rewards — <span>crypto, PayPal & gift cards</span></h1>
-                  <p>Thousands of members cash out every day. Start in minutes.</p>
+                  <h1><em>Get paid</em> for testing apps, games & surveys</h1>
+                  <p>Earn real cash. Cash out to gift cards, crypto & more. 1,000 pts = $1.00.</p>
+                  <div className="hero-cta">
+                    <button className="btn btn-primary" onClick={() => setPage("earn")}>
+                      {user ? "Start earning now" : "Sign up free — start earning"}
+                    </button>
+                  </div>
+                  <div className="stats-row">
+                    <div className="stat-box">
+                      <div className="val">~15 min</div>
+                      <div className="lbl">Avg. time to first cash</div>
+                    </div>
+                    <div className="stat-box">
+                      <div className="val">$1 = 1,000 pts</div>
+                      <div className="lbl">Transparent rate</div>
+                    </div>
+                    <div className="stat-box">
+                      <div className="val">Gift cards</div>
+                      <div className="lbl">Smooth cashouts</div>
+                    </div>
+                  </div>
                 </div>
+
+                <div className="how-section">
+                  <h2>Want to earn free cash within minutes?</h2>
+                  <p className="sub">Here’s how</p>
+                  <div className="how-grid">
+                    <div className="how-card">
+                      <div className="how-num">1</div>
+                      <h3>Choose an offer</h3>
+                      <p>Pick from games, surveys, and app tasks on the earn page. We list the best offers from partners who want to advertise.</p>
+                    </div>
+                    <div className="how-card">
+                      <div className="how-num">2</div>
+                      <h3>Complete the offer</h3>
+                      <p>Most offers are simple and take around 5–10 minutes. Reach a level, try an app, or finish a survey.</p>
+                    </div>
+                    <div className="how-card">
+                      <div className="how-num">3</div>
+                      <h3>Get paid</h3>
+                      <p>Watch your balance grow. Cash out to gift cards and more when you’re ready.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="section-divider">Best ways to earn</div>
                 <div className="feature-grid">
-                  <div className="feature-card"><h3>Take <span>Surveys</span></h3><div className="icons"><i className="fas fa-list-check" /><i className="fas fa-pen-to-square" /></div></div>
-                  <div className="feature-card"><h3>Try <span>Apps</span></h3><div className="icons"><i className="fas fa-mobile-screen" /><i className="fas fa-download" /></div></div>
-                  <div className="feature-card"><h3>Play <span>Games</span></h3><div className="icons"><i className="fas fa-gamepad" /><i className="fas fa-trophy" /></div></div>
+                  <div className="feature-card">
+                    <h3>Play <span>Games</span></h3>
+                    <div className="icons"><i className="fas fa-gamepad" /><i className="fas fa-trophy" /></div>
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: 10 }}>Gaming companies pay you to reach levels and milestones.</p>
+                  </div>
+                  <div className="feature-card">
+                    <h3>Complete <span>Offers</span></h3>
+                    <div className="icons"><i className="fas fa-mobile-screen" /><i className="fas fa-download" /></div>
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: 10 }}>Try new apps and get paid for using them.</p>
+                  </div>
+                  <div className="feature-card">
+                    <h3>Join <span>Surveys</span></h3>
+                    <div className="icons"><i className="fas fa-list-check" /><i className="fas fa-pen-to-square" /></div>
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: 10 }}>Share your opinion — companies pay for your feedback.</p>
+                  </div>
                 </div>
-                <div className="section-divider">Cash out with</div>
+
+                <div className="section-divider">We’re built for earners</div>
+                <div className="why-grid">
+                  <div className="why-card">
+                    <div className="icon"><i className="fas fa-bolt" /></div>
+                    <h3>Highest payouts</h3>
+                    <p>Earn more on games and offers. Our goal is to help you make as much as possible.</p>
+                  </div>
+                  <div className="why-card">
+                    <div className="icon"><i className="fas fa-wallet" /></div>
+                    <h3>Smooth cashouts</h3>
+                    <p>Redeem gift cards from top brands. Clear status: Unsent → Pending → Sent.</p>
+                  </div>
+                  <div className="why-card">
+                    <div className="icon"><i className="fas fa-gift" /></div>
+                    <h3>Bonus codes</h3>
+                    <p>Climb the leaderboard or redeem promo codes for extra free rewards.</p>
+                  </div>
+                </div>
+
+                <div className="section-divider">Cash out via</div>
                 <div className="feature-grid">
                   <div className="feature-card"><h3>Crypto <span>Payouts</span></h3><div className="icons"><i className="fab fa-bitcoin" /><i className="fab fa-ethereum" /></div></div>
-                  <div className="feature-card"><h3>PayPal <span>Cash</span></h3><div className="icons"><i className="fab fa-paypal" /><i className="fas fa-wallet" /></div></div>
                   <div className="feature-card"><h3>Gift <span>Cards</span></h3><div className="icons"><i className="fas fa-gift" /><i className="fas fa-store" /></div></div>
+                  <div className="feature-card"><h3>Partner <span>Catalog</span></h3><div className="icons"><i className="fas fa-globe" /><i className="fas fa-credit-card" /></div></div>
                 </div>
-                {!user && (
-                  <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={() => setPage("earn")}>
-                    <i className="fas fa-right-to-bracket" /> Login to Start Earning
+
+                <div style={{ textAlign: "center", margin: "28px 0 12px" }}>
+                  <button className="btn btn-primary" style={{ maxWidth: 280, margin: "0 auto" }} onClick={() => setPage("earn")}>
+                    Start earning now
                   </button>
-                )}
+                </div>
               </>
             )}
 
@@ -1126,8 +1308,10 @@
             {page === "earn" && (
               user ? (
                 <div className="card">
-                  <h2>Earning Portal</h2>
-                  <p style={{ color: "var(--text-secondary)", marginBottom: 18, fontSize: "0.9rem" }}>Complete offers to earn rewards</p>
+                  <h2>Earn</h2>
+                  <p style={{ color: "var(--text-secondary)", marginBottom: 18, fontSize: "0.95rem" }}>
+                    Choose an offerwall. Complete games, surveys & app tasks — get paid.
+                  </p>
                   {loadingOffers ? <div className="empty">Loading offerwalls…</div>
                     : offerwalls.length === 0 ? <div className="empty">No offerwalls available.</div>
                     : (
