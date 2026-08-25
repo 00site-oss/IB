@@ -1,1 +1,2174 @@
-<!doctype html><html lang="en"><head><script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-XXXXXXXXXX")</script><meta charset="utf-8"/><link rel="icon" href="./favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#0f1419"/><meta name="description" content="Earn free rewards — crypto, PayPal & gift cards with RewardBux"/><meta name="keywords" content="free, crypto, giftcards, gift cards, offerwalls, rewards, rewardbux, earn money"/><link rel="apple-touch-icon" href="./logo192.png"/><link rel="manifest" href="./manifest.json"/><title>RewardBux</title><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/><script src="https://accounts.google.com/gsi/client" async defer="defer"></script><script defer="defer" src="./static/js/main.ffa88fe6.js"></script><link href="./static/css/main.78223021.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RewardBux – Earn Free Rewards</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #14b8a6;
+      --accent-hover: #0d9488;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #22c55e;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .app { min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 70px; }
+    .top-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; gap: 12px; max-width: 1100px; margin: 0 auto;
+    }
+    .logo { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .logo .dollar { color: var(--accent); margin-right: 2px; }
+    .header-nav { display: none; gap: 4px; }
+    @media (min-width: 900px) { .header-nav { display: flex; } }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer;
+      color: var(--text-secondary); font-size: 0.7rem; gap: 2px; transition: .15s;
+    }
+    .nav-item i { font-size: 1.1rem; }
+    .nav-item:hover, .nav-item.active { color: var(--accent); background: rgba(20,184,166,.1); }
+    .header-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .avatar-wrap { position: relative; cursor: pointer; }
+    .avatar-wrap img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+    .level-badge {
+      position: absolute; bottom: -2px; right: -2px;
+      background: var(--accent); color: #fff; font-size: 0.6rem; font-weight: 700;
+      width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    }
+    .user-meta .name { font-size: 0.8rem; font-weight: 600; }
+    .balance-row { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--accent); }
+    .icon-btn {
+      background: transparent; border: none; color: var(--text-secondary);
+      cursor: pointer; font-size: 1rem; padding: 6px;
+    }
+    .icon-btn:hover { color: var(--danger); }
+    .dropdown-menu {
+      position: absolute; top: 100%; right: 0; margin-top: 8px;
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      min-width: 180px; box-shadow: 0 8px 24px rgba(0,0,0,.4); z-index: 100; overflow: hidden;
+    }
+    .menu-item {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      padding: 10px 14px; background: none; border: none; color: var(--text);
+      font-size: 0.85rem; cursor: pointer; text-align: left;
+    }
+    .menu-item:hover { background: rgba(255,255,255,.05); }
+    .menu-divider { height: 1px; background: var(--border); margin: 4px 0; }
+    .logs-bar { overflow: hidden; border-bottom: 1px solid var(--border); background: rgba(0,0,0,.2); }
+    .logs-row { display: flex; gap: 10px; padding: 8px 16px; overflow-x: auto; }
+    .log-card {
+      display: flex; align-items: center; gap: 8px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px 4px 4px;
+      white-space: nowrap; font-size: 0.75rem;
+    }
+    .log-card img { width: 28px; height: 28px; border-radius: 50%; }
+    .log-card .uname { color: var(--text-secondary); }
+    .log-card .amount { color: var(--accent); font-weight: 600; }
+    main { flex: 1; max-width: 900px; width: 100%; margin: 0 auto; padding: 20px 16px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+    }
+    .card h2 { font-size: 1.25rem; margin-bottom: 12px; color: #fff; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; padding: 11px 16px; border: none; border-radius: var(--radius-sm);
+      font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: .15s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+    .btn-ghost {
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm {
+      padding: 5px 10px; font-size: 0.75rem; border-radius: 6px;
+      border: 1px solid var(--border); background: transparent; color: var(--text);
+      cursor: pointer;
+    }
+    .btn-sm.success { border-color: var(--success); color: var(--success); }
+    .btn-sm.danger { border-color: var(--danger); color: var(--danger); }
+    .btn-sm.warn { border-color: var(--warning); color: var(--warning); }
+    label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin: 12px 0 4px; }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text); font-size: 0.9rem; outline: none;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    .captcha {
+      display: inline-block; background: #0f766e; color: #fff;
+      font-weight: 700; letter-spacing: 3px; padding: 8px 16px;
+      border-radius: 6px; margin-bottom: 8px; user-select: none;
+    }
+    .alert {
+      padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px;
+      font-size: 0.875rem;
+    }
+    .alert-error { background: rgba(239,68,68,.15); color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }
+    .alert-success { background: rgba(34,197,94,.15); color: #86efac; border: 1px solid rgba(34,197,94,.3); }
+    .alert-warn { background: rgba(245,158,11,.15); color: #fcd34d; border: 1px solid rgba(245,158,11,.3); }
+    .hero { text-align: center; padding: 30px 10px 20px; }
+    .hero h1 { font-size: 1.6rem; margin-bottom: 8px; color: #fff; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { color: var(--text-secondary); font-size: 0.95rem; }
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px; margin: 20px 0;
+    }
+    .feature-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 12px; text-align: center;
+    }
+    .feature-card h3 { font-size: 0.9rem; margin-bottom: 10px; }
+    .feature-card h3 span { color: var(--accent); }
+    .feature-card .icons { display: flex; justify-content: center; gap: 12px; font-size: 1.4rem; color: var(--accent); }
+    .section-divider {
+      text-align: center; color: var(--text-muted); font-size: 0.8rem;
+      margin: 24px 0 12px; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .offer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .offer {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 14px; text-align: center;
+    }
+    .offer img { max-height: 40px; max-width: 100%; margin-bottom: 8px; object-fit: contain; }
+    .empty { text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 0.9rem; }
+    .balance-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(20,184,166,.15); color: var(--accent);
+      padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;
+    }
+    .section-label { font-size: 0.8rem; color: var(--text-muted); margin: 16px 0 10px; text-transform: uppercase; letter-spacing: .5px; }
+    .cr-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .cr-toolbar .field { flex: 1; min-width: 140px; }
+    .cr-toolbar .field-btn { display: flex; align-items: flex-end; }
+    .reward-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+    .reward-item {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 12px 8px; text-align: center; cursor: pointer; transition: .15s;
+    }
+    .reward-item:hover { border-color: var(--accent); }
+    .reward-item img { height: 32px; max-width: 80px; object-fit: contain; margin-bottom: 8px; }
+    .reward-item .name { font-size: 0.8rem; font-weight: 600; color: #fff; }
+    .reward-item .tag { font-size: 0.7rem; color: var(--accent); margin-top: 4px; }
+    .denom-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .denom-chip {
+      padding: 8px 14px; border: 1px solid var(--border); border-radius: 20px;
+      background: var(--bg); color: var(--text); cursor: pointer; font-size: 0.85rem;
+    }
+    .denom-chip.active { border-color: var(--accent); background: rgba(20,184,166,.15); color: var(--accent); }
+    .brand-back {
+      background: none; border: none; color: var(--accent); cursor: pointer;
+      font-size: 0.85rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+    }
+    .chat-box .chat-messages { max-height: 360px; overflow-y: auto; margin-bottom: 12px; }
+    .chat-msg {
+      padding: 8px 10px; margin-bottom: 8px; background: var(--bg);
+      border-radius: var(--radius-sm); font-size: 0.85rem;
+    }
+    .chat-msg.admin-msg { border-left: 3px solid var(--warning); }
+    .chat-msg .meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+    .chat-msg .name { color: var(--accent); font-weight: 600; }
+    .badge-owner {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: rgba(245,158,11,.2); color: var(--warning);
+      font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; margin-left: 6px;
+    }
+    .chat-input-row { display: flex; gap: 8px; }
+    .chat-input-row input { flex: 1; }
+    .chat-input-row button {
+      width: 44px; background: var(--accent); border: none; border-radius: var(--radius-sm);
+      color: #fff; cursor: pointer; font-size: 1rem;
+    }
+    .chat-sound-toggle {
+      display: flex; align-items: center; gap: 6px; font-size: 0.8rem;
+      color: var(--text-muted); cursor: pointer; margin-bottom: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { text-align: left; padding: 8px 6px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
+    td { padding: 10px 6px; border-bottom: 1px solid var(--border); }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600;
+    }
+    .badge-sent { background: rgba(34,197,94,.2); color: #86efac; }
+    .badge-pending { background: rgba(245,158,11,.2); color: #fcd34d; }
+    .badge-unsent { background: rgba(100,116,139,.2); color: #94a3b8; }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--card); border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; padding: 6px 0; z-index: 40;
+    }
+    @media (min-width: 900px) { .bottom-nav { display: none; } }
+    .bottom-nav .nav-item { flex: 1; }
+    .iframe-overlay {
+      position: fixed; inset: 0; background: var(--bg); z-index: 200;
+      display: flex; flex-direction: column;
+    }
+    .iframe-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--border);
+    }
+    .iframe-bar button { background: none; border: none; color: var(--text); font-size: 1.2rem; cursor: pointer; }
+    .iframe-overlay iframe { flex: 1; border: none; width: 100%; }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 150;
+      display: flex; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-header h3 { font-size: 1.1rem; }
+    .modal-close { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+    .steps { display: flex; gap: 8px; margin-bottom: 16px; }
+    .step-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.done { background: var(--success); }
+    .btn-row { display: flex; gap: 10px; margin-top: 12px; }
+    .btn-row .btn { flex: 1; }
+    .summary { background: var(--bg); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.9rem; }
+    .summary div { margin-bottom: 4px; }
+    .divider { text-align: center; color: var(--text-muted); margin: 16px 0; position: relative; }
+    .divider span { background: var(--card); padding: 0 10px; position: relative; z-index: 1; }
+    .divider::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--border); }
+    .help-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .help-link-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px; text-align: center; cursor: pointer; transition: .15s;
+    }
+    .help-link-card:hover { border-color: var(--accent); }
+    .help-link-card i { font-size: 1.4rem; color: var(--accent); display: block; margin-bottom: 6px; }
+    .legal-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; }
+    .legal-content h3 { font-size: 1rem; margin: 16px 0 6px; color: #fff; }
+    .legal-content p, .legal-content li { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 6px; }
+    .legal-content ul { padding-left: 18px; margin-bottom: 10px; }
+    .legal-nav { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .legal-nav .btn { width: auto; }
+    .chat-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 60; }
+    .chat-panel {
+      position: fixed; right: 0; top: 0; bottom: 0; width: 100%; max-width: 380px;
+      background: var(--card); border-left: 1px solid var(--border); z-index: 70;
+      display: flex; flex-direction: column;
+    }
+    .chat-panel-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 600;
+    }
+    .chat-panel-close { background: none; border: none; color: var(--text); font-size: 1.1rem; cursor: pointer; }
+    .chat-panel-messages { flex: 1; overflow-y: auto; padding: 12px; }
+    /* Admin */
+    .admin-app { min-height: 100vh; background: var(--bg); }
+    .admin-header { background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+    .admin-header-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; gap: 12px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; }
+    .admin-logo { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .badge-admin { background: var(--danger); color: #fff; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; }
+    .admin-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+    .admin-nav-item {
+      background: none; border: none; color: var(--text-secondary); padding: 6px 10px;
+      border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;
+    }
+    .admin-nav-item.active, .admin-nav-item:hover { background: rgba(20,184,166,.15); color: var(--accent); }
+    .admin-header-right { display: flex; gap: 8px; }
+    .admin-main { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .stat-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #fff; margin: 4px 0; }
+    .stat-value.warn { color: var(--warning); }
+    .stat-value.accent { color: var(--accent); }
+    .stat-sub { font-size: 0.7rem; color: var(--text-muted); }
+    .admin-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+    .admin-toolbar .spacer { flex: 1; }
+    .admin-table-wrap { overflow-x: auto; }
+    .admin-table { width: 100%; font-size: 0.8rem; }
+    .admin-table th, .admin-table td { padding: 8px 6px; border-bottom: 1px solid var(--border); text-align: left; }
+    .user-cell { display: flex; align-items: center; gap: 8px; }
+    .user-cell img { width: 32px; height: 32px; border-radius: 50%; }
+    .uname { font-weight: 600; }
+    .uemail { font-size: 0.7rem; color: var(--text-muted); }
+    .admin-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .admin-empty { text-align: center; padding: 30px; color: var(--text-muted); }
+    .admin-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; }
+    .admin-note code { background: var(--bg); padding: 1px 4px; border-radius: 3px; }
+    .admin-login { max-width: 400px; margin: 60px auto; }
+    .admin-login .sub { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px; }
+    .chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 12px; border-radius: 16px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-secondary); font-size: 0.8rem; cursor: pointer;
+    }
+    .chip.active { background: rgba(20,184,166,.2); border-color: var(--accent); color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mono { font-family: ui-monospace, monospace; }
+    .gift-code-cell { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7.24.0/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useCallback, useRef, StrictMode } = React;
+
+    // ============================================================
+    // CONFIG
+    // ============================================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
+    const POINTS_PER_DOLLAR = 1000;
+    const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
+
+    const COUNTRIES = [
+      { code: "US", name: "United States" }, { code: "GB", name: "United Kingdom" },
+      { code: "CA", name: "Canada" }, { code: "AU", name: "Australia" },
+      { code: "DE", name: "Germany" }, { code: "FR", name: "France" },
+      { code: "IT", name: "Italy" }, { code: "ES", name: "Spain" },
+      { code: "NL", name: "Netherlands" }, { code: "BE", name: "Belgium" },
+      { code: "AT", name: "Austria" }, { code: "CH", name: "Switzerland" },
+      { code: "SE", name: "Sweden" }, { code: "NO", name: "Norway" },
+      { code: "DK", name: "Denmark" }, { code: "FI", name: "Finland" },
+      { code: "IE", name: "Ireland" }, { code: "PT", name: "Portugal" },
+      { code: "PL", name: "Poland" }, { code: "CZ", name: "Czechia" },
+      { code: "BR", name: "Brazil" }, { code: "MX", name: "Mexico" },
+      { code: "JP", name: "Japan" }, { code: "KR", name: "South Korea" },
+      { code: "IN", name: "India" }, { code: "SG", name: "Singapore" },
+      { code: "AE", name: "United Arab Emirates" }, { code: "NZ", name: "New Zealand" },
+      { code: "PH", name: "Philippines" }, { code: "ID", name: "Indonesia" },
+      { code: "TH", name: "Thailand" }, { code: "VN", name: "Vietnam" },
+      { code: "MY", name: "Malaysia" }, { code: "TR", name: "Türkiye" },
+      { code: "ZA", name: "South Africa" }, { code: "NG", name: "Nigeria" }
+    ];
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    const storage = {
+      get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+      remove(k) { try { localStorage.removeItem(k); } catch {} }
+    };
+
+    function ptsToUsd(pts) {
+      const n = Number(pts);
+      return isFinite(n) ? (n / POINTS_PER_DOLLAR).toFixed(2) : "0.00";
+    }
+    function usdToPts(usd) {
+      const n = Number(usd);
+      return isFinite(n) ? Math.round(n * POINTS_PER_DOLLAR) : 0;
+    }
+    function money(pts) { return "$" + ptsToUsd(pts); }
+
+    async function apiGet(action, params = {}) {
+      try {
+        const qs = new URLSearchParams({ action, ...params }).toString();
+        const res = await fetch(API_URL + "?" + qs);
+        return await res.json();
+      } catch { return { error: "Network error" }; }
+    }
+    async function apiPost(action, params = {}) {
+      try {
+        const body = new URLSearchParams({ action, ...params });
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body: body.toString()
+        });
+        return await res.json();
+      } catch { return { error: "Network error" }; }
+    }
+
+    let audioCtx = null;
+    function playDing() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+      } catch {}
+    }
+
+    function StatusBadge({ status }) {
+      const s = String(status || "unsent").toLowerCase();
+      if (s === "sent") return <span className="badge badge-sent">Sent</span>;
+      if (s === "pending") return <span className="badge badge-pending">Pending</span>;
+      if (s === "rejected" || s === "cancelled") return <span className="badge badge-unsent">Rejected</span>;
+      return <span className="badge badge-unsent">Unsent</span>;
+    }
+
+    // ============================================================
+    // MAIN APP
+    // ============================================================
+    function App() {
+      const [page, setPage] = useState("home");
+      const [user, setUser] = useState(null);
+      const [logs, setLogs] = useState([]);
+      const [leaders, setLeaders] = useState([]);
+      const [offerwalls, setOfferwalls] = useState([]);
+      const [loadingOffers, setLoadingOffers] = useState(true);
+      const [alert, setAlert] = useState(null);
+      const [soundOn, setSoundOn] = useState(true);
+      const [iframeUrl, setIframeUrl] = useState(null);
+      const [menuOpen, setMenuOpen] = useState(false);
+
+      // Login
+      const [loginForm, setLoginForm] = useState({ account: "", clientId: "", captcha: "", bonusCode: "" });
+      const [captcha, setCaptcha] = useState("");
+      const [loggingIn, setLoggingIn] = useState(false);
+
+      // Chat
+      const [chatOpen, setChatOpen] = useState(false);
+      const [messages, setMessages] = useState([]);
+      const [chatInput, setChatInput] = useState("");
+      const lastMsgId = useRef(null);
+      const chatEndRef = useRef(null);
+      const userRef = useRef(null);
+      const soundRef = useRef(true);
+      const googleRendered = useRef(false);
+
+      // Shop
+      const [cashouts, setCashouts] = useState([]);
+      const [country, setCountry] = useState("US");
+      const [brands, setBrands] = useState([]);
+      const [brandSearch, setBrandSearch] = useState("");
+      const [loadingBrands, setLoadingBrands] = useState(false);
+      const [brandError, setBrandError] = useState("");
+      const [selectedBrand, setSelectedBrand] = useState(null);
+      const [products, setProducts] = useState({ fixed: [], ranges: [] });
+      const [loadingProducts, setLoadingProducts] = useState(false);
+      const [selectedDenom, setSelectedDenom] = useState(null);
+      const [customAmount, setCustomAmount] = useState("");
+      const [email, setEmail] = useState("");
+      const [submitting, setSubmitting] = useState(false);
+      const [brandPage, setBrandPage] = useState(1);
+
+      const menuRef = useRef(null);
+
+      function showAlert(text, type = "error") {
+        setAlert({ text, type });
+        setTimeout(() => setAlert(null), 4000);
+      }
+
+      function genCaptcha() {
+        setCaptcha(String(Math.floor(10000 + Math.random() * 90000)));
+      }
+
+      function saveUser(u) {
+        setUser(u);
+        userRef.current = u;
+        storage.set("buxiq_user", JSON.stringify(u));
+      }
+
+      function logout() {
+        setUser(null);
+        userRef.current = null;
+        storage.remove("buxiq_user");
+        try { window.google?.accounts?.id?.disableAutoSelect(); } catch {}
+        googleRendered.current = false;
+        setPage("home");
+        setMenuOpen(false);
+        showAlert("Logged out", "success");
+      }
+
+      // ---- Data loaders ----
+      const loadLogs = useCallback(async () => {
+        const res = await apiGet("logs");
+        if (res.logs) setLogs(res.logs);
+      }, []);
+
+      const loadLeaders = useCallback(async () => {
+        const res = await apiGet("leaders");
+        if (res.leaders) setLeaders(res.leaders);
+      }, []);
+
+      const loadOfferwalls = useCallback(async () => {
+        setLoadingOffers(true);
+        const res = await apiGet("getOfferwalls");
+        setOfferwalls(Array.isArray(res.offerwalls) ? res.offerwalls : []);
+        setLoadingOffers(false);
+      }, []);
+
+      const refreshBalance = useCallback(async () => {
+        const u = userRef.current;
+        if (!u) return;
+        const res = await apiGet("balance", { account: u.account });
+        if (res.balance !== undefined) {
+          saveUser({ ...u, balance: res.balance, level: res.level || u.level });
+        }
+      }, []);
+
+      const loadCashouts = useCallback(async (account) => {
+        const res = await apiGet("getCashouts", { account });
+        const list = (res.cashouts || []).map(c => {
+          let amt = c.amountUsd || c.amount || "0";
+          const num = parseFloat(amt);
+          if (!isNaN(num) && num >= 100) amt = (num / POINTS_PER_DOLLAR).toFixed(2);
+          return { ...c, amountUsd: amt };
+        });
+        setCashouts(list);
+      }, []);
+
+      const loadChat = useCallback(async (silent = false) => {
+        const res = await apiGet("getChat", { limit: 50 });
+        if (!res.messages) return;
+        const msgs = res.messages;
+        const lastId = msgs.length ? msgs[msgs.length - 1].id : null;
+        if (!silent && lastId && lastMsgId.current && lastId !== lastMsgId.current && soundRef.current) {
+          playDing();
+        }
+        lastMsgId.current = lastId;
+        setMessages(msgs);
+      }, []);
+
+      const loadBrands = useCallback(async (cc) => {
+        const code = cc || country || "US";
+        setLoadingBrands(true);
+        setBrandError("");
+        setSelectedBrand(null);
+        setProducts({ fixed: [], ranges: [] });
+        setBrandPage(1);
+        const res = await apiGet("getCRBrands", { country: code, country_code: code });
+        setLoadingBrands(false);
+        if (res.error) {
+          setBrands([]);
+          setBrandError(res.error);
+          return;
+        }
+        // Normalize brands
+        let raw = res.brands;
+        if (!raw) raw = [];
+        else if (!Array.isArray(raw)) {
+          if (Array.isArray(raw.brands)) raw = raw.brands;
+          else if (Array.isArray(raw.data)) raw = raw.data;
+          else if (Array.isArray(raw.items)) raw = raw.items;
+          else if (Array.isArray(raw.results)) raw = raw.results;
+          else if (Array.isArray(raw.families)) raw = raw.families;
+          else {
+            const tmp = [];
+            Object.keys(raw).forEach(k => {
+              const v = raw[k];
+              if (Array.isArray(v)) v.forEach(x => tmp.push(x));
+              else if (v && typeof v === "object" && (v.name || v.brand_name)) tmp.push(v);
+            });
+            raw = tmp;
+          }
+        }
+        const seen = {};
+        const list = [];
+        raw.forEach((b, i) => {
+          if (!b || typeof b !== "object") return;
+          const name = String(b.name || b.brand_name || b.family_name || b.title || b.brand || "").trim();
+          if (!name || /^brand\s*\d+$/i.test(name)) return;
+          const family = String(b.family_name || b.brand_name || b.name || name).trim();
+          const key = family.toLowerCase();
+          if (seen[key]) return;
+          seen[key] = true;
+          let logo = b.logo_url || b.logo || b.image || "";
+          if (!logo && b.logo_base_url) logo = String(b.logo_base_url) + ".webp";
+          list.push({
+            id: String(b.id || b.slug || family) + "_" + i,
+            name,
+            family_name: family,
+            brand_name: String(b.brand_name || family || name).trim(),
+            logo,
+            country_code: b.country_code || "",
+            raw: b
+          });
+        });
+        list.sort((a, b) => a.name.localeCompare(b.name));
+        setBrands(list);
+        if (!list.length) setBrandError("No brands returned.");
+      }, [country]);
+
+      const loadProducts = useCallback(async (brand) => {
+        if (!user) {
+          showAlert("Please login first");
+          setPage("earn");
+          return;
+        }
+        setSelectedBrand(brand);
+        setProducts({ fixed: [], ranges: [] });
+        setSelectedDenom(null);
+        setCustomAmount("");
+        if (user.email) setEmail(String(user.email));
+        setLoadingProducts(true);
+        const res = await apiGet("getCRProducts", {
+          country,
+          country_code: country,
+          family_name: brand.family_name || brand.brand_name || brand.name,
+          brand_name: brand.brand_name || brand.family_name || brand.name,
+          coin: "USDC",
+          lang: "en"
+        });
+        setLoadingProducts(false);
+        if (res.error) {
+          showAlert(res.error);
+          setProducts({ fixed: [], ranges: [] });
+          return;
+        }
+        // Normalize products
+        let raw = res.products || res.data || res.items || res;
+        if (!Array.isArray(raw) && typeof raw === "object") {
+          if (raw.denominations || raw.face_values) raw = [raw];
+          else raw = Object.values(raw).filter(x => x && typeof x === "object");
+        }
+        if (!Array.isArray(raw)) raw = [];
+        const fixed = [];
+        const ranges = [];
+        const seen = {};
+        function addFixed(label, value, currency) {
+          const v = Number(value);
+          if (!isFinite(v) || v <= 0) return;
+          const key = v.toFixed(2) + "|" + (currency || "");
+          if (seen[key]) return;
+          seen[key] = true;
+          fixed.push({
+            label: label || (currency ? currency + " " + v : "$" + v),
+            value: v,
+            denomination: label || v + " " + (currency || "USD"),
+            currency: currency || "USD"
+          });
+        }
+        raw.forEach(p => {
+          const dens = p.denominations || p.denomination_list || p.face_values || p.values || p.amounts || [];
+          if (Array.isArray(dens)) {
+            dens.forEach(d => {
+              if (d == null) return;
+              if (typeof d === "number" || typeof d === "string") {
+                const v = parseFloat(String(d).replace(/[^0-9.]/g, ""));
+                addFixed(String(d), v, p.currency || "USD");
+              } else if (typeof d === "object") {
+                const v = parseFloat(d.value || d.face_value || d.amount || d.denomination || 0);
+                addFixed(d.label || d.denomination || d.localized || (d.currency ? d.currency + " " + v : null), v, d.currency || p.currency || "USD");
+              }
+            });
+          }
+          if (p.denomination && typeof p.denomination === "string" && p.denomination.toLowerCase() !== "range") {
+            const v = parseFloat(String(p.denomination).replace(/[^0-9.]/g, ""));
+            addFixed(p.denomination, v, p.currency || "USD");
+          }
+          if (p.face_value || p.value || p.amount) {
+            addFixed(null, parseFloat(p.face_value || p.value || p.amount), p.currency || "USD");
+          }
+          const isRange = String(p.denomination || p.type || p.kind || "").toLowerCase().includes("range")
+            || p.min_value != null || p.max_value != null || p.min != null || p.max != null;
+          if (isRange) {
+            ranges.push({
+              min: Number(p.min_value || p.min || 1) || 1,
+              max: Number(p.max_value || p.max || 500) || 500,
+              currency: p.currency || "USD",
+              brand_name: p.brand_name || brand.name
+            });
+          }
+        });
+        fixed.sort((a, b) => a.value - b.value);
+        if (!fixed.length && !ranges.length) {
+          setProducts({ fixed: [], ranges: [{ min: 1, max: 500, currency: "USD", brand_name: brand.name }] });
+        } else {
+          setProducts({ fixed, ranges });
+        }
+      }, [user, country]);
+
+      // ---- Auth ----
+      async function handleLogin() {
+        if (!loginForm.account || !loginForm.clientId) return showAlert("Enter account and client ID");
+        if (loginForm.captcha.trim() !== captcha) {
+          showAlert("Invalid CAPTCHA");
+          genCaptcha();
+          setLoginForm(f => ({ ...f, captcha: "" }));
+          return;
+        }
+        setLoggingIn(true);
+        const res = await apiGet("login", { account: loginForm.account, clientId: loginForm.clientId });
+        setLoggingIn(false);
+        if (res.error) {
+          showAlert(res.error);
+          genCaptcha();
+          return;
+        }
+        saveUser(res.user);
+        setPage("earn");
+        showAlert("Welcome back!", "success");
+      }
+
+      const handleGoogle = useCallback((response) => {
+        if (!response || !response.credential) return showAlert("Google login failed");
+        let payload;
+        try {
+          const part = response.credential.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+          payload = JSON.parse(decodeURIComponent(escape(atob(part))));
+        } catch {
+          return showAlert("Could not read Google account");
+        }
+        setLoggingIn(true);
+        apiPost("googleLogin", {
+          googleId: payload.sub,
+          email: payload.email,
+          name: payload.name || "",
+          picture: payload.picture || ""
+        }).then(res => {
+          setLoggingIn(false);
+          if (res.error) showAlert(res.error);
+          else {
+            saveUser(res.user);
+            setPage("earn");
+            showAlert(res.isNew ? "Account created! Welcome!" : "Welcome back!", "success");
+          }
+        });
+      }, []);
+
+      // ---- Chat ----
+      async function sendChat() {
+        const msg = chatInput.trim();
+        if (!msg) return;
+        if (!user) { showAlert("Please login to chat"); setPage("earn"); return; }
+        if (msg.length > 300) return showAlert("Message too long (max 300)");
+        setChatInput("");
+        const res = await apiPost("sendChat", {
+          account: user.account,
+          username: user.username || user.account,
+          message: msg
+        });
+        if (res.error) showAlert(res.error);
+        else loadChat(true);
+      }
+
+      // ---- Bonus ----
+      async function redeemBonus() {
+        if (!user) { showAlert("Please login first"); setPage("earn"); return; }
+        const code = (loginForm.bonusCode || "").trim();
+        if (!code) return showAlert("Please enter a bonus code");
+        const res = await apiGet("redeemBonus", {
+          account: user.account,
+          username: user.username || user.account,
+          bonusCode: code
+        });
+        if (res.error) showAlert(res.error);
+        else {
+          showAlert("Successfully redeemed $" + res.amountUsd + " USD!", "success");
+          setLoginForm(f => ({ ...f, bonusCode: "" }));
+          if (res.newBalance) saveUser({ ...user, balance: res.newBalance });
+          else refreshBalance();
+        }
+      }
+
+      // ---- Gift card submit ----
+      async function submitGiftCard() {
+        if (!user) { showAlert("Please login first"); setPage("earn"); return; }
+        const em = (email || user.email || "").trim();
+        if (!em || em.indexOf("@") < 0) return showAlert("Enter valid email");
+        let amount = 0, denom = "";
+        if (customAmount && parseFloat(customAmount) > 0) {
+          amount = parseFloat(customAmount);
+          denom = "range";
+        } else if (selectedDenom) {
+          amount = selectedDenom.value;
+          denom = selectedDenom.denomination || amount + " USD";
+        } else {
+          return showAlert("Select or enter an amount");
+        }
+        if (amount <= 0) return showAlert("Invalid amount");
+        const pts = usdToPts(amount);
+        if (pts > Number(user.balance || 0)) return showAlert("Insufficient balance");
+        setSubmitting(true);
+        let ip = "";
+        try {
+          const r = await fetch("https://api.ipify.org?format=json");
+          const j = await r.json();
+          if (j && j.ip) ip = String(j.ip);
+        } catch {}
+        const res = await apiPost("submitCRCashout", {
+          account: user.account,
+          username: user.username || user.account,
+          brand_name: selectedBrand.brand_name || selectedBrand.family_name || selectedBrand.name,
+          country_code: country,
+          amountUsd: amount.toFixed(2),
+          amount: pts,
+          denomination: denom,
+          details: em,
+          email: em,
+          coin: "USDC",
+          network: "Solana",
+          ip,
+          userAgent: navigator.userAgent || "RewardBux"
+        });
+        setSubmitting(false);
+        if (res.error) {
+          showAlert(res.error + (res.refunded ? " (balance refunded)" : ""));
+          return;
+        }
+        showAlert("Gift card order submitted! Email: " + em, "success");
+        const newBal = res.newBalance !== undefined ? res.newBalance : Number(user.balance) - pts;
+        saveUser({ ...user, balance: newBal });
+        loadCashouts(user.account);
+        setSelectedBrand(null);
+        setSelectedDenom(null);
+        setCustomAmount("");
+      }
+
+      function openOfferwall(ow) {
+        if (!user) { showAlert("Please login first"); setPage("earn"); return; }
+        const uid = String(user.account || user.username || "");
+        const uname = String(user.username || uid);
+        let url = String(ow.urlTemplate || "");
+        if (!url) return showAlert("Offerwall URL missing");
+        url = url
+          .replace(/\{user\}/gi, encodeURIComponent(uid))
+          .replace(/\{userid\}/gi, encodeURIComponent(uid))
+          .replace(/\{user_id\}/gi, encodeURIComponent(uid))
+          .replace(/\{account\}/gi, encodeURIComponent(uid))
+          .replace(/\{username\}/gi, encodeURIComponent(uname));
+        url += (url.indexOf("?") !== -1 ? "&" : "?") + "t=" + Date.now();
+        setIframeUrl(url);
+      }
+
+      function toggleSound() {
+        const next = !soundOn;
+        setSoundOn(next);
+        soundRef.current = next;
+        storage.set("buxiq_sound", next ? "1" : "0");
+      }
+
+      function go(p) {
+        if (p === "chat") setChatOpen(o => !o);
+        else {
+          setChatOpen(false);
+          setPage(p);
+        }
+        setMenuOpen(false);
+      }
+
+      // ---- Effects ----
+      useEffect(() => {
+        const saved = storage.get("buxiq_user");
+        if (saved) {
+          try {
+            const u = JSON.parse(saved);
+            setUser(u);
+            userRef.current = u;
+          } catch {}
+        }
+        const s = storage.get("buxiq_sound");
+        if (s !== null) {
+          setSoundOn(s === "1");
+          soundRef.current = s === "1";
+        }
+        genCaptcha();
+        loadLeaders();
+        loadLogs();
+        loadOfferwalls();
+
+        // Postback from offerwalls
+        const params = new URLSearchParams(window.location.search);
+        const uid = params.get("user_id") || params.get("userid");
+        const amount = params.get("amount") || params.get("reward");
+        const txn = params.get("transaction_id") || params.get("txn_id");
+        if (uid && amount && !isNaN(parseFloat(amount))) {
+          apiPost("creditEarnings", {
+            userId: uid,
+            amount: usdToPts(parseFloat(amount)),
+            transactionId: txn || String(Date.now())
+          }).then(res => {
+            if (!res.error) {
+              showAlert(money(usdToPts(parseFloat(amount))) + " credited!", "success");
+              if (soundRef.current) playDing();
+              loadLogs();
+              loadLeaders();
+              const u = userRef.current;
+              if (u && (String(u.account) === String(uid) || u.username === uid)) refreshBalance();
+            }
+          });
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      }, []);
+
+      useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
+      useEffect(() => { userRef.current = user; }, [user]);
+
+      // Google button
+      useEffect(() => {
+        if (user) return;
+        let tries = 0;
+        const id = setInterval(() => {
+          tries++;
+          const el = document.getElementById("gbtn");
+          const g = window.google?.accounts?.id;
+          if (g && el) {
+            clearInterval(id);
+            try {
+              if (!googleRendered.current) {
+                g.initialize({
+                  client_id: GOOGLE_CLIENT_ID,
+                  callback: handleGoogle,
+                  cancel_on_tap_outside: true
+                });
+                googleRendered.current = true;
+              }
+              el.innerHTML = "";
+              g.renderButton(el, {
+                theme: "filled_blue", size: "large", width: 320,
+                text: "continue_with", shape: "pill", logo_alignment: "left"
+              });
+            } catch {}
+          } else if (tries > 40) clearInterval(id);
+        }, 250);
+        return () => clearInterval(id);
+      }, [page, user, handleGoogle]);
+
+      // Chat polling
+      useEffect(() => {
+        if (chatOpen || page === "chat") {
+          loadChat(true);
+          const id = setInterval(() => loadChat(false), 4000);
+          return () => clearInterval(id);
+        }
+      }, [chatOpen, page, loadChat]);
+
+      useEffect(() => {
+        if (page === "shop" && user) loadCashouts(user.account);
+      }, [page, user, loadCashouts]);
+
+      useEffect(() => {
+        if (page === "shop" && user) loadBrands(country);
+      }, [page, user, country]);
+
+      useEffect(() => {
+        if (page === "earn") loadOfferwalls();
+      }, [page, loadOfferwalls]);
+
+      useEffect(() => {
+        if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+      }, [messages]);
+
+      useEffect(() => {
+        function onClick(e) {
+          if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+        }
+        document.addEventListener("mousedown", onClick);
+        return () => document.removeEventListener("mousedown", onClick);
+      }, []);
+
+      const NAV = [
+        { id: "home", icon: "fa-home", label: "Home" },
+        { id: "earn", icon: "fa-hand-holding-dollar", label: "Earn" },
+        { id: "shop", icon: "fa-shopping-cart", label: "Shop" },
+        { id: "leaders", icon: "fa-trophy", label: "Leaders" },
+        { id: "chat", icon: "fa-comments", label: "Chat" },
+        { id: "bonus", icon: "fa-gift", label: "Bonus" },
+        { id: "help", icon: "fa-circle-question", label: "Help" }
+      ];
+
+      const filteredBrands = brandSearch.trim()
+        ? brands.filter(b => (b.name + " " + b.family_name + " " + b.brand_name).toLowerCase().includes(brandSearch.trim().toLowerCase()))
+        : brands;
+      const shownBrands = filteredBrands.slice(0, 48 * brandPage);
+
+      // ---- Render ----
+      return (
+        <div className="app">
+          {/* Header */}
+          <div className="top-header">
+            <div className="header-row">
+              <div className="logo"><span className="dollar">$</span>Reward<span>Bux</span></div>
+              <div className="header-nav">
+                {NAV.map(n => (
+                  <div key={n.id} className={"nav-item" + ((n.id === "chat" ? chatOpen : page === n.id) ? " active" : "")}
+                    onClick={() => go(n.id)}>
+                    <i className={"fas " + n.icon} /><span>{n.label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="header-user" ref={menuRef}>
+                {user ? (
+                  <>
+                    <div className="avatar-wrap" onClick={() => setMenuOpen(m => !m)}>
+                      <img src={user.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff"} alt="" />
+                      <div className="level-badge">{user.level || 1}</div>
+                    </div>
+                    <div className="user-meta">
+                      <div className="name">{user.username || user.account || "User"}</div>
+                      <div className="balance-row">
+                        <span className="diamond"><i className="fas fa-gem" /></span>
+                        <span className="amount">{money(user.balance || 0)}</span>
+                      </div>
+                    </div>
+                    <button className="icon-btn logout" onClick={logout} title="Logout"><i className="fas fa-sign-out-alt" /></button>
+                    {menuOpen && (
+                      <div className="dropdown-menu">
+                        <button className="menu-item" onClick={() => go("history")}><i className="fas fa-clock-rotate-left" /> Cashout History</button>
+                        <button className="menu-item" onClick={() => go("leaders")}><i className="fas fa-trophy" /> Leaderboard</button>
+                        <button className="menu-item" onClick={() => go("bonus")}><i className="fas fa-gift" /> Bonus Codes</button>
+                        <div className="menu-divider" />
+                        <button className="menu-item" onClick={logout}><i className="fas fa-sign-out-alt" /> Logout</button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <button className="btn btn-primary" style={{ width: "auto", padding: "8px 16px", fontSize: "0.8125rem" }}
+                    onClick={() => setPage("earn")}>Signup / Login</button>
+                )}
+              </div>
+            </div>
+            {logs.length > 0 && (
+              <div className="logs-bar">
+                <div className="logs-row">
+                  {logs.slice(0, 15).map((l, i) => (
+                    <div className="log-card" key={i}>
+                      <img src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(l.username || "U") + "&background=0d9488&color=fff&size=64"} alt="" />
+                      <div className="info">
+                        <span className="uname">{l.username}</span>
+                        <span className="amount">{money(l.amount || 0)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <main>
+            {alert && <div className={"alert alert-" + alert.type}>{alert.text}</div>}
+
+            {/* HOME */}
+            {page === "home" && (
+              <>
+                <div className="hero">
+                  <h1>Earn free rewards — <span>crypto, PayPal & gift cards</span></h1>
+                  <p>Thousands of members cash out every day. Start in minutes.</p>
+                </div>
+                <div className="feature-grid">
+                  <div className="feature-card"><h3>Take <span>Surveys</span></h3><div className="icons"><i className="fas fa-list-check" /><i className="fas fa-pen-to-square" /></div></div>
+                  <div className="feature-card"><h3>Try <span>Apps</span></h3><div className="icons"><i className="fas fa-mobile-screen" /><i className="fas fa-download" /></div></div>
+                  <div className="feature-card"><h3>Play <span>Games</span></h3><div className="icons"><i className="fas fa-gamepad" /><i className="fas fa-trophy" /></div></div>
+                </div>
+                <div className="section-divider">Cash out with</div>
+                <div className="feature-grid">
+                  <div className="feature-card"><h3>Crypto <span>Payouts</span></h3><div className="icons"><i className="fab fa-bitcoin" /><i className="fab fa-ethereum" /></div></div>
+                  <div className="feature-card"><h3>PayPal <span>Cash</span></h3><div className="icons"><i className="fab fa-paypal" /><i className="fas fa-wallet" /></div></div>
+                  <div className="feature-card"><h3>Gift <span>Cards</span></h3><div className="icons"><i className="fas fa-gift" /><i className="fas fa-store" /></div></div>
+                </div>
+                {!user && (
+                  <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={() => setPage("earn")}>
+                    <i className="fas fa-right-to-bracket" /> Login to Start Earning
+                  </button>
+                )}
+              </>
+            )}
+
+            {/* EARN */}
+            {page === "earn" && (
+              user ? (
+                <div className="card">
+                  <h2>Earning Portal</h2>
+                  <p style={{ color: "var(--text-secondary)", marginBottom: 18, fontSize: "0.9rem" }}>Complete offers to earn rewards</p>
+                  {loadingOffers ? <div className="empty">Loading offerwalls…</div>
+                    : offerwalls.length === 0 ? <div className="empty">No offerwalls available.</div>
+                    : (
+                      <div className="offer-grid">
+                        {offerwalls.map(ow => (
+                          <div className="offer" key={ow.id}>
+                            {ow.logo && <img src={ow.logo} alt={ow.name} onError={e => e.target.style.display = "none"} />}
+                            <div style={{ fontSize: "0.875rem", marginBottom: 12, fontWeight: 600 }}>{ow.name}</div>
+                            <button className="btn btn-primary" style={{ padding: "9px" }} onClick={() => openOfferwall(ow)}>Open</button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                </div>
+              ) : (
+                <div className="card">
+                  <h2>Login</h2>
+                  <div id="gbtn" />
+                  <div className="divider"><span>OR</span></div>
+                  <label>Account #</label>
+                  <input value={loginForm.account} onChange={e => setLoginForm({ ...loginForm, account: e.target.value })} placeholder="Account number" />
+                  <label>Client ID</label>
+                  <input value={loginForm.clientId} onChange={e => setLoginForm({ ...loginForm, clientId: e.target.value })} placeholder="Client ID" />
+                  <label>CAPTCHA</label>
+                  <div className="captcha">{captcha}</div>
+                  <input value={loginForm.captcha} onChange={e => setLoginForm({ ...loginForm, captcha: e.target.value })}
+                    onKeyDown={e => e.key === "Enter" && handleLogin()} placeholder="Enter CAPTCHA" />
+                  <button className="btn btn-primary" onClick={handleLogin} disabled={loggingIn}>
+                    {loggingIn ? "Signing in…" : "Login"}
+                  </button>
+                </div>
+              )
+            )}
+
+            {/* SHOP */}
+            {page === "shop" && (
+              <div className="card">
+                <h2>Cashout</h2>
+                <p style={{ color: "var(--text-secondary)", marginBottom: 18, fontSize: "0.9rem" }}>
+                  <span className="balance-pill"><i className="fas fa-gem" style={{ fontSize: "0.8rem" }} /> {money(user?.balance || 0)}</span>
+                  <span style={{ marginLeft: 10, fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                    ({Number(user?.balance || 0).toLocaleString()} pts)
+                  </span>
+                </p>
+                {!user ? (
+                  <button className="btn btn-primary" onClick={() => setPage("earn")}>Login to Cashout</button>
+                ) : selectedBrand ? (
+                  <>
+                    <button className="brand-back" onClick={() => { setSelectedBrand(null); setProducts({ fixed: [], ranges: [] }); setSelectedDenom(null); setCustomAmount(""); }}>
+                      <i className="fas fa-arrow-left" /> Back to brands
+                    </button>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                      {selectedBrand.logo && <img src={selectedBrand.logo} alt="" style={{ height: 36, maxWidth: 90, objectFit: "contain" }} onError={e => e.target.style.display = "none"} />}
+                      <div>
+                        <div style={{ fontWeight: 600, color: "#fff", fontSize: "1rem" }}>{selectedBrand.name}</div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Country: {country}</div>
+                      </div>
+                    </div>
+                    {loadingProducts ? <div className="empty">Loading denominations…</div> : (
+                      <>
+                        {products.fixed.length > 0 && (
+                          <>
+                            <label>Choose amount</label>
+                            <div className="denom-grid">
+                              {products.fixed.map((d, i) => (
+                                <button key={i} type="button"
+                                  className={"denom-chip" + (selectedDenom && selectedDenom.value === d.value && !customAmount ? " active" : "")}
+                                  onClick={() => { setSelectedDenom(d); setCustomAmount(""); }}>
+                                  {d.label}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                        {(products.ranges.length > 0 || products.fixed.length === 0) && (
+                          <>
+                            <label>{products.fixed.length ? "Or custom amount (USD)" : "Amount (USD)"}</label>
+                            <input type="number" step="0.01"
+                              min={products.ranges[0] ? products.ranges[0].min : 1}
+                              max={products.ranges[0] ? products.ranges[0].max : undefined}
+                              value={customAmount}
+                              onChange={e => { setCustomAmount(e.target.value); setSelectedDenom(null); }}
+                              placeholder={products.ranges[0] ? "Min " + products.ranges[0].min + (products.ranges[0].max ? " – max " + products.ranges[0].max : "") : "e.g. 25"} />
+                          </>
+                        )}
+                        <label>Delivery email</label>
+                        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" />
+                        <button className="btn btn-primary" disabled={submitting} onClick={submitGiftCard}>
+                          {submitting ? "Submitting…" : "Redeem gift card"}
+                        </button>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div className="section-label">Gift cards (CryptoRefills catalog)</div>
+                    <div className="cr-toolbar">
+                      <div className="field">
+                        <label>Country</label>
+                        <select value={country} onChange={e => { setCountry(e.target.value); setBrandSearch(""); }}>
+                          {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name} ({c.code})</option>)}
+                        </select>
+                      </div>
+                      <div className="field">
+                        <label>Search brands</label>
+                        <input value={brandSearch} onChange={e => { setBrandSearch(e.target.value); setBrandPage(1); }} placeholder="e.g. Amazon, Steam…" />
+                      </div>
+                      <div className="field-btn">
+                        <button className="btn btn-ghost" style={{ width: "auto", padding: "10px 14px" }} onClick={() => loadBrands(country)} disabled={loadingBrands}>
+                          <i className={"fas " + (loadingBrands ? "fa-spinner fa-spin" : "fa-sync")} />
+                        </button>
+                      </div>
+                    </div>
+                    {brandError && <div className="alert alert-error">{brandError}</div>}
+                    {loadingBrands ? <div className="empty">Loading brands for {country}…</div>
+                      : filteredBrands.length === 0 ? <div className="empty">No brands found.</div>
+                      : (
+                        <>
+                          <div className="cr-count" style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: 10 }}>
+                            {filteredBrands.length} brand{filteredBrands.length === 1 ? "" : "s"} {brandSearch ? 'matching "' + brandSearch.trim() + '"' : ""}
+                          </div>
+                          <div className="reward-grid">
+                            {shownBrands.map(b => (
+                              <div className="reward-item" key={b.id} onClick={() => loadProducts(b)}>
+                                {b.logo
+                                  ? <img src={b.logo} alt={b.name} onError={e => e.target.style.display = "none"} />
+                                  : <div style={{ height: 32, marginBottom: 10, fontSize: "1.3rem", color: "var(--accent)" }}><i className="fas fa-gift" /></div>}
+                                <div className="name">{b.name}</div>
+                                <div className="tag">Select</div>
+                              </div>
+                            ))}
+                          </div>
+                          {shownBrands.length < filteredBrands.length && (
+                            <button className="btn btn-ghost" style={{ marginTop: 14 }} onClick={() => setBrandPage(p => p + 1)}>
+                              Show more ({filteredBrands.length - shownBrands.length} left)
+                            </button>
+                          )}
+                        </>
+                      )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* CHAT page */}
+            {page === "chat" && (
+              <div className="card chat-box">
+                <h2>Community Chat</h2>
+                <div className="chat-sound-toggle" onClick={toggleSound}>
+                  <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
+                  {soundOn ? "Ding sound ON" : "Ding sound OFF"}
+                </div>
+                <div className="chat-messages" style={{ maxHeight: 360 }}>
+                  {messages.length === 0 ? <div className="empty">No messages yet. Say hi!</div>
+                    : messages.map(m => (
+                      <div className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")} key={m.id}>
+                        <div className="meta">
+                          <span>
+                            <span className="name">{m.username}</span>
+                            {m.isAdmin && <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span>}
+                          </span>
+                          <span>{m.time}</span>
+                        </div>
+                        <div>{m.message}</div>
+                      </div>
+                    ))}
+                  <div ref={chatEndRef} />
+                </div>
+                <div className="chat-input-row">
+                  <input value={chatInput} onChange={e => setChatInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && sendChat()}
+                    placeholder={user ? "Type a message..." : "Login to chat"} maxLength={300} disabled={!user} />
+                  <button onClick={sendChat} disabled={!user}><i className="fas fa-paper-plane" /></button>
+                </div>
+              </div>
+            )}
+
+            {/* LEADERS */}
+            {page === "leaders" && (
+              <div className="card leaderboard">
+                <h2>Leaderboard</h2>
+                {leaders.length === 0 ? <div className="empty">No data yet</div> : (
+                  <table>
+                    <thead><tr><th>#</th><th>User</th><th>Earnings</th><th>Lvl</th></tr></thead>
+                    <tbody>
+                      {leaders.map((l, i) => (
+                        <tr key={i}>
+                          <td>{i + 1}</td>
+                          <td>{l.username}</td>
+                          <td style={{ color: "var(--accent)", fontWeight: 600 }}>{money(l.balance || 0)}</td>
+                          <td>{l.level}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+
+            {/* BONUS */}
+            {page === "bonus" && (
+              <div className="card">
+                <h2>Redeem Bonus Code</h2>
+                <div className="alert alert-warn">First come, first served. Each code can only be used once.</div>
+                {user ? (
+                  <>
+                    <label>Username</label>
+                    <input value={user.username || user.account || ""} disabled style={{ opacity: 0.7 }} />
+                    <label>Bonus Code</label>
+                    <input value={loginForm.bonusCode} onChange={e => setLoginForm({ ...loginForm, bonusCode: e.target.value.toUpperCase() })}
+                      placeholder="Enter code" onKeyDown={e => e.key === "Enter" && redeemBonus()} />
+                    <button className="btn btn-primary" onClick={redeemBonus}>Redeem Code</button>
+                  </>
+                ) : (
+                  <button className="btn btn-primary" onClick={() => setPage("earn")}>Login to Redeem Bonus</button>
+                )}
+              </div>
+            )}
+
+            {/* HELP */}
+            {page === "help" && (
+              <div className="card">
+                <h2>Help & Support</h2>
+                <div style={{ marginBottom: 18 }}>
+                  <strong style={{ color: "#fff" }}>How to earn?</strong>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>Login → Earn → open an offerwall and complete offers (surveys, apps, games).</p>
+                </div>
+                <div style={{ marginBottom: 18 }}>
+                  <strong style={{ color: "#fff" }}>How to cash out?</strong>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>Shop → pick a gift card → choose amount → enter delivery email → submit.</p>
+                </div>
+                <div style={{ marginBottom: 18 }}>
+                  <strong style={{ color: "#fff" }}>Cashout status</strong>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>
+                    <span className="badge badge-unsent">Unsent</span> waiting · <span className="badge badge-pending">Pending</span> processing · <span className="badge badge-sent">Sent</span> paid
+                  </p>
+                </div>
+                <div style={{ marginBottom: 18 }}>
+                  <strong style={{ color: "#fff" }}>Points</strong>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>1,000 points = $1.00 USD. Points have no cash value until a successful cashout is completed.</p>
+                </div>
+                <button className="btn btn-primary" style={{ marginBottom: 8 }} onClick={() => alert("support@rewardbux.com")}>Contact Support</button>
+                <div className="help-links">
+                  <div className="help-link-card" onClick={() => setPage("privacy")}><i className="fas fa-shield-halved" /><span>Privacy Policy</span></div>
+                  <div className="help-link-card" onClick={() => setPage("terms")}><i className="fas fa-file-contract" /><span>Terms of Service</span></div>
+                </div>
+              </div>
+            )}
+
+            {/* PRIVACY */}
+            {page === "privacy" && (
+              <div className="card">
+                <h2>Privacy Policy</h2>
+                <div className="legal-meta">Last updated: August 15, 2026 · RewardBux</div>
+                <div className="legal-content">
+                  <h3>1. Introduction</h3>
+                  <p>RewardBux (“we”, “us”, “our”) operates a rewards platform that lets users earn points by completing third-party offers and redeem those points for gift cards and other rewards.</p>
+                  <h3>2. Information We Collect</h3>
+                  <ul>
+                    <li><strong>Account information</strong> — account number, client ID, username, email, profile picture, Google account data.</li>
+                    <li><strong>Balance & activity</strong> — points, level, earnings, cashouts.</li>
+                    <li><strong>Device data</strong> — IP address (for fraud checks), browser type.</li>
+                    <li><strong>Chat content</strong> — messages, username, timestamp.</li>
+                    <li><strong>Local storage</strong> — session and sound preference.</li>
+                  </ul>
+                  <h3>3. How We Use Your Information</h3>
+                  <ul>
+                    <li>Account management and authentication</li>
+                    <li>Crediting points and processing cashouts</li>
+                    <li>Leaderboards, activity logs, chat</li>
+                    <li>Fraud detection and support</li>
+                  </ul>
+                  <h3>4. Contact</h3>
+                  <p>Privacy questions: <strong>support@rewardbux.com</strong></p>
+                </div>
+                <div className="legal-nav">
+                  <button className="btn btn-ghost" onClick={() => setPage("help")}><i className="fas fa-arrow-left" /> Back to Help</button>
+                  <button className="btn btn-ghost" onClick={() => setPage("terms")}>View Terms of Service</button>
+                </div>
+              </div>
+            )}
+
+            {/* TERMS */}
+            {page === "terms" && (
+              <div className="card">
+                <h2>Terms of Service</h2>
+                <div className="legal-meta">Last updated: August 15, 2026 · RewardBux</div>
+                <div className="legal-content">
+                  <h3>1. Acceptance</h3>
+                  <p>By using RewardBux you agree to these Terms and our Privacy Policy.</p>
+                  <h3>2. Eligibility</h3>
+                  <p>You must be at least 18 years old.</p>
+                  <h3>3. Account</h3>
+                  <ul>
+                    <li>One person = one account. Multiple accounts are prohibited.</li>
+                    <li>You are responsible for all activity under your account.</li>
+                  </ul>
+                  <h3>4. Points</h3>
+                  <ul>
+                    <li><strong>1,000 points = $1.00 USD</strong>. Points are not cash until a successful cashout.</li>
+                    <li>We may reverse points for chargebacks or fraud.</li>
+                  </ul>
+                  <h3>5. Cashouts</h3>
+                  <ul>
+                    <li>Subject to minimum amounts and available denominations.</li>
+                    <li>We may reject or reverse cashouts for suspected fraud.</li>
+                  </ul>
+                  <h3>6. Contact</h3>
+                  <p>Questions: <strong>support@rewardbux.com</strong></p>
+                </div>
+                <div className="legal-nav">
+                  <button className="btn btn-ghost" onClick={() => setPage("help")}><i className="fas fa-arrow-left" /> Back to Help</button>
+                  <button className="btn btn-ghost" onClick={() => setPage("privacy")}>View Privacy Policy</button>
+                </div>
+              </div>
+            )}
+
+            {/* HISTORY */}
+            {page === "history" && (
+              <div className="card">
+                <h2>Your Cashout History</h2>
+                {!user ? <div className="empty">Please login to view your history.</div>
+                  : cashouts.length === 0 ? <div className="empty">No cashouts found.</div>
+                  : (
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
+                        <thead>
+                          <tr>
+                            <th style={{ textAlign: "left", padding: "8px 6px", borderBottom: "1px solid var(--border)", color: "var(--text-muted)" }}>Reward</th>
+                            <th style={{ textAlign: "left", padding: "8px 6px", borderBottom: "1px solid var(--border)", color: "var(--text-muted)" }}>Amount (USD)</th>
+                            <th style={{ textAlign: "left", padding: "8px 6px", borderBottom: "1px solid var(--border)", color: "var(--text-muted)" }}>Status</th>
+                            <th style={{ textAlign: "left", padding: "8px 6px", borderBottom: "1px solid var(--border)", color: "var(--text-muted)" }}>Gift Code</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {cashouts.map((c, i) => {
+                            let amt = c.amountUsd || c.amount || "0.00";
+                            const n = parseFloat(amt);
+                            if (!isNaN(n) && n >= 100) amt = (n / POINTS_PER_DOLLAR).toFixed(2);
+                            else if (!isNaN(n)) amt = n.toFixed(2);
+                            return (
+                              <tr key={i}>
+                                <td style={{ padding: "10px 6px", borderBottom: "1px solid var(--border)" }}>{c.rewardName || c.brand_name || c.rewardType || "—"}</td>
+                                <td style={{ padding: "10px 6px", borderBottom: "1px solid var(--border)", color: "var(--accent)", fontWeight: 600 }}>${amt}</td>
+                                <td style={{ padding: "10px 6px", borderBottom: "1px solid var(--border)" }}><StatusBadge status={c.status} /></td>
+                                <td style={{ padding: "10px 6px", borderBottom: "1px solid var(--border)", wordBreak: "break-all", fontSize: "0.75rem" }}>{c.giftCode || "—"}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                {user && (
+                  <div style={{ marginTop: 16 }}>
+                    <button className="btn btn-ghost" style={{ width: "auto", padding: "8px 18px" }}
+                      onClick={() => { loadCashouts(user.account); showAlert("Refreshed", "success"); }}>
+                      <i className="fas fa-sync" /> Refresh
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+
+          {/* Bottom nav (mobile) */}
+          <div className="bottom-nav">
+            {NAV.map(n => (
+              <div key={n.id} className={"nav-item" + ((n.id === "chat" ? chatOpen : page === n.id) ? " active" : "")}
+                onClick={() => go(n.id)}>
+                <i className={"fas " + n.icon} /><span>{n.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Floating chat panel */}
+          {chatOpen && (
+            <>
+              <div className="chat-backdrop" onClick={() => setChatOpen(false)} />
+              <div className="chat-panel">
+                <div className="chat-panel-header">
+                  <span><i className="fas fa-comments" /> Community Chat</span>
+                  <button className="chat-panel-close" onClick={() => setChatOpen(false)}><i className="fas fa-times" /></button>
+                </div>
+                <div className="chat-sound-toggle" onClick={toggleSound} style={{ padding: "0 14px", marginBottom: 8 }}>
+                  <i className={"fas " + (soundOn ? "fa-volume-up" : "fa-volume-mute")} />
+                  {soundOn ? "Ding sound ON" : "Ding sound OFF"}
+                </div>
+                <div className="chat-messages chat-panel-messages">
+                  {messages.length === 0 ? <div className="empty">No messages yet.</div>
+                    : messages.map(m => (
+                      <div className={"chat-msg" + (m.isAdmin ? " admin-msg" : "")} key={m.id}>
+                        <div className="meta">
+                          <span>
+                            <span className="name">{m.username}</span>
+                            {m.isAdmin && <span className="badge-owner"><i className="fas fa-shield-alt" /> Owner</span>}
+                          </span>
+                          <span>{m.time}</span>
+                        </div>
+                        <div>{m.message}</div>
+                      </div>
+                    ))}
+                  <div ref={chatEndRef} />
+                </div>
+                <div className="chat-input-row" style={{ padding: "0 12px 14px" }}>
+                  <input value={chatInput} onChange={e => setChatInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && sendChat()}
+                    placeholder={user ? "Type a message..." : "Login to chat"} maxLength={300} disabled={!user} />
+                  <button onClick={sendChat} disabled={!user}><i className="fas fa-paper-plane" /></button>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Offerwall iframe */}
+          {iframeUrl && (
+            <div className="iframe-overlay">
+              <div className="iframe-bar">
+                <span style={{ fontWeight: 600 }}>Offer Wall</span>
+                <button onClick={() => { setIframeUrl(null); refreshBalance(); }}><i className="fas fa-times" /></button>
+              </div>
+              <iframe src={iframeUrl} title="Offerwall" sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-top-navigation-by-user-activation" />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ============================================================
+    // ADMIN PANEL
+    // ============================================================
+    const ADMIN_TOKEN_KEY = "rewardbux_admin_token";
+
+    function AdminPanel({ onExit }) {
+      const [authed, setAuthed] = useState(false);
+      const [token, setToken] = useState("");
+      const [password, setPassword] = useState("");
+      const [loggingIn, setLoggingIn] = useState(false);
+      const [alert, setAlert] = useState(null);
+      const [tab, setTab] = useState("dashboard");
+      const [stats, setStats] = useState(null);
+      const [users, setUsers] = useState([]);
+      const [cashouts, setCashouts] = useState([]);
+      const [chatMsgs, setChatMsgs] = useState([]);
+      const [bonusCodes, setBonusCodes] = useState([]);
+      const [offerwalls, setOfferwalls] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [search, setSearch] = useState("");
+      const [statusFilter, setStatusFilter] = useState("all");
+      const [busy, setBusy] = useState(null);
+      const [bonusForm, setBonusForm] = useState({ code: "", amountUsd: "", maxUses: "1" });
+      const [owForm, setOwForm] = useState({ id: "", name: "", logo: "", urlTemplate: "" });
+      const [editOw, setEditOw] = useState(null);
+      const [adjustUser, setAdjustUser] = useState(null);
+      const [adjustPts, setAdjustPts] = useState("");
+      const [adjustNote, setAdjustNote] = useState("");
+      const tokenRef = useRef("");
+
+      function showAlert(text, type = "error") {
+        setAlert({ text, type });
+        setTimeout(() => setAlert(null), 4000);
+      }
+
+      function adminParams(extra = {}) {
+        return { adminKey: tokenRef.current, password: tokenRef.current, ...extra };
+      }
+
+      useEffect(() => {
+        try {
+          const t = localStorage.getItem(ADMIN_TOKEN_KEY);
+          if (t) { setToken(t); tokenRef.current = t; setAuthed(true); }
+        } catch {}
+      }, []);
+
+      const loadStats = useCallback(async () => {
+        setLoading(true);
+        const res = await apiGet("adminStats", adminParams());
+        setLoading(false);
+        if (res.error) {
+          const [logs, leaders, chat] = await Promise.all([
+            apiGet("logs"), apiGet("leaders"), apiGet("getChat", { limit: 20 })
+          ]);
+          setStats({
+            totalUsers: (leaders.leaders || []).length,
+            totalPaidUsd: "—",
+            pendingCashouts: 0,
+            chatMessages: (chat.messages || []).length,
+            note: "adminStats not available – showing partial data"
+          });
+        } else setStats(res.stats || res);
+      }, []);
+
+      const loadUsers = useCallback(async () => {
+        setLoading(true);
+        const res = await apiGet("adminUsers", adminParams({ search }));
+        setLoading(false);
+        if (res.error) {
+          const leaders = await apiGet("leaders");
+          setUsers((leaders.leaders || []).map((u, i) => ({
+            account: u.account || u.username || String(i),
+            username: u.username, balance: u.balance || 0, level: u.level || 1,
+            email: u.email || "", banned: false
+          })));
+          if (res.error) showAlert("adminUsers API: " + res.error + " (showing leaders fallback)", "warn");
+        } else setUsers(res.users || []);
+      }, [search]);
+
+      const loadCashouts = useCallback(async () => {
+        setLoading(true);
+        const res = await apiGet("adminCashouts", adminParams({ status: statusFilter === "all" ? "" : statusFilter }));
+        setLoading(false);
+        if (res.error) { showAlert("adminCashouts: " + res.error); setCashouts([]); }
+        else setCashouts(res.cashouts || []);
+      }, [statusFilter]);
+
+      const loadChat = useCallback(async () => {
+        setLoading(true);
+        const res = await apiGet("getChat", { limit: 100 });
+        setLoading(false);
+        if (res.messages) setChatMsgs(res.messages);
+      }, []);
+
+      const loadBonus = useCallback(async () => {
+        setLoading(true);
+        const res = await apiGet("adminBonusCodes", adminParams());
+        setLoading(false);
+        if (res.error) { setBonusCodes([]); if (res.error !== "Unauthorized") showAlert("adminBonusCodes: " + res.error); }
+        else setBonusCodes(res.codes || res.bonusCodes || []);
+      }, []);
+
+      const loadOfferwalls = useCallback(async () => {
+        setLoading(true);
+        const res = await apiGet("getOfferwalls");
+        setLoading(false);
+        setOfferwalls(Array.isArray(res.offerwalls) ? res.offerwalls : []);
+      }, []);
+
+      useEffect(() => {
+        if (!authed) return;
+        if (tab === "dashboard") loadStats();
+        else if (tab === "users") loadUsers();
+        else if (tab === "cashouts") loadCashouts();
+        else if (tab === "chat") loadChat();
+        else if (tab === "bonus") loadBonus();
+        else if (tab === "offerwalls") loadOfferwalls();
+      }, [authed, tab]);
+
+      async function updateCashout(id, status, giftCode = "") {
+        setBusy(id + status);
+        const res = await apiPost("adminUpdateCashout", adminParams({ id: String(id), status, giftCode: giftCode || "" }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else { showAlert("Cashout updated → " + status, "success"); loadCashouts(); }
+      }
+
+      async function banUser(account, banned) {
+        setBusy("ban-" + account);
+        const res = await apiPost("adminBanUser", adminParams({ account: String(account), banned: banned ? "1" : "0" }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else { showAlert(banned ? "User banned" : "User unbanned", "success"); loadUsers(); }
+      }
+
+      async function adjustBalance() {
+        if (!adjustUser) return;
+        const pts = parseInt(adjustPts, 10);
+        if (isNaN(pts)) return showAlert("Enter points (can be negative)");
+        setBusy("adjust");
+        const res = await apiPost("adminAdjustBalance", adminParams({
+          account: String(adjustUser.account || adjustUser.username),
+          amount: String(pts),
+          note: adjustNote || ""
+        }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else {
+          showAlert("Balance adjusted by " + pts + " pts", "success");
+          setAdjustUser(null); setAdjustPts(""); setAdjustNote("");
+          loadUsers();
+        }
+      }
+
+      async function createBonus() {
+        const code = (bonusForm.code || "").trim().toUpperCase();
+        const amt = parseFloat(bonusForm.amountUsd);
+        if (!code) return showAlert("Enter a code");
+        if (!amt || amt <= 0) return showAlert("Enter amount in USD");
+        setBusy("bonus-create");
+        const res = await apiPost("adminCreateBonus", adminParams({
+          code, amountUsd: amt.toFixed(2), amount: String(Math.round(amt * POINTS_PER_DOLLAR)), maxUses: bonusForm.maxUses || "1"
+        }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else {
+          showAlert("Bonus code created: " + code, "success");
+          setBonusForm({ code: "", amountUsd: "", maxUses: "1" });
+          loadBonus();
+        }
+      }
+
+      async function deleteBonus(code) {
+        if (!window.confirm("Delete code " + code + "?")) return;
+        setBusy("bonus-" + code);
+        const res = await apiPost("adminDeleteBonus", adminParams({ code: String(code) }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else { showAlert("Bonus code deleted", "success"); loadBonus(); }
+      }
+
+      async function saveOfferwall() {
+        const name = (owForm.name || "").trim();
+        const url = (owForm.urlTemplate || "").trim();
+        if (!name || !url) return showAlert("Name and URL template required");
+        setBusy("ow-save");
+        const res = await apiPost("adminSaveOfferwall", adminParams({
+          id: editOw || owForm.id || "", name, logo: owForm.logo || "", urlTemplate: url
+        }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else {
+          showAlert(editOw ? "Offerwall updated" : "Offerwall added", "success");
+          setOwForm({ id: "", name: "", logo: "", urlTemplate: "" });
+          setEditOw(null);
+          loadOfferwalls();
+        }
+      }
+
+      async function deleteOfferwall(id, name) {
+        if (!window.confirm("Delete offerwall " + name + "?")) return;
+        setBusy("ow-" + id);
+        const res = await apiPost("adminDeleteOfferwall", adminParams({ id: String(id) }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else { showAlert("Offerwall deleted", "success"); loadOfferwalls(); }
+      }
+
+      async function deleteChat(id) {
+        if (!window.confirm("Delete this message?")) return;
+        setBusy("chat-" + id);
+        const res = await apiPost("adminDeleteChat", adminParams({ id: String(id) }));
+        setBusy(null);
+        if (res.error) showAlert(res.error);
+        else { showAlert("Message deleted", "success"); loadChat(); }
+      }
+
+      function logoutAdmin() {
+        setAuthed(false); setToken(""); tokenRef.current = "";
+        try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch {}
+        if (onExit) onExit();
+      }
+
+      if (!authed) {
+        return (
+          <div className="admin-app">
+            <div className="card admin-login">
+              <h2><i className="fas fa-shield-halved" style={{ color: "var(--accent)", marginRight: 8 }} /> Admin Login</h2>
+              <p className="sub">Enter the admin password configured in your Google Apps Script backend.</p>
+              {alert && <div className={"alert alert-" + alert.type}>{alert.text}</div>}
+              <form onSubmit={async e => {
+                e.preventDefault();
+                if (!password.trim()) return showAlert("Enter admin password");
+                setLoggingIn(true);
+                const res = await apiPost("adminLogin", { password: password.trim() });
+                setLoggingIn(false);
+                if (res.error) return showAlert(res.error || "Invalid password");
+                const t = res.token || password.trim();
+                setToken(t); tokenRef.current = t;
+                try { localStorage.setItem(ADMIN_TOKEN_KEY, t); } catch {}
+                setAuthed(true); setPassword("");
+                showAlert("Welcome, admin", "success");
+              }}>
+                <label>Admin password</label>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" autoFocus />
+                <button className="btn btn-primary" type="submit" disabled={loggingIn}>
+                  {loggingIn ? "Signing in…" : "Enter admin panel"}
+                </button>
+              </form>
+              <button className="btn btn-ghost" style={{ marginTop: 12 }} onClick={() => onExit ? onExit() : window.location.href = "/"}>
+                ← Back to site
+              </button>
+              <p className="admin-note">Backend must implement action <code>adminLogin</code> (POST) that accepts <code>password</code> and returns <code>{"{ token }"}</code> on success.</p>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="admin-app">
+          <div className="admin-header">
+            <div className="admin-header-row">
+              <div className="admin-logo">
+                <span>$Reward<span style={{ color: "#5eead4" }}>Bux</span></span>
+                <span className="badge-admin">ADMIN</span>
+              </div>
+              <div className="admin-nav">
+                {[
+                  { id: "dashboard", icon: "fa-chart-line", label: "Dashboard" },
+                  { id: "users", icon: "fa-users", label: "Users" },
+                  { id: "cashouts", icon: "fa-money-bill-transfer", label: "Cashouts" },
+                  { id: "chat", icon: "fa-comments", label: "Chat" },
+                  { id: "bonus", icon: "fa-gift", label: "Bonus codes" },
+                  { id: "offerwalls", icon: "fa-th-large", label: "Offerwalls" }
+                ].map(t => (
+                  <button key={t.id} className={"admin-nav-item" + (tab === t.id ? " active" : "")} onClick={() => setTab(t.id)}>
+                    <i className={"fas " + t.icon} />{t.label}
+                  </button>
+                ))}
+              </div>
+              <div className="admin-header-right">
+                <button className="btn-sm" onClick={() => onExit ? onExit() : window.location.href = "/"}>
+                  <i className="fas fa-external-link-alt" /> Site
+                </button>
+                <button className="btn-sm danger" onClick={logoutAdmin}>
+                  <i className="fas fa-sign-out-alt" /> Logout
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-main">
+            {alert && <div className={"alert alert-" + alert.type}>{alert.text}</div>}
+
+            {tab === "dashboard" && (
+              <>
+                <div className="card">
+                  <h2>Dashboard</h2>
+                  {loading && !stats ? <div className="admin-empty">Loading…</div> : (
+                    <div className="stats-grid">
+                      <div className="stat-card"><div className="stat-label">Users</div><div className="stat-value">{stats?.totalUsers ?? "—"}</div><div className="stat-sub">Registered accounts</div></div>
+                      <div className="stat-card"><div className="stat-label">Pending cashouts</div><div className="stat-value warn">{stats?.pendingCashouts ?? "—"}</div><div className="stat-sub">Awaiting review</div></div>
+                      <div className="stat-card"><div className="stat-label">Total paid</div><div className="stat-value accent">{stats?.totalPaidUsd != null ? (typeof stats.totalPaidUsd === "number" ? "$" + Number(stats.totalPaidUsd).toFixed(2) : stats.totalPaidUsd) : "—"}</div><div className="stat-sub">Lifetime payouts</div></div>
+                      <div className="stat-card"><div className="stat-label">Chat messages</div><div className="stat-value">{stats?.chatMessages ?? "—"}</div><div className="stat-sub">Recent activity</div></div>
+                    </div>
+                  )}
+                  {stats?.note && <div className="alert alert-warn">{stats.note}</div>}
+                  <div className="admin-toolbar">
+                    <button className="btn btn-ghost" style={{ width: "auto" }} onClick={loadStats}><i className="fas fa-sync" /> Refresh</button>
+                  </div>
+                </div>
+                <div className="card">
+                  <h2>Quick links</h2>
+                  <div className="admin-actions" style={{ gap: 10 }}>
+                    <button className="btn btn-primary" style={{ width: "auto" }} onClick={() => setTab("cashouts")}>Review cashouts</button>
+                    <button className="btn btn-ghost" style={{ width: "auto" }} onClick={() => setTab("users")}>Manage users</button>
+                    <button className="btn btn-ghost" style={{ width: "auto" }} onClick={() => setTab("bonus")}>Create bonus code</button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {tab === "users" && (
+              <div className="card">
+                <h2>Users</h2>
+                <div className="admin-toolbar">
+                  <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search username / account…" onKeyDown={e => e.key === "Enter" && loadUsers()} />
+                  <button className="btn btn-ghost" style={{ width: "auto", padding: "10px 14px" }} onClick={loadUsers}><i className="fas fa-search" /> Search</button>
+                  <div className="spacer" />
+                  <button className="btn btn-ghost" style={{ width: "auto" }} onClick={loadUsers}><i className="fas fa-sync" /> Refresh</button>
+                </div>
+                {loading ? <div className="admin-empty">Loading users…</div>
+                  : users.length === 0 ? <div className="admin-empty">No users found.</div>
+                  : (
+                    <div className="admin-table-wrap">
+                      <table className="admin-table">
+                        <thead><tr><th>User</th><th>Balance</th><th>Level</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody>
+                          {users.map((u, i) => (
+                            <tr key={u.account || u.username || i}>
+                              <td>
+                                <div className="user-cell">
+                                  <img src={u.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(u.username || "U") + "&background=0d9488&color=fff&size=64"} alt="" />
+                                  <div>
+                                    <div className="uname">{u.username || u.account}</div>
+                                    <div className="uemail">{u.email || u.account || "—"}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style={{ color: "var(--accent)", fontWeight: 600 }}>{money(u.balance || 0)}</td>
+                              <td>{u.level || 1}</td>
+                              <td>{u.banned ? <span className="badge badge-unsent">Banned</span> : <span className="badge badge-sent">Active</span>}</td>
+                              <td>
+                                <div className="admin-actions">
+                                  <button className="btn-sm" onClick={() => { setAdjustUser(u); setAdjustPts(""); setAdjustNote(""); }}>Adjust $</button>
+                                  <button className={"btn-sm " + (u.banned ? "success" : "danger")}
+                                    disabled={busy === "ban-" + (u.account || u.username)}
+                                    onClick={() => banUser(u.account || u.username, !u.banned)}>
+                                    {u.banned ? "Unban" : "Ban"}
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                {adjustUser && (
+                  <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setAdjustUser(null)}>
+                    <div className="modal">
+                      <div className="modal-header">
+                        <h3>Adjust balance — {adjustUser.username || adjustUser.account}</h3>
+                        <button className="modal-close" onClick={() => setAdjustUser(null)}><i className="fas fa-times" /></button>
+                      </div>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 12 }}>
+                        Current: {money(adjustUser.balance || 0)} ({Number(adjustUser.balance || 0).toLocaleString()} pts)
+                      </p>
+                      <label>Points to add (negative to subtract)</label>
+                      <input type="number" value={adjustPts} onChange={e => setAdjustPts(e.target.value)} placeholder="e.g. 1000 or -500" autoFocus />
+                      <label>Note (optional)</label>
+                      <input value={adjustNote} onChange={e => setAdjustNote(e.target.value)} placeholder="Reason…" />
+                      <div className="btn-row">
+                        <button className="btn btn-ghost" onClick={() => setAdjustUser(null)}>Cancel</button>
+                        <button className="btn btn-primary" onClick={adjustBalance} disabled={busy === "adjust"}>
+                          {busy === "adjust" ? "Saving…" : "Apply"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {tab === "cashouts" && (
+              <div className="card">
+                <h2>Cashouts</h2>
+                <div className="admin-toolbar">
+                  <div className="chip-row" style={{ marginBottom: 0 }}>
+                    {["all", "unsent", "pending", "sent"].map(s => (
+                      <button key={s} className={"chip" + (statusFilter === s ? " active" : "")} onClick={() => setStatusFilter(s)}>
+                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="spacer" />
+                  <button className="btn btn-ghost" style={{ width: "auto" }} onClick={loadCashouts}><i className="fas fa-sync" /> Refresh</button>
+                </div>
+                {loading ? <div className="admin-empty">Loading cashouts…</div>
+                  : cashouts.length === 0 ? <div className="admin-empty">No cashouts found.</div>
+                  : (
+                    <div className="admin-table-wrap">
+                      <table className="admin-table">
+                        <thead><tr><th>User</th><th>Reward</th><th>Amount</th><th>Status</th><th>Details</th><th>Actions</th></tr></thead>
+                        <tbody>
+                          {cashouts.map((c, i) => {
+                            let amt = c.amountUsd || c.amount || "0";
+                            const n = parseFloat(amt);
+                            if (!isNaN(n) && n >= 100) amt = (n / POINTS_PER_DOLLAR).toFixed(2);
+                            else if (!isNaN(n)) amt = n.toFixed(2);
+                            const id = c.id || c.row || i;
+                            return (
+                              <tr key={id}>
+                                <td>
+                                  <div className="uname" style={{ fontWeight: 600 }}>{c.username || c.account}</div>
+                                  <div className="uemail" style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>{c.account}</div>
+                                </td>
+                                <td>{c.rewardName || c.brand_name || c.rewardType || "—"}</td>
+                                <td style={{ color: "var(--accent)", fontWeight: 600 }}>${amt}</td>
+                                <td><StatusBadge status={c.status} /></td>
+                                <td><div className="gift-code-cell" title={c.details || c.email || c.giftCode || ""}>{c.giftCode || c.details || c.email || "—"}</div></td>
+                                <td>
+                                  <div className="admin-actions">
+                                    {String(c.status).toLowerCase() !== "pending" && (
+                                      <button className="btn-sm warn" disabled={!!busy} onClick={() => updateCashout(id, "pending")}>Pending</button>
+                                    )}
+                                    {String(c.status).toLowerCase() !== "sent" && (
+                                      <button className="btn-sm success" disabled={!!busy} onClick={() => {
+                                        const code = window.prompt("Gift code (optional):", c.giftCode || "");
+                                        if (code !== null) updateCashout(id, "sent", code);
+                                      }}>Mark sent</button>
+                                    )}
+                                    {String(c.status).toLowerCase() !== "rejected" && (
+                                      <button className="btn-sm danger" disabled={!!busy} onClick={() => {
+                                        if (window.confirm("Reject this cashout? Balance may be refunded by backend.")) updateCashout(id, "rejected");
+                                      }}>Reject</button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                <p className="admin-note">Requires backend actions: <code>adminCashouts</code>, <code>adminUpdateCashout</code> (id, status, giftCode).</p>
+              </div>
+            )}
+
+            {tab === "chat" && (
+              <div className="card">
+                <h2>Chat moderation</h2>
+                <div className="admin-toolbar">
+                  <button className="btn btn-ghost" style={{ width: "auto" }} onClick={loadChat}><i className="fas fa-sync" /> Refresh</button>
+                </div>
+                {loading ? <div className="admin-empty">Loading messages…</div>
+                  : chatMsgs.length === 0 ? <div className="admin-empty">No messages.</div>
+                  : (
+                    <div className="admin-table-wrap">
+                      <table className="admin-table">
+                        <thead><tr><th>Time</th><th>User</th><th>Message</th><th /></tr></thead>
+                        <tbody>
+                          {[...chatMsgs].reverse().map(m => (
+                            <tr key={m.id}>
+                              <td className="mono" style={{ whiteSpace: "nowrap" }}>{m.time}</td>
+                              <td>
+                                <span style={{ fontWeight: 600, color: m.isAdmin ? "var(--warning)" : "var(--accent)" }}>{m.username}</span>
+                                {m.isAdmin && <span className="badge-owner" style={{ marginLeft: 6 }}>Owner</span>}
+                              </td>
+                              <td style={{ maxWidth: 320, wordBreak: "break-word" }}>{m.message}</td>
+                              <td>
+                                <button className="btn-sm danger" disabled={busy === "chat-" + m.id} onClick={() => deleteChat(m.id)}>Delete</button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                <p className="admin-note">Requires backend action: <code>adminDeleteChat</code> (id).</p>
+              </div>
+            )}
+
+            {tab === "bonus" && (
+              <div className="card">
+                <h2>Bonus codes</h2>
+                <div style={{ marginBottom: 20, padding: 16, background: "var(--bg)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)" }}>
+                  <div style={{ fontWeight: 600, marginBottom: 12, color: "#fff" }}>Create new code</div>
+                  <div className="form-row">
+                    <div>
+                      <label>Code</label>
+                      <input value={bonusForm.code} onChange={e => setBonusForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="WELCOME10" />
+                    </div>
+                    <div>
+                      <label>Amount (USD)</label>
+                      <input type="number" step="0.01" value={bonusForm.amountUsd} onChange={e => setBonusForm(f => ({ ...f, amountUsd: e.target.value }))} placeholder="1.00" />
+                    </div>
+                  </div>
+                  <div className="form-row">
+                    <div>
+                      <label>Max uses</label>
+                      <input type="number" min="1" value={bonusForm.maxUses} onChange={e => setBonusForm(f => ({ ...f, maxUses: e.target.value }))} placeholder="1" />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "flex-end" }}>
+                      <button className="btn btn-primary" style={{ marginBottom: 12 }} onClick={createBonus} disabled={busy === "bonus-create"}>
+                        {busy === "bonus-create" ? "Creating…" : "Create code"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="admin-toolbar">
+                  <button className="btn btn-ghost" style={{ width: "auto" }} onClick={loadBonus}><i className="fas fa-sync" /> Refresh</button>
+                </div>
+                {loading ? <div className="admin-empty">Loading…</div>
+                  : bonusCodes.length === 0 ? <div className="admin-empty">No bonus codes yet.</div>
+                  : (
+                    <div className="admin-table-wrap">
+                      <table className="admin-table">
+                        <thead><tr><th>Code</th><th>Amount</th><th>Uses</th><th>Max</th><th /></tr></thead>
+                        <tbody>
+                          {bonusCodes.map((c, i) => (
+                            <tr key={c.code || i}>
+                              <td className="mono" style={{ fontWeight: 600, color: "var(--accent)" }}>{c.code}</td>
+                              <td>${parseFloat(c.amountUsd || (c.amount ? c.amount / POINTS_PER_DOLLAR : 0)).toFixed(2)}</td>
+                              <td>{c.uses ?? c.used ?? 0}</td>
+                              <td>{c.maxUses ?? c.max ?? "∞"}</td>
+                              <td>
+                                <button className="btn-sm danger" disabled={busy === "bonus-" + c.code} onClick={() => deleteBonus(c.code)}>Delete</button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                <p className="admin-note">Requires: <code>adminBonusCodes</code>, <code>adminCreateBonus</code>, <code>adminDeleteBonus</code>.</p>
+              </div>
+            )}
+
+            {tab === "offerwalls" && (
+              <div className="card">
+                <h2>Offerwalls</h2>
+                <div style={{ marginBottom: 20, padding: 16, background: "var(--bg)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)" }}>
+                  <div style={{ fontWeight: 600, marginBottom: 12, color: "#fff" }}>{editOw ? "Edit offerwall" : "Add offerwall"}</div>
+                  <label>Name</label>
+                  <input value={owForm.name} onChange={e => setOwForm(f => ({ ...f, name: e.target.value }))} placeholder="AdGate / Torox / …" />
+                  <label>Logo URL (optional)</label>
+                  <input value={owForm.logo} onChange={e => setOwForm(f => ({ ...f, logo: e.target.value }))} placeholder="https://…" />
+                  <label>URL template</label>
+                  <input value={owForm.urlTemplate} onChange={e => setOwForm(f => ({ ...f, urlTemplate: e.target.value }))} placeholder="https://example.com/wall?user={user}" />
+                  <p style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginBottom: 12 }}>
+                    Use placeholders: {"{user}"}, {"{userid}"}, {"{username}"}, {"{account}"}
+                  </p>
+                  <div className="btn-row">
+                    {editOw && <button className="btn btn-ghost" onClick={() => { setEditOw(null); setOwForm({ id: "", name: "", logo: "", urlTemplate: "" }); }}>Cancel</button>}
+                    <button className="btn btn-primary" onClick={saveOfferwall} disabled={busy === "ow-save"}>
+                      {busy === "ow-save" ? "Saving…" : editOw ? "Update" : "Add offerwall"}
+                    </button>
+                  </div>
+                </div>
+                <div className="admin-toolbar">
+                  <button className="btn btn-ghost" style={{ width: "auto" }} onClick={loadOfferwalls}><i className="fas fa-sync" /> Refresh</button>
+                </div>
+                {loading ? <div className="admin-empty">Loading…</div>
+                  : offerwalls.length === 0 ? <div className="admin-empty">No offerwalls configured.</div>
+                  : (
+                    <div className="admin-table-wrap">
+                      <table className="admin-table">
+                        <thead><tr><th>Name</th><th>URL template</th><th /></tr></thead>
+                        <tbody>
+                          {offerwalls.map(ow => (
+                            <tr key={ow.id}>
+                              <td>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                  {ow.logo && <img src={ow.logo} alt="" style={{ height: 24, maxWidth: 40, objectFit: "contain" }} onError={e => e.target.style.display = "none"} />}
+                                  <strong>{ow.name}</strong>
+                                </div>
+                              </td>
+                              <td className="mono" style={{ maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis" }}>{ow.urlTemplate || ow.url || "—"}</td>
+                              <td>
+                                <div className="admin-actions">
+                                  <button className="btn-sm" onClick={() => {
+                                    setEditOw(ow.id);
+                                    setOwForm({ id: ow.id, name: ow.name || "", logo: ow.logo || "", urlTemplate: ow.urlTemplate || ow.url || "" });
+                                  }}>Edit</button>
+                                  <button className="btn-sm danger" disabled={busy === "ow-" + ow.id} onClick={() => deleteOfferwall(ow.id, ow.name)}>Delete</button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                <p className="admin-note">Requires: <code>adminSaveOfferwall</code>, <code>adminDeleteOfferwall</code>. Public <code>getOfferwalls</code> already exists.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // ROOT – switch between App and Admin
+    // ============================================================
+    function isAdminRoute() {
+      const path = (window.location.pathname || "").toLowerCase();
+      const hash = (window.location.hash || "").toLowerCase();
+      const params = new URLSearchParams(window.location.search);
+      return path.includes("/admin") || hash === "#admin" || hash.startsWith("#admin") || params.get("admin") === "1" || params.get("admin") === "true";
+    }
+
+    function Root() {
+      const [admin, setAdmin] = useState(isAdminRoute());
+
+      useEffect(() => {
+        const handler = () => setAdmin(isAdminRoute());
+        window.addEventListener("popstate", handler);
+        window.addEventListener("hashchange", handler);
+        return () => {
+          window.removeEventListener("popstate", handler);
+          window.removeEventListener("hashchange", handler);
+        };
+      }, []);
+
+      return admin
+        ? <AdminPanel onExit={() => { window.history.pushState({}, "", "/"); setAdmin(false); }} />
+        : <App />;
+    }
+
+    // Mount
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<StrictMode><Root /></StrictMode>);
+  </script>
+</body>
+</html>
