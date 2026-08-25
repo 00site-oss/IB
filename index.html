@@ -303,64 +303,6 @@
       font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);
     }
     .home-pills span i { color: var(--accent); font-size: 0.85rem; }
-    /* Profile & tiers */
-    .profile-hero {
-      display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
-    }
-    .profile-hero img {
-      width: 72px; height: 72px; border-radius: 50%;
-      border: 3px solid var(--accent); object-fit: cover;
-    }
-    .profile-hero h2 { font-size: 1.25rem; font-weight: 800; margin: 0 0 4px; }
-    .profile-hero .sub { font-size: 0.85rem; color: var(--text-secondary); }
-    .tier-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.4px; margin-top: 8px;
-    }
-    .tier-badge.none { background: rgba(107,114,128,.2); color: #9ca3af; }
-    .tier-badge.silver { background: rgba(192,192,192,.2); color: #d1d5db; border: 1px solid rgba(192,192,192,.35); }
-    .tier-badge.gold { background: rgba(245,197,66,.15); color: #f5c542; border: 1px solid rgba(245,197,66,.35); }
-    .tier-badge.platinum { background: rgba(229,228,226,.15); color: #e5e4e2; border: 1px solid rgba(229,228,226,.4); }
-    .score-ring-wrap { text-align: center; margin: 20px 0; }
-    .score-ring {
-      width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 12px;
-      background: conic-gradient(var(--accent) calc(var(--pct) * 1%), var(--border) 0);
-      display: flex; align-items: center; justify-content: center;
-      position: relative;
-    }
-    .score-ring::before {
-      content: ""; position: absolute; inset: 10px; border-radius: 50%;
-      background: var(--card);
-    }
-    .score-ring .inner {
-      position: relative; z-index: 1; text-align: center;
-    }
-    .score-ring .val { font-size: 1.75rem; font-weight: 900; color: #fff; }
-    .score-ring .lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .score-breakdown {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
-    }
-    .score-item {
-      background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px;
-    }
-    .score-item .k { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
-    .score-item .v { font-size: 1.1rem; font-weight: 800; color: #fff; margin-top: 4px; }
-    .score-item .h { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
-    .tier-ladder { margin-top: 18px; }
-    .tier-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 14px; border-radius: 12px; margin-bottom: 8px;
-      border: 1px solid var(--border); background: var(--bg2);
-    }
-    .tier-row.current { border-color: var(--accent); background: var(--accent-dim); }
-    .tier-row .name { font-weight: 700; }
-    .tier-row .req { font-size: 0.8rem; color: var(--text-secondary); }
-    .tier-rules {
-      margin-top: 16px; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.55;
-    }
-    .tier-rules li { margin-bottom: 6px; }
     .stats-row {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
       max-width: 720px; margin: 32px auto 0; text-align: center;
@@ -679,17 +621,6 @@
     const PTS_PER_LEVEL = 1500; // min 1500 pts required for each +1 level
     const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
 
-    // Tier system — overall rate 0–100
-    const TIER_SILVER = 55;
-    const TIER_GOLD = 75;
-    const TIER_PLATINUM = 85;
-    const TASKS_PER_DAY_GOAL = 10;
-    const DAILY_SCORE_MAX = 33.3;       // 10 tasks × 3.33
-    const SCORE_PER_TASK = 3.33;        // 3.33 × tasks → daily contribution
-    const TASK_HISTORY_CAP = 100;       // last 100 tasks
-    const BALANCE_BONUS = 12;           // +12 if balance ≥ $1 (1000 pts)
-    const MIN_BALANCE_FOR_BONUS = POINTS_PER_DOLLAR; // $1.00
-
     const COUNTRIES = [
       { code: "US", name: "United States" }, { code: "GB", name: "United Kingdom" },
       { code: "CA", name: "Canada" }, { code: "AU", name: "Australia" },
@@ -765,159 +696,6 @@
       return Math.max(0, nextThreshold - pts);
     }
     function money(pts) { return "$" + ptsToUsd(toPoints(pts)); }
-
-    function todayKey() {
-      const d = new Date();
-      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    }
-
-    /** Load / save per-user task history (last 100 task timestamps + daily counts) */
-    function getTaskStore(account) {
-      try {
-        const raw = storage.get("buxiq_tasks_" + account);
-        if (!raw) return { tasks: [], daily: {} };
-        const data = JSON.parse(raw);
-        return {
-          tasks: Array.isArray(data.tasks) ? data.tasks.slice(-TASK_HISTORY_CAP) : [],
-          daily: data.daily && typeof data.daily === "object" ? data.daily : {}
-        };
-      } catch {
-        return { tasks: [], daily: {} };
-      }
-    }
-
-    function saveTaskStore(account, store) {
-      try {
-        storage.set("buxiq_tasks_" + account, JSON.stringify({
-          tasks: (store.tasks || []).slice(-TASK_HISTORY_CAP),
-          daily: store.daily || {}
-        }));
-      } catch {}
-    }
-
-    /** Record one completed offer/survey */
-    function recordTask(account) {
-      if (!account) return;
-      const store = getTaskStore(account);
-      const now = Date.now();
-      const day = todayKey();
-      store.tasks.push(now);
-      store.tasks = store.tasks.slice(-TASK_HISTORY_CAP);
-      store.daily[day] = (store.daily[day] || 0) + 1;
-      // Keep only last 14 days of daily counts
-      const keys = Object.keys(store.daily).sort();
-      if (keys.length > 14) {
-        keys.slice(0, keys.length - 14).forEach(k => delete store.daily[k]);
-      }
-      saveTaskStore(account, store);
-      return store;
-    }
-
-    /**
-     * Merge previous completed tasks from activity logs into local store.
-     * Counts log rows for this user (account / username).
-     */
-    function syncTasksFromLogs(account, username, logList) {
-      if (!account || !Array.isArray(logList) || !logList.length) return getTaskStore(account);
-      const store = getTaskStore(account);
-      const uname = String(username || "").toLowerCase();
-      const acct = String(account || "").toLowerCase();
-      const mine = logList.filter(l => {
-        const lu = String(l.username || "").toLowerCase();
-        const la = String(l.account || l.userId || "").toLowerCase();
-        return (uname && lu === uname) || (acct && (la === acct || lu === acct));
-      });
-      const fromLogs = mine.map(l => {
-        const t = l.createdAt ? Date.parse(l.createdAt) : NaN;
-        return isFinite(t) ? t : Date.now();
-      });
-      const merged = [...(store.tasks || []), ...fromLogs].filter(t => isFinite(t)).sort((a, b) => a - b);
-      const deduped = [];
-      for (let i = 0; i < merged.length; i++) {
-        if (!deduped.length || merged[i] - deduped[deduped.length - 1] > 2000) deduped.push(merged[i]);
-      }
-      store.tasks = deduped.slice(-TASK_HISTORY_CAP);
-      const dayStart = new Date();
-      dayStart.setHours(0, 0, 0, 0);
-      const todayCount = store.tasks.filter(t => t >= dayStart.getTime()).length;
-      const day = todayKey();
-      store.daily[day] = Math.max(store.daily[day] || 0, todayCount);
-      store.logTaskCount = mine.length;
-      store.syncedAt = Date.now();
-      saveTaskStore(account, store);
-      return store;
-    }
-
-    /**
-     * Overall score (0–100):
-     *   dailyScore = min(33.3, tasksToday * 3.33)  // 0 if nothing today
-     *   historyScore = min(54.7, tasksInLast100 * 0.547)
-     *   balanceBonus = +12 if balance ≥ $1
-     *   overall = min(100, daily + history + balance)
-     */
-    function calcOverallScore(account, balancePts) {
-      const store = getTaskStore(account);
-      const day = todayKey();
-      const tasksToday = store.daily[day] || 0;
-      const tasksInLast100 = (store.tasks || []).length;
-
-      const dailyScore = Math.min(DAILY_SCORE_MAX, Math.round(tasksToday * SCORE_PER_TASK * 10) / 10);
-      // History: each of last 100 tasks adds up to ~0.547 so 100 tasks ≈ 54.7
-      const historyScore = Math.min(54.7, Math.round(tasksInLast100 * 0.547 * 10) / 10);
-      const balanceBonus = toPoints(balancePts) >= MIN_BALANCE_FOR_BONUS ? BALANCE_BONUS : 0;
-
-      const overall = Math.min(100, Math.round((dailyScore + historyScore + balanceBonus) * 10) / 10);
-      return {
-        overall,
-        dailyScore,
-        historyScore,
-        balanceBonus,
-        tasksToday,
-        tasksInLast100,
-        logTaskCount: store.logTaskCount || 0,
-        hasMinBalance: balanceBonus > 0
-      };
-    }
-
-    function getTier(score) {
-      if (score >= TIER_PLATINUM) return { id: "platinum", name: "Platinum", min: TIER_PLATINUM, color: "#e5e4e2", next: null };
-      if (score >= TIER_GOLD) return { id: "gold", name: "Gold", min: TIER_GOLD, color: "#f5c542", next: { name: "Platinum", need: TIER_PLATINUM } };
-      if (score >= TIER_SILVER) return { id: "silver", name: "Silver", min: TIER_SILVER, color: "#c0c0c0", next: { name: "Gold", need: TIER_GOLD } };
-      return { id: "none", name: "Unranked", min: 0, color: "#6b7280", next: { name: "Silver", need: TIER_SILVER } };
-    }
-
-    function userTierInfo(user) {
-      if (!user) return { score: { overall: 0 }, tier: getTier(0) };
-      const score = calcOverallScore(user.account, user.balance);
-      return { score, tier: getTier(score.overall) };
-    }
-    // Silver+ → Shop | Gold+ → cashout + promo codes | Platinum → daily $0.10
-    function canAccessShop(user) {
-      const id = userTierInfo(user).tier.id;
-      return id === "silver" || id === "gold" || id === "platinum";
-    }
-    function canCashout(user) {
-      const id = userTierInfo(user).tier.id;
-      return id === "gold" || id === "platinum";
-    }
-    function canRedeemPromo(user) {
-      const id = userTierInfo(user).tier.id;
-      return id === "gold" || id === "platinum";
-    }
-    function isPlatinum(user) {
-      return userTierInfo(user).tier.id === "platinum";
-    }
-    const PLATINUM_DAILY_USD = 0.10;
-    const PLATINUM_DAILY_PTS = Math.round(PLATINUM_DAILY_USD * POINTS_PER_DOLLAR); // 100 pts
-    function platinumDailyKey(account) {
-      return "buxiq_plat_daily_" + account + "_" + todayKey();
-    }
-    function hasClaimedPlatinumToday(account) {
-      return storage.get(platinumDailyKey(account)) === "1";
-    }
-    function markPlatinumClaimed(account) {
-      storage.set(platinumDailyKey(account), "1");
-    }
 
     async function apiGet(action, params = {}) {
       try {
@@ -1029,9 +807,6 @@
         let lifetime = toPoints(u.lifetimeEarned ?? u.totalEarned ?? prev.lifetimeEarned ?? 0);
         if (opts.earnedPts && opts.earnedPts > 0) {
           lifetime = Math.max(lifetime, toPoints(prev.lifetimeEarned || 0) + opts.earnedPts);
-          // Each completed offer/survey = 1 task toward overall score
-          const acct = u.account || prev.account;
-          if (acct) recordTask(acct);
         }
         // Keep lifetime at least as high as current balance (first login / legacy)
         lifetime = Math.max(lifetime, balance);
@@ -1056,14 +831,7 @@
       // ---- Data loaders ----
       const loadLogs = useCallback(async () => {
         const res = await apiGet("logs");
-        if (res.logs) {
-          setLogs(res.logs);
-          // Pull previous completed tasks for logged-in user into overall score
-          const u = userRef.current;
-          if (u && u.account) {
-            syncTasksFromLogs(u.account, u.username || u.account, res.logs);
-          }
-        }
+        if (res.logs) setLogs(res.logs);
       }, []);
 
       const loadLeaders = useCallback(async () => {
@@ -1344,44 +1112,9 @@
         else loadChat(true);
       }
 
-      // ---- Platinum daily $0.10 ----
-      async function claimPlatinumDaily() {
-        if (!user) { showAlert("Please login first"); return; }
-        if (!isPlatinum(user)) {
-          showAlert("Platinum tier required (overall ≥ 85) for the daily $0.10 code.");
-          return;
-        }
-        if (hasClaimedPlatinumToday(user.account)) {
-          showAlert("Already claimed today’s Platinum reward. Come back tomorrow.");
-          return;
-        }
-        const pts = PLATINUM_DAILY_PTS;
-        // Prefer server credit with fixed txn id per day
-        const txn = "PLATINUM-DAILY-" + user.account + "-" + todayKey();
-        const res = await apiPost("creditEarnings", {
-          userId: user.account,
-          amount: pts,
-          transactionId: txn
-        });
-        if (res.error && !res.already) {
-          // Local fallback credit if API rejects
-          showAlert(res.error);
-          return;
-        }
-        markPlatinumClaimed(user.account);
-        const newBal = res.newBalance != null ? toPoints(res.newBalance) : toPoints(user.balance || 0) + pts;
-        saveUser({ ...user, balance: newBal }, { earnedPts: pts });
-        showAlert("Platinum daily reward: $0.10 (" + pts + " pts) added!", "success");
-      }
-
       // ---- Bonus ----
       async function redeemBonus() {
         if (!user) { showAlert("Please login first"); setPage("earn"); return; }
-        if (!canRedeemPromo(user)) {
-          showAlert("Gold tier required to redeem promo codes (overall ≥ 75).");
-          setPage("profile");
-          return;
-        }
         const code = (loginForm.bonusCode || "").trim();
         if (!code) return showAlert("Please enter a bonus code");
         const res = await apiGet("redeemBonus", {
@@ -1422,16 +1155,6 @@
       // ---- Gift card submit ----
       async function submitGiftCard() {
         if (!user) { showAlert("Please login first"); setPage("earn"); return; }
-        if (!canAccessShop(user)) {
-          showAlert("Silver tier required to access Shop (overall ≥ 55).");
-          setPage("profile");
-          return;
-        }
-        if (!canCashout(user)) {
-          showAlert("Gold tier required to cash out (overall ≥ 75). Keep earning to unlock.");
-          setPage("profile");
-          return;
-        }
         const em = (email || user.email || "").trim();
         if (!em || em.indexOf("@") < 0) return showAlert("Enter valid email");
         let amount = 0, denom = "";
@@ -1507,33 +1230,11 @@
       }
 
       function go(p) {
-        if (p === "chat") {
-          setChatOpen(o => !o);
-          setMenuOpen(false);
-          return;
+        if (p === "chat") setChatOpen(o => !o);
+        else {
+          setChatOpen(false);
+          setPage(p);
         }
-        // Tier gates
-        if (p === "shop") {
-          if (!user) { showAlert("Please login first"); setPage("earn"); setMenuOpen(false); return; }
-          if (!canAccessShop(user)) {
-            showAlert("Silver tier required to access Shop (overall ≥ 55). Open Profile to see your score.");
-            setPage("profile");
-            setMenuOpen(false);
-            return;
-          }
-        }
-        if (p === "bonus") {
-          if (!user) { showAlert("Please login first"); setPage("earn"); setMenuOpen(false); return; }
-          // Gold or Platinum can use promo page; others redirected
-          if (!canRedeemPromo(user)) {
-            showAlert("Gold tier required to redeem promo codes (overall ≥ 75).");
-            setPage("profile");
-            setMenuOpen(false);
-            return;
-          }
-        }
-        setChatOpen(false);
-        setPage(p);
         setMenuOpen(false);
       }
 
@@ -1650,16 +1351,6 @@
         if (page === "earn") loadOfferwalls();
       }, [page, loadOfferwalls]);
 
-      // When opening profile, refresh logs → count past tasks → final score
-      useEffect(() => {
-        if (page === "profile" && user) {
-          loadLogs().then(() => {
-            // force re-render with updated store
-            setUser(u => (u ? { ...u } : u));
-          });
-        }
-      }, [page, user && user.account]);
-
       useEffect(() => {
         if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
       }, [messages]);
@@ -1707,21 +1398,20 @@
               <div className="header-user" ref={menuRef}>
                 {user ? (
                   <>
-                    <div className="avatar-wrap" onClick={() => go("profile")} title="Open profile">
+                    <div className="avatar-wrap" onClick={() => setMenuOpen(m => !m)}>
                       <img src={user.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=0d9488&color=fff"} alt="" />
                       <div className="level-badge">{user.level || 1}</div>
                     </div>
-                    <div className="user-meta" onClick={() => go("profile")} style={{ cursor: "pointer" }}>
+                    <div className="user-meta">
                       <div className="name">{user.username || user.account || "User"}</div>
                       <div className="balance-row">
                         <span className="diamond"><i className="fas fa-gem" /></span>
                         <span className="amount">{money(user.balance || 0)}</span>
                       </div>
                     </div>
-                    <button className="icon-btn logout" onClick={() => setMenuOpen(m => !m)} title="Menu"><i className="fas fa-ellipsis-v" /></button>
+                    <button className="icon-btn logout" onClick={logout} title="Logout"><i className="fas fa-sign-out-alt" /></button>
                     {menuOpen && (
                       <div className="dropdown-menu">
-                        <button className="menu-item" onClick={() => go("profile")}><i className="fas fa-user" /> Profile & Tiers</button>
                         <button className="menu-item" onClick={() => go("history")}><i className="fas fa-clock-rotate-left" /> Cashout History</button>
                         <button className="menu-item" onClick={() => go("leaders")}><i className="fas fa-trophy" /> Leaderboard</button>
                         <button className="menu-item" onClick={() => go("bonus")}><i className="fas fa-gift" /> Bonus Codes</button>
@@ -1810,125 +1500,6 @@
               </div>
             )}
 
-            {/* PROFILE + TIERS */}
-            {page === "profile" && (
-              user ? (() => {
-                const score = calcOverallScore(user.account, user.balance);
-                const tier = getTier(score.overall);
-                const pct = Math.min(100, score.overall);
-                return (
-                  <div className="card">
-                    <div className="profile-hero">
-                      <img
-                        src={user.avatar || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.username || "U") + "&background=01d676&color=0b0d14&size=128&bold=true"}
-                        alt=""
-                      />
-                      <div>
-                        <h2>{user.username || user.account}</h2>
-                        <div className="sub">Level {user.level || 1} · Balance {money(user.balance || 0)}</div>
-                        <div className={"tier-badge " + tier.id}>
-                          {tier.id === "platinum" && <i className="fas fa-gem" />}
-                          {tier.id === "gold" && <i className="fas fa-crown" />}
-                          {tier.id === "silver" && <i className="fas fa-medal" />}
-                          {tier.id === "none" && <i className="fas fa-circle" />}
-                          {tier.name}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="score-ring-wrap">
-                      <div className="score-ring" style={{ ["--pct"]: pct }}>
-                        <div className="inner">
-                          <div className="val">{score.overall}</div>
-                          <div className="lbl">Overall</div>
-                        </div>
-                      </div>
-                      {tier.next ? (
-                        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-                          {Math.max(0, (tier.next.need - score.overall).toFixed(1))} pts to <strong style={{ color: "#fff" }}>{tier.next.name}</strong>
-                        </p>
-                      ) : (
-                        <p style={{ fontSize: "0.85rem", color: "var(--accent)", fontWeight: 700 }}>Top tier unlocked</p>
-                      )}
-                    </div>
-
-                    <div style={{
-                      textAlign: "center", marginBottom: 16, padding: "12px 14px",
-                      background: "var(--accent-dim)", border: "1px solid rgba(1,214,118,.3)", borderRadius: 14
-                    }}>
-                      <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Final overall score</div>
-                      <div style={{ fontSize: "2rem", fontWeight: 900, color: "var(--accent)", lineHeight: 1.2 }}>{score.overall}</div>
-                      <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: 4 }}>
-                        {score.tasksInLast100} completed tasks counted
-                        {score.logTaskCount ? ` · ${score.logTaskCount} from activity logs` : ""}
-                      </div>
-                    </div>
-
-                    <div className="score-breakdown">
-                      <div className="score-item">
-                        <div className="k">Today</div>
-                        <div className="v">+{score.dailyScore}</div>
-                        <div className="h">{score.tasksToday} / {TASKS_PER_DAY_GOAL} tasks · 3.33× each</div>
-                      </div>
-                      <div className="score-item">
-                        <div className="k">Past tasks (max 100)</div>
-                        <div className="v">+{score.historyScore}</div>
-                        <div className="h">{score.tasksInLast100} tasks in history</div>
-                      </div>
-                      <div className="score-item">
-                        <div className="k">Balance bonus</div>
-                        <div className="v">{score.hasMinBalance ? "+12" : "0"}</div>
-                        <div className="h">{score.hasMinBalance ? "≥ $1.00 held" : "Need ≥ $1.00 in balance"}</div>
-                      </div>
-                      <div className="score-item">
-                        <div className="k">Level</div>
-                        <div className="v">{user.level || 1}</div>
-                        <div className="h">1,500 pts per level</div>
-                      </div>
-                    </div>
-
-                    <div className="tier-ladder">
-                      <h3 style={{ fontSize: "0.95rem", marginBottom: 10 }}>Tiers</h3>
-                      {[
-                        { id: "silver", name: "Silver", need: TIER_SILVER, icon: "fa-medal" },
-                        { id: "gold", name: "Gold", need: TIER_GOLD, icon: "fa-crown" },
-                        { id: "platinum", name: "Platinum", need: TIER_PLATINUM, icon: "fa-gem" }
-                      ].map(t => (
-                        <div key={t.id} className={"tier-row" + (tier.id === t.id ? " current" : "")}>
-                          <div className="name"><i className={"fas " + t.icon} style={{ marginRight: 8, opacity: 0.85 }} />{t.name}</div>
-                          <div className="req">Overall ≥ {t.need}{score.overall >= t.need ? " · Unlocked" : ""}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="tier-rules">
-                      <strong style={{ color: "#fff" }}>How overall score works</strong>
-                      <ul style={{ marginTop: 8, paddingLeft: 18 }}>
-                        <li>Each completed offer or survey = <strong>1 task</strong> (last 100 counted).</li>
-                        <li>Daily: <strong>3.33 × tasks today</strong> (max <strong>33.3</strong> at 10 tasks). If you do <strong>0 tasks today</strong>, today’s score is <strong>0</strong>.</li>
-                        <li>History from your last 100 tasks contributes up to ~54.7.</li>
-                        <li>Keep at least <strong>$1.00</strong> (1,000 pts) in balance for <strong>+12</strong> overall.</li>
-                        <li>Silver 55 · Gold 75 · Platinum 85</li>
-                        <li><strong>Silver</strong> — access Shop</li>
-                        <li><strong>Gold</strong> — cash out + redeem promo codes</li>
-                        <li><strong>Platinum</strong> — daily $0.10 permanent reward (once per day)</li>
-                      </ul>
-                    </div>
-
-                    <button className="btn btn-primary" style={{ marginTop: 18 }} onClick={() => setPage("earn")}>
-                      Complete tasks to raise score
-                    </button>
-                  </div>
-                );
-              })() : (
-                <div className="card">
-                  <h2>Profile</h2>
-                  <p style={{ color: "var(--text-secondary)", marginBottom: 16 }}>Log in to view your tier and overall score.</p>
-                  <button className="btn btn-primary" onClick={() => setPage("earn")}>Login</button>
-                </div>
-              )
-            )}
-
             {/* EARN */}
             {page === "earn" && (
               user ? (
@@ -1983,23 +1554,6 @@
                 </p>
                 {!user ? (
                   <button className="btn btn-primary" onClick={() => setPage("earn")}>Login to Cashout</button>
-                ) : !canAccessShop(user) ? (
-                  <div>
-                    <div className="alert alert-warn">Silver tier required (overall ≥ 55) to access Shop.</div>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: 14 }}>
-                      Your overall: <strong style={{ color: "#fff" }}>{userTierInfo(user).score.overall}</strong> · Tier: <strong style={{ color: "#fff" }}>{userTierInfo(user).tier.name}</strong>
-                    </p>
-                    <button className="btn btn-primary" onClick={() => setPage("profile")}>View profile & score</button>
-                  </div>
-                ) : !canCashout(user) ? (
-                  <div>
-                    <div className="alert alert-warn">Gold tier required (overall ≥ 75) to cash out. You can browse as Silver, but withdrawals unlock at Gold.</div>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: 14 }}>
-                      Your overall: <strong style={{ color: "#fff" }}>{userTierInfo(user).score.overall}</strong> · Tier: <strong style={{ color: "#fff" }}>{userTierInfo(user).tier.name}</strong>
-                    </p>
-                    <button className="btn btn-primary" onClick={() => setPage("profile")}>View profile & score</button>
-                    <button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => setPage("earn")}>Keep earning</button>
-                  </div>
                 ) : selectedBrand ? (
                   <>
                     <button className="brand-back" onClick={() => { setSelectedBrand(null); setProducts({ fixed: [], ranges: [] }); setSelectedDenom(null); setCustomAmount(""); }}>
@@ -2157,46 +1711,16 @@
             {page === "bonus" && (
               <div className="card">
                 <h2>Redeem Bonus Code</h2>
-                <div className="alert alert-warn">Gold tier or higher required. First come, first served for limited codes.</div>
+                <div className="alert alert-warn">First come, first served. Each code can only be used once.</div>
                 {user ? (
-                  !canRedeemPromo(user) ? (
-                    <div>
-                      <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: 14 }}>
-                        Promo codes unlock at <strong style={{ color: "#fff" }}>Gold</strong> (overall ≥ 75).
-                        Your score: <strong style={{ color: "#fff" }}>{userTierInfo(user).score.overall}</strong> ({userTierInfo(user).tier.name}).
-                      </p>
-                      <button className="btn btn-primary" onClick={() => setPage("profile")}>View profile</button>
-                    </div>
-                  ) : (
-                    <>
-                      {isPlatinum(user) && (
-                        <div style={{
-                          marginBottom: 18, padding: 14, borderRadius: 14,
-                          border: "1px solid rgba(229,228,226,.35)", background: "rgba(229,228,226,.06)"
-                        }}>
-                          <div style={{ fontWeight: 800, marginBottom: 6, color: "#e5e4e2" }}>
-                            <i className="fas fa-gem" /> Platinum daily code
-                          </div>
-                          <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: 12 }}>
-                            Permanent benefit: claim <strong style={{ color: "#fff" }}>$0.10</strong> (100 pts) once per day.
-                          </p>
-                          {hasClaimedPlatinumToday(user.account) ? (
-                            <button className="btn btn-ghost" disabled>Claimed today — come back tomorrow</button>
-                          ) : (
-                            <button className="btn btn-primary" onClick={claimPlatinumDaily}>
-                              Claim daily $0.10
-                            </button>
-                          )}
-                        </div>
-                      )}
-                      <label>Username</label>
-                      <input value={user.username || user.account || ""} disabled style={{ opacity: 0.7 }} />
-                      <label>Bonus Code</label>
-                      <input value={loginForm.bonusCode} onChange={e => setLoginForm({ ...loginForm, bonusCode: e.target.value.toUpperCase() })}
-                        placeholder="Enter code" onKeyDown={e => e.key === "Enter" && redeemBonus()} />
-                      <button className="btn btn-primary" onClick={redeemBonus}>Redeem Code</button>
-                    </>
-                  )
+                  <>
+                    <label>Username</label>
+                    <input value={user.username || user.account || ""} disabled style={{ opacity: 0.7 }} />
+                    <label>Bonus Code</label>
+                    <input value={loginForm.bonusCode} onChange={e => setLoginForm({ ...loginForm, bonusCode: e.target.value.toUpperCase() })}
+                      placeholder="Enter code" onKeyDown={e => e.key === "Enter" && redeemBonus()} />
+                    <button className="btn btn-primary" onClick={redeemBonus}>Redeem Code</button>
+                  </>
                 ) : (
                   <button className="btn btn-primary" onClick={() => setPage("earn")}>Login to Redeem Bonus</button>
                 )}
