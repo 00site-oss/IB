@@ -793,10 +793,28 @@
         });
         if (res.error) showAlert(res.error);
         else {
-          showAlert("Successfully redeemed $" + res.amountUsd + " USD!", "success");
+          // Rate: $1 = 1000 pts
+          // Backend may return amount in pts or amountUsd in dollars (or pts by mistake)
+          let pts = 0;
+          if (res.amount != null && res.amount !== "") {
+            pts = toPoints(res.amount);
+          } else if (res.amountUsd != null && res.amountUsd !== "") {
+            const usdVal = parseFloat(res.amountUsd);
+            // If amountUsd is large like 1000, backend sent points in amountUsd field
+            if (isFinite(usdVal) && usdVal >= 1 && Number.isInteger(usdVal)) {
+              pts = toPoints(usdVal);
+            } else if (isFinite(usdVal)) {
+              pts = usdToPts(usdVal);
+            }
+          }
+          const usdStr = ptsToUsd(pts);
+          showAlert("Successfully redeemed $" + usdStr + " (" + pts + " pts)!", "success");
           setLoginForm(f => ({ ...f, bonusCode: "" }));
-          if (res.newBalance) saveUser({ ...user, balance: res.newBalance });
-          else refreshBalance();
+          if (res.newBalance != null) {
+            saveUser({ ...user, balance: toPoints(res.newBalance) || res.newBalance });
+          } else {
+            refreshBalance();
+          }
         }
       }
 
