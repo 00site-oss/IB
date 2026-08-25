@@ -449,6 +449,48 @@
     }
     .chat-panel-close { background: none; border: none; color: var(--text); font-size: 1.1rem; cursor: pointer; }
     .chat-panel-messages { flex: 1; overflow-y: auto; padding: 12px; }
+    .chat-toast {
+      position: fixed; bottom: 80px; right: 16px; left: 16px;
+      max-width: 360px; margin-left: auto;
+      background: var(--card); border: 1px solid rgba(1,214,118,.35);
+      border-radius: 16px; padding: 14px 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(1,214,118,.1);
+      z-index: 90; cursor: pointer;
+      animation: toastIn .35s cubic-bezier(.2,.9,.3,1);
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    @media (min-width: 900px) {
+      .chat-toast { bottom: 24px; left: auto; right: 24px; }
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(16px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .chat-toast-avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid rgba(1,214,118,.4);
+    }
+    .chat-toast-body { flex: 1; min-width: 0; }
+    .chat-toast-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 4px; gap: 8px;
+    }
+    .chat-toast-name { font-weight: 700; font-size: 0.85rem; color: var(--accent); }
+    .chat-toast-time { font-size: 0.7rem; color: var(--text-muted); }
+    .chat-toast-text {
+      font-size: 0.85rem; color: var(--text); line-height: 1.35;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .chat-toast-action {
+      margin-top: 8px; font-size: 0.75rem; font-weight: 700; color: var(--accent);
+      display: flex; align-items: center; gap: 5px;
+    }
+    .chat-toast-close {
+      position: absolute; top: 8px; right: 10px;
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 0.9rem; padding: 4px;
+    }
+    .chat-toast-close:hover { color: #fff; }
     /* Admin */
     .admin-app { min-height: 100vh; background: var(--bg); }
     .admin-header { background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
@@ -658,10 +700,12 @@
       const [chatOpen, setChatOpen] = useState(false);
       const [messages, setMessages] = useState([]);
       const [chatInput, setChatInput] = useState("");
+      const [chatPopup, setChatPopup] = useState(null); // { username, message, time, id }
       const lastMsgId = useRef(null);
       const chatEndRef = useRef(null);
       const userRef = useRef(null);
       const soundRef = useRef(true);
+      const chatOpenRef = useRef(false);
       const googleRendered = useRef(false);
 
       // Shop
@@ -762,9 +806,29 @@
         const res = await apiGet("getChat", { limit: 50 });
         if (!res.messages) return;
         const msgs = res.messages;
-        const lastId = msgs.length ? msgs[msgs.length - 1].id : null;
-        if (!silent && lastId && lastMsgId.current && lastId !== lastMsgId.current && soundRef.current) {
-          playDing();
+        const last = msgs.length ? msgs[msgs.length - 1] : null;
+        const lastId = last ? last.id : null;
+        const isNew = !silent && lastId && lastMsgId.current && lastId !== lastMsgId.current;
+        if (isNew) {
+          // Don't notify for own messages
+          const me = userRef.current;
+          const fromMe = me && (
+            String(last.username) === String(me.username) ||
+            String(last.username) === String(me.account) ||
+            String(last.account) === String(me.account)
+          );
+          if (!fromMe) {
+            if (soundRef.current) playDing();
+            // Popup only when chat panel is closed
+            if (!chatOpenRef.current) {
+              setChatPopup({
+                id: last.id,
+                username: last.username || "User",
+                message: last.message || "",
+                time: last.time || "now"
+              });
+            }
+          }
         }
         lastMsgId.current = lastId;
         setMessages(msgs);
@@ -1191,14 +1255,24 @@
         return () => clearInterval(id);
       }, [page, user, handleGoogle]);
 
-      // Chat polling
+      // Always poll chat so popups work even when chat is closed
       useEffect(() => {
-        if (chatOpen || page === "chat") {
-          loadChat(true);
-          const id = setInterval(() => loadChat(false), 4000);
-          return () => clearInterval(id);
-        }
-      }, [chatOpen, page, loadChat]);
+        loadChat(true);
+        const id = setInterval(() => loadChat(false), 4000);
+        return () => clearInterval(id);
+      }, [loadChat]);
+
+      useEffect(() => {
+        chatOpenRef.current = chatOpen;
+        if (chatOpen) setChatPopup(null); // clear popup when user opens chat
+      }, [chatOpen]);
+
+      // Auto-dismiss popup after 12s (new message will show again)
+      useEffect(() => {
+        if (!chatPopup) return;
+        const t = setTimeout(() => setChatPopup(null), 12000);
+        return () => clearTimeout(t);
+      }, [chatPopup]);
 
       useEffect(() => {
         if (page === "shop" && user) loadCashouts(user.account);
@@ -1802,6 +1876,40 @@
               </div>
             ))}
           </div>
+
+          {/* New message popup — click to open chat */}
+          {chatPopup && !chatOpen && (
+            <div
+              className="chat-toast"
+              role="button"
+              tabIndex={0}
+              onClick={() => { setChatPopup(null); setChatOpen(true); }}
+              onKeyDown={e => { if (e.key === "Enter") { setChatPopup(null); setChatOpen(true); } }}
+            >
+              <button
+                className="chat-toast-close"
+                title="Dismiss"
+                onClick={e => { e.stopPropagation(); setChatPopup(null); }}
+              >
+                <i className="fas fa-times" />
+              </button>
+              <img
+                className="chat-toast-avatar"
+                src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(chatPopup.username || "U") + "&background=01d676&color=0b0d14&size=80&bold=true"}
+                alt=""
+              />
+              <div className="chat-toast-body">
+                <div className="chat-toast-meta">
+                  <span className="chat-toast-name">{chatPopup.username}</span>
+                  <span className="chat-toast-time">{chatPopup.time}</span>
+                </div>
+                <div className="chat-toast-text">{chatPopup.message}</div>
+                <div className="chat-toast-action">
+                  <i className="fas fa-comments" /> Open chat to reply
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Floating chat panel */}
           {chatOpen && (
