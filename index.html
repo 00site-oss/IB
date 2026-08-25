@@ -49,24 +49,33 @@
       padding: 12px 20px; gap: 14px; max-width: 1200px; margin: 0 auto;
     }
     .logo {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 1.35rem; font-weight: 900; color: #fff; letter-spacing: -0.4px;
-      text-decoration: none; cursor: pointer;
+      display: flex; align-items: center; cursor: pointer;
+      text-decoration: none; line-height: 0;
     }
-    .logo-icon {
-      width: 32px; height: 32px; border-radius: 9px;
-      background: linear-gradient(135deg, #01d676 0%, #00b861 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; color: #0b0d14; font-weight: 900;
-      box-shadow: 0 2px 12px rgba(1, 214, 118, 0.35);
+    .logo img {
+      height: 36px; width: auto; max-width: 190px;
+      object-fit: contain; display: block;
     }
-    .logo span.brand-cash { color: var(--accent); }
-    .header-nav { display: none; gap: 4px; }
-    @media (min-width: 900px) { .header-nav { display: flex; } }
+    @media (min-width: 600px) {
+      .logo img { height: 42px; max-width: 220px; }
+    }
+    .header-nav { display: none; gap: 2px; align-items: center; }
+    .header-nav .nav-item {
+      flex-direction: row; gap: 7px;
+      padding: 8px 12px; font-size: 0.8rem; font-weight: 600;
+      border-radius: 10px;
+    }
+    .header-nav .nav-item i { font-size: 0.95rem; }
+    .header-nav .nav-item span { display: inline; }
+    @media (min-width: 900px) {
+      .header-nav { display: flex; }
+      .bottom-nav { display: none !important; }
+      .app { padding-bottom: 0 !important; }
+    }
     .nav-item {
       display: flex; flex-direction: column; align-items: center;
       padding: 8px 14px; border-radius: 12px; cursor: pointer;
-      color: var(--text-secondary); font-size: 0.7rem; font-weight: 600; gap: 3px; transition: .15s;
+      color: var(--text-secondary); font-size: 0.68rem; font-weight: 600; gap: 3px; transition: .15s;
     }
     .nav-item i { font-size: 1.15rem; }
     .nav-item:hover, .nav-item.active { color: var(--accent); background: var(--accent-dim); }
@@ -97,16 +106,65 @@
     }
     .menu-item:hover { background: rgba(255,255,255,.05); }
     .menu-divider { height: 1px; background: var(--border); margin: 4px 0; }
-    .logs-bar { overflow: hidden; border-bottom: 1px solid var(--border); background: rgba(0,0,0,.2); }
-    .logs-row { display: flex; gap: 10px; padding: 8px 16px; overflow-x: auto; }
-    .log-card {
-      display: flex; align-items: center; gap: 8px; background: var(--card);
-      border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px 4px 4px;
-      white-space: nowrap; font-size: 0.75rem;
+    .logs-bar {
+      overflow: hidden; border-bottom: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(1,214,118,.06), transparent 30%, transparent 70%, rgba(1,214,118,.06));
+      position: relative;
     }
-    .log-card img { width: 28px; height: 28px; border-radius: 50%; }
-    .log-card .uname { color: var(--text-secondary); }
-    .log-card .amount { color: var(--accent); font-weight: 600; }
+    .logs-bar-inner {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0 10px 16px; max-width: 1200px; margin: 0 auto;
+    }
+    .logs-live {
+      flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.6px; color: var(--accent);
+      padding: 5px 10px; border-radius: 999px;
+      background: var(--accent-dim); border: 1px solid rgba(1,214,118,.25);
+    }
+    .logs-live .dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(1,214,118,.5);
+      animation: livePulse 1.6s ease infinite;
+    }
+    @keyframes livePulse {
+      0% { box-shadow: 0 0 0 0 rgba(1,214,118,.45); }
+      70% { box-shadow: 0 0 0 8px rgba(1,214,118,0); }
+      100% { box-shadow: 0 0 0 0 rgba(1,214,118,0); }
+    }
+    .logs-track-wrap {
+      flex: 1; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+    .logs-row {
+      display: flex; gap: 10px; width: max-content;
+      animation: tickerScroll 40s linear infinite;
+    }
+    .logs-row:hover { animation-play-state: paused; }
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .log-card {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 999px; padding: 5px 14px 5px 5px;
+      white-space: nowrap; font-size: 0.78rem;
+      transition: border-color .15s, transform .15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    .log-card:hover { border-color: rgba(1,214,118,.4); transform: translateY(-1px); }
+    .log-card img {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid rgba(1,214,118,.35);
+    }
+    .log-card .info { display: flex; align-items: baseline; gap: 6px; }
+    .log-card .uname { color: var(--text-secondary); font-weight: 600; max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
+    .log-card .amount { color: var(--accent); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .log-card .tag {
+      font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+      color: var(--text-muted); letter-spacing: 0.3px;
+    }
     main { flex: 1; max-width: 900px; width: 100%; margin: 0 auto; padding: 20px 16px; }
     .card {
       background: var(--card); border: 1px solid var(--border);
@@ -325,11 +383,15 @@
     .badge-unsent { background: rgba(100,116,139,.2); color: #94a3b8; }
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--card); border-top: 1px solid var(--border);
-      display: flex; justify-content: space-around; padding: 6px 0; z-index: 40;
+      background: rgba(22, 26, 36, 0.96); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; padding: 6px 0 env(safe-area-inset-bottom, 0);
+      z-index: 40;
     }
-    @media (min-width: 900px) { .bottom-nav { display: none; } }
     .bottom-nav .nav-item { flex: 1; }
+    @media (min-width: 900px) {
+      .bottom-nav { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+    }
     .iframe-overlay {
       position: fixed; inset: 0; background: var(--bg); z-index: 200;
       display: flex; flex-direction: column;
@@ -449,6 +511,7 @@
     // ============================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbz7hvPX2foQcm8buIOLHjPOTnboLBuW70sAnhdBZCMfZ7M3wub_dn8VRqTDUW0sldP6jg/exec";
     const POINTS_PER_DOLLAR = 1000;
+    const PTS_PER_LEVEL = 1500; // min 1500 pts required for each +1 level
     const GOOGLE_CLIENT_ID = "387422659555-oslvljaea4gosav8f7mtvkt43ns4fa6q.apps.googleusercontent.com";
 
     const COUNTRIES = [
@@ -500,6 +563,30 @@
       if (!isFinite(n) || n <= 0) return 0;
       if (n > 0 && n < 1) return Math.round(n * 100); // 0.5 → 50 pts
       return Math.round(n); // 50 → 50 pts
+    }
+    /**
+     * Level system: each +1 level requires min 1500 pts.
+     * Level 1: 0–1499 pts | Level 2: 1500–2999 | Level 3: 3000–4499 | …
+     * Uses lifetime earned when available so cashouts don't lower level.
+     */
+    function calcLevel(pointsOrUser) {
+      let pts = 0;
+      if (pointsOrUser && typeof pointsOrUser === "object") {
+        pts = toPoints(pointsOrUser.lifetimeEarned ?? pointsOrUser.totalEarned ?? pointsOrUser.balance ?? 0);
+      } else {
+        pts = toPoints(pointsOrUser);
+      }
+      return Math.max(1, Math.floor(pts / PTS_PER_LEVEL) + 1);
+    }
+    function ptsToNextLevel(pointsOrUser) {
+      let pts = 0;
+      if (pointsOrUser && typeof pointsOrUser === "object") {
+        pts = toPoints(pointsOrUser.lifetimeEarned ?? pointsOrUser.totalEarned ?? pointsOrUser.balance ?? 0);
+      } else {
+        pts = toPoints(pointsOrUser);
+      }
+      const nextThreshold = calcLevel(pts) * PTS_PER_LEVEL;
+      return Math.max(0, nextThreshold - pts);
     }
     function money(pts) { return "$" + ptsToUsd(toPoints(pts)); }
 
@@ -604,10 +691,21 @@
         setCaptcha(String(Math.floor(10000 + Math.random() * 90000)));
       }
 
-      function saveUser(u) {
-        setUser(u);
-        userRef.current = u;
-        storage.set("buxiq_user", JSON.stringify(u));
+      function saveUser(u, opts = {}) {
+        // Track lifetime earned (never decreases) so level stays after cashouts
+        const prev = userRef.current || {};
+        const balance = toPoints(u.balance ?? prev.balance ?? 0);
+        let lifetime = toPoints(u.lifetimeEarned ?? u.totalEarned ?? prev.lifetimeEarned ?? 0);
+        if (opts.earnedPts && opts.earnedPts > 0) {
+          lifetime = Math.max(lifetime, toPoints(prev.lifetimeEarned || 0) + opts.earnedPts);
+        }
+        // Keep lifetime at least as high as current balance (first login / legacy)
+        lifetime = Math.max(lifetime, balance);
+        const level = calcLevel(lifetime);
+        const next = { ...prev, ...u, balance, lifetimeEarned: lifetime, level };
+        setUser(next);
+        userRef.current = next;
+        storage.set("buxiq_user", JSON.stringify(next));
       }
 
       function logout() {
@@ -644,7 +742,8 @@
         if (!u) return;
         const res = await apiGet("balance", { account: u.account });
         if (res.balance !== undefined) {
-          saveUser({ ...u, balance: res.balance, level: res.level || u.level });
+          // Level from lifetime earned (1500 pts per level) — ignore server level
+          saveUser({ ...u, balance: res.balance });
         }
       }, []);
 
@@ -914,7 +1013,10 @@
           showAlert("Successfully redeemed $" + usdStr + " (" + pts + " pts)!", "success");
           setLoginForm(f => ({ ...f, bonusCode: "" }));
           if (res.newBalance != null) {
-            saveUser({ ...user, balance: toPoints(res.newBalance) || res.newBalance });
+            saveUser({ ...user, balance: toPoints(res.newBalance) || res.newBalance }, { earnedPts: pts });
+          } else if (pts > 0) {
+            const newBal = toPoints(user.balance || 0) + pts;
+            saveUser({ ...user, balance: newBal }, { earnedPts: pts });
           } else {
             refreshBalance();
           }
@@ -1045,7 +1147,11 @@
               loadLogs();
               loadLeaders();
               const u = userRef.current;
-              if (u && (String(u.account) === String(uid) || u.username === uid)) refreshBalance();
+              if (u && (String(u.account) === String(uid) || u.username === uid)) {
+                // Add earned pts toward level (1500 pts per level)
+                const newBal = toPoints(u.balance || 0) + pts;
+                saveUser({ ...u, balance: newBal }, { earnedPts: pts });
+              }
             }
           });
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -1140,8 +1246,7 @@
           <div className="top-header">
             <div className="header-row">
               <div className="logo" onClick={() => go("home")}>
-                <div className="logo-icon">$</div>
-                Reward<span className="brand-cash">Bux</span>
+                <img src="https://i.ibb.co/s9MLLtHD/IMG-3307.png" alt="RewardBux" />
               </div>
               <div className="header-nav">
                 {NAV.map(n => (
@@ -1184,16 +1289,24 @@
             </div>
             {logs.length > 0 && (
               <div className="logs-bar">
-                <div className="logs-row">
-                  {logs.slice(0, 15).map((l, i) => (
-                    <div className="log-card" key={i}>
-                      <img src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(l.username || "U") + "&background=0d9488&color=fff&size=64"} alt="" />
-                      <div className="info">
-                        <span className="uname">{l.username}</span>
-                        <span className="amount">{money(l.amount || 0)}</span>
-                      </div>
+                <div className="logs-bar-inner">
+                  <div className="logs-live"><span className="dot" /> Live</div>
+                  <div className="logs-track-wrap">
+                    <div className="logs-row">
+                      {[...logs.slice(0, 20), ...logs.slice(0, 20)].map((l, i) => (
+                        <div className="log-card" key={i}>
+                          <img
+                            src={"https://ui-avatars.com/api/?name=" + encodeURIComponent(l.username || "U") + "&background=01d676&color=0b0d14&size=64&bold=true"}
+                            alt=""
+                          />
+                          <div className="info">
+                            <span className="uname">{l.username || "User"}</span>
+                            <span className="amount">+{money(l.amount || 0)}</span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -1550,8 +1663,11 @@
                   </p>
                 </div>
                 <div style={{ marginBottom: 18 }}>
-                  <strong style={{ color: "#fff" }}>Points</strong>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>1,000 points = $1.00 USD. Points have no cash value until a successful cashout is completed.</p>
+                  <strong style={{ color: "#fff" }}>Points & Levels</strong>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>
+                    1,000 points = $1.00 USD. Each level-up requires a minimum of <strong style={{ color: "var(--accent)" }}>1,500 pts</strong> earned
+                    (Level 1: 0–1,499 · Level 2: 1,500–2,999 · Level 3: 3,000+). Level is based on lifetime earnings so cashouts do not lower your level.
+                  </p>
                 </div>
                 <button className="btn btn-primary" style={{ marginBottom: 8 }} onClick={() => alert("support@rewardbux.com")}>Contact Support</button>
                 <div className="help-links">
@@ -2003,7 +2119,7 @@
           <div className="admin-header">
             <div className="admin-header-row">
               <div className="admin-logo">
-                <span>$Reward<span style={{ color: "#5eead4" }}>Bux</span></span>
+                <img src="https://i.ibb.co/s9MLLtHD/IMG-3307.png" alt="RewardBux" style={{ height: 32, width: "auto", objectFit: "contain" }} />
                 <span className="badge-admin">ADMIN</span>
               </div>
               <div className="admin-nav">
