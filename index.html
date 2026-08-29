@@ -704,6 +704,45 @@
     }
     function money(pts) { return "$" + ptsToUsd(toPoints(pts)); }
 
+    const MAX_TASKS = 100;
+    /** Task history item: { type: 'open'|'complete', ts, pts? } */
+    function loadTaskHistory(account) {
+      if (!account) return [];
+      try {
+        const raw = storage.get("buxiq_tasks_" + String(account));
+        if (!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr.slice(-MAX_TASKS) : [];
+      } catch { return []; }
+    }
+    function saveTaskHistory(account, tasks) {
+      if (!account) return;
+      try {
+        storage.set("buxiq_tasks_" + String(account), JSON.stringify((tasks || []).slice(-MAX_TASKS)));
+      } catch {}
+    }
+    /**
+     * Acceptance rate: each open +0.5%, each complete +0.5% (from last 100 tasks).
+     * Completion rate: each complete +1% (from last 100 tasks).
+     */
+    function calcRates(tasks) {
+      const list = (tasks || []).slice(-MAX_TASKS);
+      let accept = 0;
+      let complete = 0;
+      list.forEach(t => {
+        if (t.type === "open") accept += 0.5;
+        if (t.type === "complete") {
+          accept += 0.5;
+          complete += 1;
+        }
+      });
+      return {
+        acceptanceRate: Math.min(100, Math.round(accept * 10) / 10),
+        completionRate: Math.min(100, Math.round(complete * 10) / 10),
+        taskCount: list.length
+      };
+    }
+
     async function apiGet(action, params = {}) {
       try {
         const qs = new URLSearchParams({ action, ...params }).toString();
@@ -762,6 +801,14 @@
       const [soundOn, setSoundOn] = useState(true);
       const [iframeUrl, setIframeUrl] = useState(null);
       const [menuOpen, setMenuOpen] = useState(false);
+      // Offerwall accept/decline + rates (last 100 tasks)
+      const [pendingOfferwall, setPendingOfferwall] = useState(null); // { ow, url } awaiting Accept/Decline
+      const [offerwallLocked, setOfferwallLocked] = useState(false); // can't close until credited
+      const [taskHistory, setTaskHistory] = useState([]);
+      const [rates, setRates] = useState({ acceptanceRate: 0, completionRate: 0, taskCount: 0 });
+      const offerwallBaselineBal = useRef(null); // balance when offerwall opened
+      const offerwallLockedRef = useRef(false);
+      const processedTxnRef = useRef(new Set()); // avoid double-counting same credit
 
       // Login
       const [loginForm, setLoginForm] = useState({ account: "", clientId: "", captcha: "", bonusCode: "" });
@@ -822,6 +869,47 @@
         setUser(next);
         userRef.current = next;
         storage.set("buxiq_user", JSON.stringify(next));
+        // Load task history when account is known
+        const acc = next.account || next.username;
+        if (acc) {
+          const tasks = loadTaskHistory(acc);
+          setTaskHistory(tasks);
+          setRates(calcRates(tasks));
+        }
+      }
+
+      function pushTask(type, extra = {}) {
+        const u = userRef.current;
+        const acc = u && (u.account || u.username);
+        if (!acc) return;
+        const tasks = loadTaskHistory(acc);
+        const entry = { type, ts: Date.now(), ...extra };
+        tasks.push(entry);
+        const trimmed = tasks.slice(-MAX_TASKS);
+        saveTaskHistory(acc, trimmed);
+        setTaskHistory(trimmed);
+        setRates(calcRates(trimmed));
+      }
+
+      function recordOfferwallOpen() {
+        // +0.5% acceptance rate
+        pushTask("open");
+      }
+
+      function recordOfferwallComplete(pts) {
+        // +1% completion rate, +0.5% acceptance rate
+        pushTask("complete", { pts: pts || 0 });
+      }
+
+      function unlockOfferwall(creditedPts) {
+        if (!offerwallLockedRef.current) return;
+        offerwallLockedRef.current = false;
+        setOfferwallLocked(false);
+        offerwallBaselineBal.current = null;
+        if (creditedPts != null && creditedPts > 0) {
+          recordOfferwallComplete(creditedPts);
+          showAlert("Offer credited! Rates updated.", "success");
+        }
       }
 
       function logout() {
@@ -832,6 +920,12 @@
         googleRendered.current = false;
         setPage("home");
         setMenuOpen(false);
+        setTaskHistory([]);
+        setRates({ acceptanceRate: 0, completionRate: 0, taskCount: 0 });
+        setPendingOfferwall(null);
+        setIframeUrl(null);
+        setOfferwallLocked(false);
+        offerwallLockedRef.current = false;
         showAlert("Logged out", "success");
       }
 
@@ -1226,7 +1320,35 @@
           .replace(/\{account\}/gi, encodeURIComponent(uid))
           .replace(/\{username\}/gi, encodeURIComponent(uname));
         url += (url.indexOf("?") !== -1 ? "&" : "?") + "t=" + Date.now();
+        // Prompt Accept / Decline before opening
+        setPendingOfferwall({ ow, url, name: ow.name || "Offerwall" });
+      }
+
+      function acceptOfferwall() {
+        if (!pendingOfferwall) return;
+        const { url } = pendingOfferwall;
+        setPendingOfferwall(null);
+        // +0.5% acceptance rate on open/accept
+        recordOfferwallOpen();
+        const bal = toPoints(userRef.current?.balance || 0);
+        offerwallBaselineBal.current = bal;
+        offerwallLockedRef.current = true;
+        setOfferwallLocked(true);
         setIframeUrl(url);
+      }
+
+      function declineOfferwall() {
+        setPendingOfferwall(null);
+        showAlert("Offerwall declined", "warn");
+      }
+
+      function tryCloseOfferwall() {
+        if (offerwallLockedRef.current) {
+          showAlert("Complete an offer from this wall first — you cannot close until credited.", "warn");
+          return;
+        }
+        setIframeUrl(null);
+        refreshBalance();
       }
 
       function toggleSound() {
@@ -1253,6 +1375,12 @@
             const u = JSON.parse(saved);
             setUser(u);
             userRef.current = u;
+            const acc = u.account || u.username;
+            if (acc) {
+              const tasks = loadTaskHistory(acc);
+              setTaskHistory(tasks);
+              setRates(calcRates(tasks));
+            }
           } catch {}
         }
         const s = storage.get("buxiq_sound");
@@ -1272,25 +1400,37 @@
         const txn = params.get("transaction_id") || params.get("txn_id");
         if (uid && amount && !isNaN(parseFloat(amount))) {
           const pts = toPoints(amount); // 50 → 50 pts, 0.5 → 50 pts
-          apiPost("creditEarnings", {
-            userId: uid,
-            amount: pts,
-            transactionId: txn || String(Date.now())
-          }).then(res => {
-            if (!res.error) {
-              showAlert(money(pts) + " credited!", "success");
-              if (soundRef.current) playDing();
-              loadLogs();
-              loadLeaders();
-              const u = userRef.current;
-              if (u && (String(u.account) === String(uid) || u.username === uid)) {
-                // Add earned pts toward level (1500 pts per level)
-                const newBal = toPoints(u.balance || 0) + pts;
-                saveUser({ ...u, balance: newBal }, { earnedPts: pts });
+          const txnId = txn || String(Date.now());
+          if (processedTxnRef.current.has(txnId)) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+          } else {
+            processedTxnRef.current.add(txnId);
+            apiPost("creditEarnings", {
+              userId: uid,
+              amount: pts,
+              transactionId: txnId
+            }).then(res => {
+              if (!res.error) {
+                showAlert(money(pts) + " credited!", "success");
+                if (soundRef.current) playDing();
+                loadLogs();
+                loadLeaders();
+                const u = userRef.current;
+                if (u && (String(u.account) === String(uid) || u.username === uid)) {
+                  // Add earned pts toward level (1500 pts per level)
+                  const newBal = toPoints(u.balance || 0) + pts;
+                  saveUser({ ...u, balance: newBal }, { earnedPts: pts });
+                  // Completion from postback: +1% completion, +0.5% acceptance; unlock if locked
+                  if (offerwallLockedRef.current) {
+                    unlockOfferwall(pts);
+                  } else {
+                    recordOfferwallComplete(pts);
+                  }
+                }
               }
-            }
-          });
-          window.history.replaceState({}, document.title, window.location.pathname);
+            });
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
         }
       }, []);
 
@@ -1333,6 +1473,59 @@
         const id = setInterval(() => loadChat(false), 4000);
         return () => clearInterval(id);
       }, [loadChat]);
+
+      // While offerwall is locked, poll balance/logs — unlock + record complete when credited
+      useEffect(() => {
+        if (!offerwallLocked || !iframeUrl) return;
+        const poll = async () => {
+          const u = userRef.current;
+          if (!u || !offerwallLockedRef.current) return;
+          const baseline = offerwallBaselineBal.current;
+          if (baseline == null) return;
+          const res = await apiGet("balance", { account: u.account });
+          if (res.balance !== undefined) {
+            const newBal = toPoints(res.balance);
+            if (newBal > baseline) {
+              const gained = newBal - baseline;
+              saveUser({ ...u, balance: newBal }, { earnedPts: gained });
+              unlockOfferwall(gained);
+              if (soundRef.current) playDing();
+              loadLogs();
+              loadLeaders();
+              return;
+            }
+          }
+          // Also check logs for recent credit matching this user
+          const logsRes = await apiGet("logs");
+          if (logsRes.logs && Array.isArray(logsRes.logs)) {
+            setLogs(logsRes.logs);
+            const me = String(u.account || u.username || "").toLowerCase();
+            const recent = logsRes.logs.find(l => {
+              const name = String(l.username || l.account || "").toLowerCase();
+              return name === me || name === String(u.username || "").toLowerCase();
+            });
+            if (recent) {
+              const amt = toPoints(recent.amount || 0);
+              if (amt > 0 && offerwallLockedRef.current) {
+                // Re-fetch balance to sync
+                const b2 = await apiGet("balance", { account: u.account });
+                if (b2.balance !== undefined) {
+                  const nb = toPoints(b2.balance);
+                  if (nb > baseline) {
+                    saveUser({ ...u, balance: nb }, { earnedPts: nb - baseline });
+                    unlockOfferwall(nb - baseline);
+                    if (soundRef.current) playDing();
+                    loadLeaders();
+                  }
+                }
+              }
+            }
+          }
+        };
+        poll();
+        const id = setInterval(poll, 3500);
+        return () => clearInterval(id);
+      }, [offerwallLocked, iframeUrl]);
 
       useEffect(() => {
         chatOpenRef.current = chatOpen;
@@ -1512,8 +1705,25 @@
               user ? (
                 <div className="card">
                   <h2>Earn</h2>
-                  <p style={{ color: "var(--text-secondary)", marginBottom: 18, fontSize: "0.95rem" }}>
+                  <p style={{ color: "var(--text-secondary)", marginBottom: 14, fontSize: "0.95rem" }}>
                     Choose an offerwall. Complete games, surveys & app tasks — get paid.
+                  </p>
+                  <div className="stats-row" style={{ maxWidth: "100%", margin: "0 0 18px", gridTemplateColumns: "repeat(3, 1fr)" }}>
+                    <div className="stat-box">
+                      <div className="val">{rates.acceptanceRate}%</div>
+                      <div className="lbl">Acceptance rate</div>
+                    </div>
+                    <div className="stat-box">
+                      <div className="val">{rates.completionRate}%</div>
+                      <div className="lbl">Completion rate</div>
+                    </div>
+                    <div className="stat-box">
+                      <div className="val">{rates.taskCount}/100</div>
+                      <div className="lbl">Tasks tracked</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: 16 }}>
+                    Open (Accept) = +0.5% acceptance · Credited offer/survey = +1% completion &amp; +0.5% acceptance · Based on last 100 tasks
                   </p>
                   {loadingOffers ? <div className="empty">Loading offerwalls…</div>
                     : offerwalls.length === 0 ? <div className="empty">No offerwalls available.</div>
@@ -1740,7 +1950,7 @@
                 <h2>Help & Support</h2>
                 <div style={{ marginBottom: 18 }}>
                   <strong style={{ color: "#fff" }}>How to earn?</strong>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>Login → Earn → open an offerwall and complete offers (surveys, apps, games).</p>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>Login → Earn → Accept an offerwall → complete offers (surveys, apps, games). Accepting opens the wall (+0.5% acceptance). After accept you cannot close until credited. Each credit adds +1% completion &amp; +0.5% acceptance (last 100 tasks).</p>
                 </div>
                 <div style={{ marginBottom: 18 }}>
                   <strong style={{ color: "#fff" }}>How to cash out?</strong>
@@ -1966,13 +2176,57 @@
             </>
           )}
 
+          {/* Accept / Decline offerwall prompt */}
+          {pendingOfferwall && (
+            <div className="modal-overlay" style={{ zIndex: 210 }} onClick={e => e.target === e.currentTarget && declineOfferwall()}>
+              <div className="modal">
+                <div className="modal-header">
+                  <h3>Open offerwall?</h3>
+                  <button className="modal-close" onClick={declineOfferwall}><i className="fas fa-times" /></button>
+                </div>
+                <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", marginBottom: 12 }}>
+                  <strong style={{ color: "#fff" }}>{pendingOfferwall.name}</strong>
+                </p>
+                <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: 16 }}>
+                  Accept to open this offerwall. Opening adds <strong style={{ color: "var(--accent)" }}>+0.5%</strong> to your acceptance rate.
+                  After you accept you cannot close until an offer from this wall is credited (+1% completion &amp; +0.5% acceptance).
+                </p>
+                <div className="btn-row">
+                  <button className="btn btn-ghost" onClick={declineOfferwall}>Decline</button>
+                  <button className="btn btn-primary" onClick={acceptOfferwall}>Accept</button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Offerwall iframe */}
           {iframeUrl && (
             <div className="iframe-overlay">
               <div className="iframe-bar">
-                <span style={{ fontWeight: 600 }}>Offer Wall</span>
-                <button onClick={() => { setIframeUrl(null); refreshBalance(); }}><i className="fas fa-times" /></button>
+                <span style={{ fontWeight: 600 }}>
+                  Offer Wall
+                  {offerwallLocked && (
+                    <span style={{ marginLeft: 10, fontSize: "0.75rem", color: "var(--warning)", fontWeight: 600 }}>
+                      <i className="fas fa-lock" /> Locked until credited
+                    </span>
+                  )}
+                </span>
+                <button
+                  onClick={tryCloseOfferwall}
+                  title={offerwallLocked ? "Complete an offer first" : "Close"}
+                  style={offerwallLocked ? { opacity: 0.45, cursor: "not-allowed" } : undefined}
+                >
+                  <i className="fas fa-times" />
+                </button>
               </div>
+              {offerwallLocked && (
+                <div style={{
+                  padding: "8px 16px", background: "rgba(255,176,32,.12)", borderBottom: "1px solid var(--border)",
+                  fontSize: "0.8rem", color: "var(--warning)", textAlign: "center"
+                }}>
+                  Complete a game, survey, or offer — once credited you can close (+1% completion rate).
+                </div>
+              )}
               <iframe src={iframeUrl} title="Offerwall" sandbox="allow-scripts allow-forms allow-popups allow-same-origin allow-top-navigation-by-user-activation" />
             </div>
           )}
