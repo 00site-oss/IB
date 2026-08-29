@@ -808,6 +808,7 @@
       const [rates, setRates] = useState({ acceptanceRate: 0, completionRate: 0, taskCount: 0 });
       const offerwallBaselineBal = useRef(null); // balance when offerwall opened
       const offerwallLockedRef = useRef(false);
+      const iframeOpenRef = useRef(false); // true while offerwall overlay is open
       const processedTxnRef = useRef(new Set()); // avoid double-counting same credit
 
       // Login
@@ -926,6 +927,7 @@
         setIframeUrl(null);
         setOfferwallLocked(false);
         offerwallLockedRef.current = false;
+        iframeOpenRef.current = false;
         showAlert("Logged out", "success");
       }
 
@@ -1334,6 +1336,7 @@
         offerwallBaselineBal.current = bal;
         offerwallLockedRef.current = true;
         setOfferwallLocked(true);
+        iframeOpenRef.current = true;
         setIframeUrl(url);
       }
 
@@ -1347,6 +1350,7 @@
           showAlert("Complete an offer from this wall first — you cannot close until credited.", "warn");
           return;
         }
+        iframeOpenRef.current = false;
         setIframeUrl(null);
         refreshBalance();
       }
@@ -1526,6 +1530,44 @@
         const id = setInterval(poll, 3500);
         return () => clearInterval(id);
       }, [offerwallLocked, iframeUrl]);
+
+      // Block page reload while inside offerwall (nothing happens on F5 / Ctrl+R / refresh)
+      useEffect(() => {
+        iframeOpenRef.current = !!iframeUrl;
+
+        function onBeforeUnload(e) {
+          if (!iframeOpenRef.current) return;
+          e.preventDefault();
+          e.returnValue = "";
+          return "";
+        }
+
+        function onKeyDown(e) {
+          if (!iframeOpenRef.current) return;
+          const key = e.key || "";
+          const isReload =
+            key === "F5" ||
+            ((e.ctrlKey || e.metaKey) && (key === "r" || key === "R")) ||
+            ((e.ctrlKey || e.metaKey) && e.shiftKey && (key === "r" || key === "R"));
+          if (isReload) {
+            e.preventDefault();
+            e.stopPropagation();
+            showAlert(
+              offerwallLockedRef.current
+                ? "Cannot reload while offerwall is locked — complete an offer first."
+                : "Cannot reload while offerwall is open.",
+              "warn"
+            );
+          }
+        }
+
+        window.addEventListener("beforeunload", onBeforeUnload);
+        window.addEventListener("keydown", onKeyDown, true);
+        return () => {
+          window.removeEventListener("beforeunload", onBeforeUnload);
+          window.removeEventListener("keydown", onKeyDown, true);
+        };
+      }, [iframeUrl]);
 
       useEffect(() => {
         chatOpenRef.current = chatOpen;
