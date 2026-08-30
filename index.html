@@ -2,11 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-<!-- This site is hosted on Netlify. Anyone can build and deploy a site
-     like this one for free: https://netlify.new/?utm_campaign=ai-legible&utm_source=comment&utm_medium=referral&utm_id=5c1f1712-245e-4621-876c-41001b7778d7
-     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
-<meta name="hosting-provider" content="Netlify">
-<meta name="netlify-deploy" content="https://netlify.new/?utm_campaign=ai-legible&amp;utm_source=meta&amp;utm_medium=referral&amp;utm_id=5c1f1712-245e-4621-876c-41001b7778d7">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RewardBux – Get Paid for Games & Surveys | Earn Real Cash</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -813,17 +808,7 @@
       const [rates, setRates] = useState({ acceptanceRate: 0, completionRate: 0, taskCount: 0 });
       const offerwallBaselineBal = useRef(null); // balance when offerwall opened
       const offerwallLockedRef = useRef(false);
-      const iframeOpenRef = useRef(false); // true while offerwall overlay is open
       const processedTxnRef = useRef(new Set()); // avoid double-counting same credit
-
-      // Overall score + clock-in
-      const [overallScore, setOverallScore] = useState(0);
-      const [scoreAccess, setScoreAccess] = useState({ chat: false, bonus: false, shop: false, offerwalls: false });
-      const [scoreBreakdown, setScoreBreakdown] = useState(null);
-      const [clockInAt, setClockInAt] = useState("");
-      const [shiftActive, setShiftActive] = useState(false);
-      const heartbeatRef = useRef(null);
-      const SCORE_GATES = { chat: 25, bonus: 35, shop: 45, offerwalls: 50 };
 
       // Login
       const [loginForm, setLoginForm] = useState({ account: "", clientId: "", captcha: "", bonusCode: "" });
@@ -869,74 +854,6 @@
         setCaptcha(String(Math.floor(10000 + Math.random() * 90000)));
       }
 
-      function localTimePayload() {
-        const d = new Date();
-        const pad = n => String(n).padStart(2, "0");
-        return {
-          localHour: d.getHours(),
-          localDate: d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate())
-        };
-      }
-
-      async function refreshOverallScore(account) {
-        const acc = account || (userRef.current && (userRef.current.account || userRef.current.username));
-        if (!acc) return;
-        const res = await apiGet("getOverallScore", { account: acc });
-        if (res.error) return;
-        setOverallScore(res.overall || 0);
-        setScoreAccess(res.access || { chat: false, bonus: false, shop: false, offerwalls: false });
-        setScoreBreakdown(res.scores || null);
-        if (res.shift) {
-          setClockInAt(res.shift.clockInAt || "");
-          setShiftActive(!!res.shift.active);
-        }
-      }
-
-      async function doClockIn(account) {
-        const acc = account || (userRef.current && (userRef.current.account || userRef.current.username));
-        if (!acc) return;
-        const lt = localTimePayload();
-        const res = await apiPost("clockIn", { account: acc, ...lt });
-        if (res.error) return;
-        setClockInAt(res.clockInAt || "");
-        setShiftActive(true);
-        if (res.overall != null) setOverallScore(res.overall);
-        if (res.access) setScoreAccess(res.access);
-        if (res.attendanceDelta) {
-          const note = res.attendanceNote || (res.attendanceDelta > 0 ? "Early clock-in bonus" : "Late clock-in penalty");
-          showAlert(note + " · Score " + (res.overall ?? ""), res.attendanceDelta > 0 ? "success" : "warn");
-        }
-      }
-
-      function startHeartbeat(account) {
-        stopHeartbeat();
-        const tick = async () => {
-          if (document.visibilityState !== "visible") return;
-          const u = userRef.current;
-          const acc = account || (u && (u.account || u.username));
-          if (!acc) return;
-          await apiPost("heartbeat", { account: acc });
-        };
-        heartbeatRef.current = setInterval(tick, 45000);
-        tick();
-      }
-
-      function stopHeartbeat() {
-        if (heartbeatRef.current) {
-          clearInterval(heartbeatRef.current);
-          heartbeatRef.current = null;
-        }
-      }
-
-      async function endShift(account) {
-        stopHeartbeat();
-        const acc = account || (userRef.current && (userRef.current.account || userRef.current.username));
-        if (!acc) return;
-        const lt = localTimePayload();
-        await apiPost("clockOut", { account: acc, ...lt });
-        setShiftActive(false);
-      }
-
       function saveUser(u, opts = {}) {
         // Track lifetime earned (never decreases) so level stays after cashouts
         const prev = userRef.current || {};
@@ -958,11 +875,6 @@
           const tasks = loadTaskHistory(acc);
           setTaskHistory(tasks);
           setRates(calcRates(tasks));
-          // Auto clock-in + score on login / session restore
-          if (!opts.skipClockIn) {
-            doClockIn(acc).then(() => refreshOverallScore(acc));
-            startHeartbeat(acc);
-          }
         }
       }
 
@@ -997,13 +909,10 @@
         if (creditedPts != null && creditedPts > 0) {
           recordOfferwallComplete(creditedPts);
           showAlert("Offer credited! Rates updated.", "success");
-          const acc = userRef.current && (userRef.current.account || userRef.current.username);
-          if (acc) refreshOverallScore(acc);
         }
       }
 
       function logout() {
-        endShift();
         setUser(null);
         userRef.current = null;
         storage.remove("buxiq_user");
@@ -1017,12 +926,6 @@
         setIframeUrl(null);
         setOfferwallLocked(false);
         offerwallLockedRef.current = false;
-        iframeOpenRef.current = false;
-        setOverallScore(0);
-        setScoreAccess({ chat: false, bonus: false, shop: false, offerwalls: false });
-        setScoreBreakdown(null);
-        setClockInAt("");
-        setShiftActive(false);
         showAlert("Logged out", "success");
       }
 
@@ -1406,10 +1309,6 @@
 
       function openOfferwall(ow) {
         if (!user) { showAlert("Please login first"); setPage("earn"); return; }
-        if (!scoreAccess.offerwalls) {
-          showAlert("Need overall score ≥ " + SCORE_GATES.offerwalls + " for offerwalls (yours: " + overallScore + ")", "warn");
-          return;
-        }
         const uid = String(user.account || user.username || "");
         const uname = String(user.username || uid);
         let url = String(ow.urlTemplate || "");
@@ -1425,27 +1324,16 @@
         setPendingOfferwall({ ow, url, name: ow.name || "Offerwall" });
       }
 
-      async function acceptOfferwall() {
+      function acceptOfferwall() {
         if (!pendingOfferwall) return;
-        const { url, name } = pendingOfferwall;
+        const { url } = pendingOfferwall;
         setPendingOfferwall(null);
-        // Local acceptance rate +0.5%
+        // +0.5% acceptance rate on open/accept
         recordOfferwallOpen();
-        // Overall score +5 via backend
-        const u = userRef.current;
-        const acc = u && (u.account || u.username);
-        if (acc) {
-          const lt = localTimePayload();
-          const res = await apiPost("recordAcceptance", { account: acc, offerwall: name || "", ...lt });
-          if (res.overall != null) setOverallScore(res.overall);
-          if (res.access) setScoreAccess(res.access);
-          if (res.delta) showAlert("Acceptance +" + res.delta + " overall score", "success");
-        }
         const bal = toPoints(userRef.current?.balance || 0);
         offerwallBaselineBal.current = bal;
         offerwallLockedRef.current = true;
         setOfferwallLocked(true);
-        iframeOpenRef.current = true;
         setIframeUrl(url);
       }
 
@@ -1459,7 +1347,6 @@
           showAlert("Complete an offer from this wall first — you cannot close until credited.", "warn");
           return;
         }
-        iframeOpenRef.current = false;
         setIframeUrl(null);
         refreshBalance();
       }
@@ -1472,20 +1359,9 @@
       }
 
       function go(p) {
-        if (p === "chat") {
-          if (user && !scoreAccess.chat) {
-            showAlert("Need overall score ≥ " + SCORE_GATES.chat + " to use chat (yours: " + overallScore + ")", "warn");
-            return;
-          }
-          setChatOpen(o => !o);
-        } else {
+        if (p === "chat") setChatOpen(o => !o);
+        else {
           setChatOpen(false);
-          if (p === "earn" && user && !scoreAccess.offerwalls) {
-            showAlert("Need overall score ≥ " + SCORE_GATES.offerwalls + " for offerwalls (yours: " + overallScore + ")", "warn");
-          }
-          if (p === "shop" && user && !scoreAccess.shop) {
-            showAlert("Need overall score ≥ " + SCORE_GATES.shop + " for shop (yours: " + overallScore + ")", "warn");
-          }
           setPage(p);
         }
         setMenuOpen(false);
@@ -1504,8 +1380,6 @@
               const tasks = loadTaskHistory(acc);
               setTaskHistory(tasks);
               setRates(calcRates(tasks));
-              doClockIn(acc).then(() => refreshOverallScore(acc));
-              startHeartbeat(acc);
             }
           } catch {}
         }
@@ -1562,40 +1436,6 @@
 
       useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
       useEffect(() => { userRef.current = user; }, [user]);
-
-      // Clock-in heartbeat + auto end shift when leaving site
-      useEffect(() => {
-        if (!user) {
-          stopHeartbeat();
-          return;
-        }
-        const acc = user.account || user.username;
-        const onVis = () => {
-          if (document.visibilityState === "visible") {
-            doClockIn(acc);
-            startHeartbeat(acc);
-            refreshOverallScore(acc);
-          }
-          // When hidden: server ends shift after IDLE_MINUTES without heartbeat
-        };
-        const onUnload = () => {
-          try {
-            const lt = localTimePayload();
-            const body = new URLSearchParams({ action: "clockOut", account: acc, ...lt });
-            if (navigator.sendBeacon) {
-              navigator.sendBeacon(API_URL, body);
-            }
-          } catch {}
-        };
-        document.addEventListener("visibilitychange", onVis);
-        window.addEventListener("pagehide", onUnload);
-        startHeartbeat(acc);
-        return () => {
-          document.removeEventListener("visibilitychange", onVis);
-          window.removeEventListener("pagehide", onUnload);
-          stopHeartbeat();
-        };
-      }, [user && (user.account || user.username)]);
 
       // Google button
       useEffect(() => {
@@ -1687,44 +1527,6 @@
         return () => clearInterval(id);
       }, [offerwallLocked, iframeUrl]);
 
-      // Block page reload while inside offerwall (nothing happens on F5 / Ctrl+R / refresh)
-      useEffect(() => {
-        iframeOpenRef.current = !!iframeUrl;
-
-        function onBeforeUnload(e) {
-          if (!iframeOpenRef.current) return;
-          e.preventDefault();
-          e.returnValue = "";
-          return "";
-        }
-
-        function onKeyDown(e) {
-          if (!iframeOpenRef.current) return;
-          const key = e.key || "";
-          const isReload =
-            key === "F5" ||
-            ((e.ctrlKey || e.metaKey) && (key === "r" || key === "R")) ||
-            ((e.ctrlKey || e.metaKey) && e.shiftKey && (key === "r" || key === "R"));
-          if (isReload) {
-            e.preventDefault();
-            e.stopPropagation();
-            showAlert(
-              offerwallLockedRef.current
-                ? "Cannot reload while offerwall is locked — complete an offer first."
-                : "Cannot reload while offerwall is open.",
-              "warn"
-            );
-          }
-        }
-
-        window.addEventListener("beforeunload", onBeforeUnload);
-        window.addEventListener("keydown", onKeyDown, true);
-        return () => {
-          window.removeEventListener("beforeunload", onBeforeUnload);
-          window.removeEventListener("keydown", onKeyDown, true);
-        };
-      }, [iframeUrl]);
-
       useEffect(() => {
         chatOpenRef.current = chatOpen;
         if (chatOpen) setChatPopup(null); // clear popup when user opens chat
@@ -1805,14 +1607,6 @@
                       <div className="balance-row">
                         <span className="diamond"><i className="fas fa-gem" /></span>
                         <span className="amount">{money(user.balance || 0)}</span>
-                      </div>
-                      <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", marginTop: 2, display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
-                        <span style={{ color: "var(--accent)", fontWeight: 700 }}>Score {overallScore}</span>
-                        {shiftActive && clockInAt ? (
-                          <span title="Clocked in"><i className="fas fa-clock" style={{ marginRight: 3 }} />{String(clockInAt).slice(-5) || clockInAt}</span>
-                        ) : (
-                          <span style={{ color: "var(--warning)" }}>Shift ended</span>
-                        )}
                       </div>
                     </div>
                     <button className="icon-btn logout" onClick={logout} title="Logout"><i className="fas fa-sign-out-alt" /></button>
@@ -1909,17 +1703,6 @@
             {/* EARN */}
             {page === "earn" && (
               user ? (
-                !scoreAccess.offerwalls ? (
-                <div className="card" style={{ textAlign: "center" }}>
-                  <h2><i className="fas fa-lock" style={{ color: "var(--warning)", marginRight: 8 }} /> Offerwalls locked</h2>
-                  <p style={{ color: "var(--text-secondary)", marginBottom: 10 }}>
-                    Overall score <strong style={{ color: "var(--accent)" }}>{overallScore}</strong> — need <strong>{SCORE_GATES.offerwalls}</strong> to unlock offerwalls.
-                  </p>
-                  <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                    Clock in before 10:00 local (+20) · Accept walls (+5) · Complete offers (+5)
-                  </p>
-                </div>
-                ) : (
                 <div className="card">
                   <h2>Earn</h2>
                   <p style={{ color: "var(--text-secondary)", marginBottom: 14, fontSize: "0.95rem" }}>
@@ -1956,7 +1739,6 @@
                       </div>
                     )}
                 </div>
-                )
               ) : (
                 <div className="card">
                   <h2>Login</h2>
@@ -1979,22 +1761,6 @@
 
             {/* SHOP */}
             {page === "shop" && (
-              !user ? (
-              <div className="card">
-                <h2>Cashout</h2>
-                <div className="empty">Please login to cash out.</div>
-              </div>
-              ) : !scoreAccess.shop ? (
-              <div className="card" style={{ textAlign: "center" }}>
-                <h2><i className="fas fa-lock" style={{ color: "var(--warning)", marginRight: 8 }} /> Shop locked</h2>
-                <p style={{ color: "var(--text-secondary)", marginBottom: 10 }}>
-                  Overall score <strong style={{ color: "var(--accent)" }}>{overallScore}</strong> — need <strong>{SCORE_GATES.shop}</strong> to unlock shop.
-                </p>
-                <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                  Clock in before 10:00 local (+20) · Accept walls (+5) · Complete offers (+5)
-                </p>
-              </div>
-              ) : (
               <div className="card">
                 <h2>Cashout</h2>
                 <p style={{ color: "var(--text-secondary)", marginBottom: 18, fontSize: "0.9rem" }}>
@@ -2101,7 +1867,6 @@
                   </>
                 )}
               </div>
-              )
             )}
 
             {/* CHAT page */}
@@ -2164,17 +1929,7 @@
               <div className="card">
                 <h2>Redeem Bonus Code</h2>
                 <div className="alert alert-warn">First come, first served. Each code can only be used once.</div>
-                {user && !scoreAccess.bonus ? (
-                  <div style={{ textAlign: "center", padding: "12px 0" }}>
-                    <p style={{ color: "var(--text-secondary)", marginBottom: 8 }}>
-                      <i className="fas fa-lock" style={{ color: "var(--warning)", marginRight: 6 }} />
-                      Overall score <strong style={{ color: "var(--accent)" }}>{overallScore}</strong> — need <strong>{SCORE_GATES.bonus}</strong> for bonus codes.
-                    </p>
-                    <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>
-                      Clock in before 10:00 local (+20) · Accept walls (+5) · Complete offers (+5)
-                    </p>
-                  </div>
-                ) : user ? (
+                {user ? (
                   <>
                     <label>Username</label>
                     <input value={user.username || user.account || ""} disabled style={{ opacity: 0.7 }} />
@@ -2212,18 +1967,6 @@
                   <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>
                     1,000 points = $1.00 USD. Each level-up requires a minimum of <strong style={{ color: "var(--accent)" }}>1,500 pts</strong> earned
                     (Level 1: 0–1,499 · Level 2: 1,500–2,999 · Level 3: 3,000+). Level is based on lifetime earnings so cashouts do not lower your level.
-                  </p>
-                </div>
-                <div style={{ marginBottom: 18 }}>
-                  <strong style={{ color: "#fff" }}>Overall score &amp; clock-in</strong>
-                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: 6 }}>
-                    Login auto clock-in. Be on site before <strong style={{ color: "var(--accent)" }}>10:00 local</strong> for <strong>+20</strong> score (once/day); after 10:00 → <strong>-10</strong>.
-                    Accept an offerwall → <strong>+5</strong>. Credited offer → <strong>+5</strong>. Leave the site / idle ~3 min → shift ends.
-                    Unlock: Chat ≥25 · Bonus ≥35 · Shop ≥45 · Offerwalls ≥50.
-                    {user && (
-                      <span> Your score: <strong style={{ color: "var(--accent)" }}>{overallScore}</strong>
-                        {shiftActive && clockInAt ? " · Clocked in " + clockInAt : " · Shift ended"}.</span>
-                    )}
                   </p>
                 </div>
                 <button className="btn btn-primary" style={{ marginBottom: 8 }} onClick={() => alert("support@rewardbux.com")}>Contact Support</button>
@@ -3138,4 +2881,3 @@
   </script>
 </body>
 </html>
-<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="5c1f1712-245e-4621-876c-41001b7778d7" data-app-host="app.netlify.com"></script>
